@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Crazyswarm2’s documentation! &mdash; Crazyswarm2 1.0a1 documentation</title>
+  <title>Crazyswarm2: A ROS2 testbed for Aerial Robot Teams &mdash; Crazyswarm2 1.0a1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
@@ -19,7 +19,8 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,14 +41,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Welcome to Crazyswarm2’s documentation!</a><ul>
-<li><a class="reference internal" href="#how-do-crazyswarm2-and-crazyswarm-differ">How do Crazyswarm2 and Crazyswarm differ?</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -62,7 +61,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Welcome to Crazyswarm2’s documentation!</li>
+      <li>Crazyswarm2: A ROS2 testbed for Aerial Robot Teams</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -72,21 +71,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="welcome-to-crazyswarm2-s-documentation">
-<span id="introduction"></span><h1>Welcome to Crazyswarm2’s documentation!<a class="headerlink" href="#welcome-to-crazyswarm2-s-documentation" title="Permalink to this heading"></a></h1>
-<p>Crazyswarm2 is a work-in-progress port of the original <a class="reference external" href="https://crazyswarm.readthedocs.io">Crazyswarm</a> to ROS2.</p>
+  <section id="crazyswarm2-a-ros2-testbed-for-aerial-robot-teams">
+<span id="introduction"></span><h1>Crazyswarm2: A ROS2 testbed for Aerial Robot Teams<a class="headerlink" href="#crazyswarm2-a-ros2-testbed-for-aerial-robot-teams" title="Permalink to this heading"></a></h1>
+<p>Crazyswarm2 is a <strong>work-in-progress</strong> port of the original <a class="reference external" href="https://crazyswarm.readthedocs.io">Crazyswarm</a> to ROS2.
+It is fully open-source and available on <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2">github</a>.</p>
 <p>Crazyswarm2 is primarily made for researchers that want to operate or simulate a team of unmanned aerial vehicles (UAVs) that uses the
-<a class="reference external" href="https://www.bitcraze.io/products/crazyflie-2-1/">Bitcraze Crazyflie 2.x</a> and <a class="reference external" href="https://store.bitcraze.io/products/crazyflie-bolt">Bitcraze Crazyflie Bolt-based</a>.</p>
-<section id="how-do-crazyswarm2-and-crazyswarm-differ">
-<h2>How do Crazyswarm2 and Crazyswarm differ?<a class="headerlink" href="#how-do-crazyswarm2-and-crazyswarm-differ" title="Permalink to this heading"></a></h2>
-<p>Crazyswarm2 was forked from Crazyswarm. However, there is also heavy re-design of some of the core design choices.</p>
+<a class="reference external" href="https://www.bitcraze.io/products/crazyflie-2-1/">Bitcraze Crazyflie 2.x</a> or <a class="reference external" href="https://store.bitcraze.io/products/crazyflie-bolt">Bitcraze Crazyflie Bolt-based</a> UAVs.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Crazyswarm2 is already usable for basic tasks (teleoperation, flying in a motion capture space, data collection), however the API and configuration file formats might still change. While many features of Crazyswarm1 are ported, there are currently still some important limitations:</p>
+<ul class="simple">
+<li><p>No support for real-time logging (logging on uSD-card is supported)</p></li>
+<li><p>Tested only for small team sizes (less than 10 robots)</p></li>
+<li><p>Limited Python API and only a few example scripts</p></li>
+</ul>
+</div>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+</ul>
+</div>
 </section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
