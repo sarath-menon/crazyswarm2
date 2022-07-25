@@ -16,16 +16,26 @@
       y_velocity_axis: 4
       z_velocity_axis: 2
       yaw_velocity_axis: 1
+<<<<<<< HEAD
       x_velocity_max: 1.0 # m/s
       y_velocity_max: 1.0 # m/s
       z_velocity_max: 1.0 # m/s
       yaw_velocity_max: 2.0  # rad/s
       x_limit: [-1.2, 1.2] # m
       y_limit: [-1.2, 1.2] # m
+=======
+      x_velocity_max: 0.5 # m/s
+      y_velocity_max: 0.5 # m/s
+      z_velocity_max: 0.5 # m/s
+      yaw_velocity_max: 0.5  # rad/s
+      x_limit: [-1.0, 1.0] # m
+      y_limit: [-1.0, 1.0] # m
+>>>>>>> main
       z_limit: [0.0, 2.5] # m
     initial_position:
       x: 0.0
       y: 0.0
       z: 0.10
+    auto_yaw_rate: -0.05 # rad/s, use 0.0 for manual yaw control
 
 
