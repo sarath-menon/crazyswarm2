@@ -7,7 +7,53 @@
         enHighLevel: 1
       stabilizer:
         estimator: 2 # 1: complementary, 2: kalman
-        controller: 2 # 1: PID, 2: mellinger
+        controller: 7 # 1: PID, 2: mellinger 4: sjc 6: Lee 7: lee payload
+        pAlpha: 0.01
+      ctrlLee:
+        Kpos_Px: 9.0 # def: 10.0
+        Kpos_Py: 9.0 # def: 10.0
+        Kpos_Pz: 9.0 # def: 10.0
+        Kpos_Dx: 7.0  # def: 8.0
+        Kpos_Dy: 7.0  # def: 8.0 
+        Kpos_Dz: 7.0  # def: 8.0  
+        Kpos_Ix: 5.0
+        Kpos_Iy: 5.0
+        Kpos_Iz: 8.0
+        KR_x: 0.0055 #0.0055   # def: 0.005  
+        KR_y: 0.0055 #0.0055  # def: 0.005
+        KR_z:  0.01 #0.008   # def: 0.005
+        Kw_x: 0.0013 #0.0013 # def: 0.0009
+        Kw_y: 0.0013 #0.0013  # def: 0.0009
+        Kw_z: 0.002  # def: 0.0012
+        KI_x: 0.012 #0.009 #0.015
+        KI_y: 0.018 #0.009 #0.015
+        KI_z: 0.015 #0.009 #0.015
+        mass: 0.0333
+      ctrlLeeP:
+        Kpos_Px : 10.0 #20.0 #15.0 #100.0 #60.0
+        Kpos_Py : 10.0 #20.0 #15.0 #100.0 #60.0
+        Kpos_Pz : 10.0 #20.0 #15.0 #160.0 #90.0
+        Kpos_Dx : 8.0 #18.0 ##13.0 #80.0 #0.0 #2.5
+        Kpos_Dy : 8.0 #18.0 ##13.0 #80.0 #0.0 #2.5
+        Kpos_Dz : 8.0 #18.0 ##13.0 #90.0 #0.0 #2.5
+        Kqx     : 250.0 #150.0 #250.0  #160.0
+        Kqy     : 250.0 #150.0 #250.0  #160.0
+        Kqz     : 250.0 #150.0 #250.0  #160.0
+        Kwx     : 100.0 #80.0 #100.0 #60.0 
+        Kwy     : 100.0 #80.0 #100.0 #60.0 
+        Kwz     : 100.0 #80.0 #100.0 #60.0 
+        KRx     : 0.008
+        KRy     : 0.008
+        KRz     : 0.008
+        Komx    : 0.0017
+        Komy    : 0.0017
+        Komz    : 0.0017
+        KI_x: 0.05 #0.05 #0.01 #0.009 #0.015
+        KI_y: 0.05 #0.05 #0.01 #0.009 #0.015
+        KI_z: 0.05 #0.05 #0.01 #0.009 #0.015
+        mass    : 0.034
+        massP   : 0.01
+        length  : 0.001
       # ring:
       #   effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
       #   solidBlue: 255 # if set to solid color
@@ -16,6 +62,6 @@
       #   headlightEnable: 0
       locSrv:
         extPosStdDev: 1e-3
-        extQuatStdDev: 0.5e-1
+        extQuatStdDev: 0.5e0 #0.5e-1
       # kalman:
       #   resetEstimation: 1

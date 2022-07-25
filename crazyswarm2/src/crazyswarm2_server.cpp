@@ -497,6 +497,7 @@ private:
             std::shared_ptr<Empty::Response> response)
   {
     RCLCPP_INFO(logger_, "emergency()");
+    for (int i = 0; i < 10; ++i)
     for (auto &bc : broadcaster_)
     {
       auto &cfbc = bc.second;
@@ -512,6 +513,7 @@ private:
                 request->timescale,
                 request->reversed,
                 request->group_mask);
+    for (int i = 0; i < 10; ++i)
     for (auto &bc : broadcaster_)
     {
       auto &cfbc = bc.second;
@@ -529,6 +531,7 @@ private:
                 request->height,
                 rclcpp::Duration(request->duration).seconds(),
                 request->group_mask);
+    for (int i = 0; i < 10; ++i)
     for (auto& bc : broadcaster_) {
       auto& cfbc = bc.second;
       cfbc->takeoff(request->height, rclcpp::Duration(request->duration).seconds(), request->group_mask);
@@ -542,6 +545,7 @@ private:
                 request->height,
                 rclcpp::Duration(request->duration).seconds(),
                 request->group_mask);
+    for (int i = 0; i < 10; ++i)
     for (auto& bc : broadcaster_) {
       auto& cfbc = bc.second;
       cfbc->land(request->height, rclcpp::Duration(request->duration).seconds(), request->group_mask);
@@ -555,6 +559,7 @@ private:
                 request->goal.x, request->goal.y, request->goal.z, request->yaw,
                 rclcpp::Duration(request->duration).seconds(),
                 request->group_mask);
+    for (int i = 0; i < 10; ++i)
     for (auto &bc : broadcaster_)
     {
       auto &cfbc = bc.second;

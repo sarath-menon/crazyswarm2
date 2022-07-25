@@ -62,13 +62,17 @@ def generate_launch_description():
         get_package_share_directory('crazyswarm2'),
         'config',
         'teleop.yaml')
-
+    rviz_config = os.path.join(
+        get_package_share_directory('motion_capture_tracking'),
+        'config',
+        'rviz.rviz')
     return LaunchDescription([
         Node(
             package='motion_capture_tracking',
             executable='motion_capture_tracking_node',
             name='motion_capture_tracking',
-            output='screen',
+            # output='screen',
+            output='log',
             parameters=[motion_capture_params]
         ),
         Node(
@@ -76,11 +80,11 @@ def generate_launch_description():
             executable='teleop',
             name='teleop',
             remappings=[
-                ('takeoff', 'cf231/takeoff'),
-                ('land', 'cf231/land'),
-                ('cmd_vel', 'cf231/cmd_vel'),
-                ('cmd_full_state', 'cf231/cmd_full_state'),
-                ('notify_setpoints_stop', 'cf231/notify_setpoints_stop'),
+                ('takeoff', 'cf2/takeoff'),
+                ('land', 'cf2/land'),
+                ('cmd_vel', 'cf2/cmd_vel'),
+                ('cmd_full_state', 'cf2/cmd_full_state'),
+                ('notify_setpoints_stop', 'cf2/notify_setpoints_stop'),
             ],
             parameters=[teleop_yaml]
         ),
@@ -96,4 +100,10 @@ def generate_launch_description():
             output='screen',
             parameters=[server_params]
         ),
+        # Node(
+        #     package='rviz2',
+        #     executable='rviz2',
+        #     name='rviz2',
+        #     arguments=['-d', rviz_config]
+        # )
     ])

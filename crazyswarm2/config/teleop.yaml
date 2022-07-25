@@ -16,10 +16,10 @@
       y_velocity_axis: 4
       z_velocity_axis: 2
       yaw_velocity_axis: 1
-      x_velocity_max: 0.5 # m/s
-      y_velocity_max: 0.5 # m/s
-      z_velocity_max: 0.5 # m/s
-      yaw_velocity_max: 0.5  # rad/s
+      x_velocity_max: 1.0 # m/s
+      y_velocity_max: 1.0 # m/s
+      z_velocity_max: 1.0 # m/s
+      yaw_velocity_max: 2.0  # rad/s
       x_limit: [-1.2, 1.2] # m
       y_limit: [-1.2, 1.2] # m
       z_limit: [0.0, 2.5] # m

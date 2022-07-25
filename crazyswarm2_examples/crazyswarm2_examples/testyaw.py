@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import numpy as np
 from pathlib import Path
 
@@ -12,21 +10,22 @@ def main():
     allcfs = swarm.allcfs
 
     traj1 = Trajectory()
-    traj1.loadcsv(Path(__file__).parent / "data/figure8.csv")
-
+    traj1.loadcsv(Path(__file__).parent / "data/yaw0.csv")
+    ev = traj1.eval(0)
+    
     TRIALS = 1
-    TIMESCALE = 1.0
+    TIMESCALE = 5.0
     for i in range(TRIALS):
         for cf in allcfs.crazyflies:
             cf.uploadTrajectory(0, 0, traj1)
 
-        allcfs.takeoff(targetHeight=0.7, duration=3.0)
+        allcfs.takeoff(targetHeight=0.5, duration=3.0)
         timeHelper.sleep(5)
         for cf in allcfs.crazyflies:
-            pos = np.array(cf.initialPosition) + np.array([0, 0, 0.7])
-            cf.goTo(pos, 0, 2.0)
-        timeHelper.sleep(3.0)
-
+            pos = np.array(cf.initialPosition) + np.array([0, 0, 0.5])
+            cf.goTo(pos, ev.yaw, 3.0)
+        timeHelper.sleep(4.0)
+        
         for cf in allcfs.crazyflies:
             cf.setParam("usd/logging", 1)
 

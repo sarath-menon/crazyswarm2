@@ -6,6 +6,13 @@
     mode: "libobjecttracker" # one of motionCapture,libRigidBodyTracker
 
     marker_configurations:
+      mocap_deck: # for standard Crazyflie
+        offset: [0.0, 0.0, 0.0]
+        points:
+          p0: [0.03,     0.0,  0.0]  # top
+          p1: [0.0,     0.03,  0.0]  # back left   (M3)
+          p2: [0.0,    -0.03,  0.0]  # back right  (M2)
+          p3: [ -0.015,  0.0,  0.0]  # front right (M1)
       default: # for standard Crazyflie
         offset: [0.0, 0.0, 0.0]
         points:
@@ -31,7 +38,13 @@
           p1: [-0.0113941,0.00945842,0.0984811]
           p2: [-0.0306277,0.0514879,0.0520456]
           p3: [0.0535816,-0.0400775,0.0432799]
-
+      pwm_board: # for standard Crazyflie
+        offset: [0.0, 0.0, 0.0]
+        points:
+          p0: [   0.019,  -0.019, 0]  # M1 top right
+          p1: [ -0.019,  -0.019, 0.0]  # M2 bottom right  
+          p2: [-0.019, 0.019, 0.0]  # M3  back left 
+          p3: [ 0.019, 0.019, 0.0]  # M4 front left
     dynamics_configurations:
       default:
         max_velocity: [2, 2, 3] # m/s

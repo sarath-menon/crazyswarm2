@@ -25,6 +25,11 @@ setup(
             'nice_hover = crazyswarm2_examples.nice_hover:main',
             'figure8 = crazyswarm2_examples.figure8:main',
             'cmd_full_state = crazyswarm2_examples.cmd_full_state:main',
+            'helix = crazyswarm2_examples.helix:main',
+            'downwash = crazyswarm2_examples.downwash:main',
+            'testyaw = crazyswarm2_examples.testyaw:main'
         ],
     },
 )
+
+# 'helix = crazyswarm2_examples.helix::main',
