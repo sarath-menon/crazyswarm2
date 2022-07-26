@@ -27,9 +27,8 @@ setup(
             'cmd_full_state = crazyswarm2_examples.cmd_full_state:main',
             'helix = crazyswarm2_examples.helix:main',
             'downwash = crazyswarm2_examples.downwash:main',
-            'testyaw = crazyswarm2_examples.testyaw:main'
+            'testyaw = crazyswarm2_examples.testyaw:main',
+            'payload_figure8 = crazyswarm2_examples.payload_figure8:main'
         ],
     },
 )
-
-# 'helix = crazyswarm2_examples.helix::main',

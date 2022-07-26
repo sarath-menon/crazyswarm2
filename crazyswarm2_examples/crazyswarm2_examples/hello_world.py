@@ -4,10 +4,10 @@
 from py_crazyswarm2 import Crazyswarm
 
 
-TAKEOFF_DURATION = 8.0
-PAYLOAD_CONTROLLER = 12.0
+TAKEOFF_DURATION = 10.0
+PAYLOAD_CONTROLLER = 30.0
 HOVER_BACK     = 5.0
-TARGET_HEIGHT   = 0.7
+TARGET_HEIGHT   = 1.0
 
 def main():
     swarm = Crazyswarm()
@@ -25,12 +25,18 @@ def main():
     cf.setParam('stabilizer.controller', 7)
 
     timeHelper.sleep(PAYLOAD_CONTROLLER)
+    
+    # cf.goTo([0.5,0.0,0.0], 0.0, 2.0, relative=True)
+    # timeHelper.sleep(3.0)
+    
+    # cf.goTo([-0.5,0.0,0.0], 0.0, 2.0, relative=True)
+    # timeHelper.sleep(3.0)
 
     print('finished trajectory')
     cf.setParam("usd.logging", 0) 
-    
-    print('swap controller')
 
+    print('swap controller')
+    cf.setParam('ctrlLee.mass', 0.034+0.007)
     cf.setParam('stabilizer.controller', 6)
 
     initPos = cf.initialPosition
