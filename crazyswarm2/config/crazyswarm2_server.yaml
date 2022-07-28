@@ -61,7 +61,7 @@
         mass       : 0.034
         massP      : 0.007
         length     : 0.57
-
+        offset     : 0.57
       # ring:
       #   effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
       #   solidBlue: 255 # if set to solid color
