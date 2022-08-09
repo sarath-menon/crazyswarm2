@@ -80,11 +80,11 @@ def generate_launch_description():
             executable='teleop',
             name='teleop',
             remappings=[
-                ('takeoff', 'cf2/takeoff'),
-                ('land', 'cf2/land'),
-                ('cmd_vel', 'cf2/cmd_vel'),
-                ('cmd_full_state', 'cf2/cmd_full_state'),
-                ('notify_setpoints_stop', 'cf2/notify_setpoints_stop'),
+                ('takeoff', 'cf231/takeoff'),
+                ('land', 'cf231/land'),
+                ('cmd_vel', 'cf231/cmd_vel'),
+                ('cmd_full_state', 'cf231/cmd_full_state'),
+                ('notify_setpoints_stop', 'cf231/notify_setpoints_stop'),
             ],
             parameters=[teleop_yaml]
         ),

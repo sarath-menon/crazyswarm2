@@ -1,14 +1,14 @@
-# cf231:
-#   # Use URI -OR- id + channel
-#   # uri: "radio://0/80/2M/E7E7E7E701"
-#   uri: "radio://0/80/2M/E7E7E7E7E7"
-#   # id: 1
-#   # channel: 80
-#   initial_position: [0,0,0]
-#   type: "cf21"
-#   # firmware_params:
-#   #   kalman:
-#   #     pNAcc_xy: 1.0 # default 0.5
+cf231:
+  # Use URI -OR- id + channel
+  # uri: "radio://0/80/2M/E7E7E7E701"
+  uri: "radio://0/80/2M/E7E7E7E7E7"
+  # id: 1
+  # channel: 80
+  initial_position: [0,0,0]
+  type: "cf21"
+  # firmware_params:
+  #   kalman:
+  #     pNAcc_xy: 1.0 # default 0.5
 # cf4:
 #   # Use URI -OR- id + channel
 #   # uri: "radio://0/80/2M/E7E7E7E701"
@@ -20,17 +20,17 @@
 #   # firmware_params:
 #   #   kalman:
 #   #     pNAcc_xy: 1.0 # default 0.5
-cf2:
-  # Use URI -OR- id + channel
-  # uri: "radio://0/80/2M/E7E7E7E701"
-  uri: "radio://0/80/2M/E7E7E7E702"
-  # id: 1
-  # channel: 80
-  initial_position: [0.0,0.0,0.0]
-  type: "cf21"
-  # firmware_params:
-  #   kalman:
-  #     pNAcc_xy: 1.0 # default 0.5
+# cf2:
+#   # Use URI -OR- id + channel
+#   # uri: "radio://0/80/2M/E7E7E7E701"
+#   uri: "radio://0/80/2M/E7E7E7E702"
+#   # id: 1
+#   # channel: 80
+#   initial_position: [0.0,0.0,0.0]
+#   type: "cf21"
+#   # firmware_params:
+#   #   kalman:
+#   #     pNAcc_xy: 1.0 # default 0.5
 # cf6:
 #   # Use URI -OR- id + channel
 #   # uri: "radio://0/80/2M/E7E7E7E701"
@@ -43,15 +43,15 @@ cf2:
 #   #   kalman:
 #   #     pNAcc_xy: 1.0 # default 0.5
 
-cf255:
-  # Use URI -OR- id + channel
-  # uri: "radio://0/80/2M/E7E7E7E701"
-  uri: "radio://0/80/2M/E7E7E7E7FF"
-  # id: 1
-  # channel: 80
-  initial_position: [-0.243,0.0,0.0]
-  type: "cf21"
-  # firmware_params:
-  #   kalman:
-  #     pNAcc_xy: 1.0 # default 0.5
+# cf255:
+#   # Use URI -OR- id + channel
+#   # uri: "radio://0/80/2M/E7E7E7E701"
+#   uri: "radio://0/80/2M/E7E7E7E7FF"
+#   # id: 1
+#   # channel: 80
+#   initial_position: [-0.243,0.0,0.0]
+#   type: "cf21"
+#   # firmware_params:
+#   #   kalman:
+#   #     pNAcc_xy: 1.0 # default 0.5
 

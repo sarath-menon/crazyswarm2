@@ -14,7 +14,7 @@ def main():
     ev = traj1.eval(0)
     
     TRIALS = 1
-    TIMESCALE = 5.0
+    TIMESCALE = 1.5
     for i in range(TRIALS):
         for cf in allcfs.crazyflies:
             cf.uploadTrajectory(0, 0, traj1)
@@ -22,7 +22,7 @@ def main():
         allcfs.takeoff(targetHeight=0.5, duration=3.0)
         timeHelper.sleep(5)
         for cf in allcfs.crazyflies:
-            pos = np.array(cf.initialPosition) + np.array([0, 0, 0.5])
+            pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
             cf.goTo(pos, ev.yaw, 3.0)
         timeHelper.sleep(4.0)
         
