@@ -53,6 +53,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#python-scripts">Python scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#vizualization">Vizualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rviz2-pose">RVIZ2 Pose</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -134,6 +138,32 @@ ros2 service call cf1/land crazyflie_interfaces/srv/Land <span class="s2">&quot;
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyflie_examples hello_world
 </pre></div>
 </div>
+</section>
+</section>
+<section id="vizualization">
+<h2>Vizualization<a class="headerlink" href="#vizualization" title="Permalink to this heading"></a></h2>
+<section id="rviz2-pose">
+<h3>RVIZ2 Pose<a class="headerlink" href="#rviz2-pose" title="Permalink to this heading"></a></h3>
+<p>In crazyflie.yaml, make sure that this following is added or uncommented</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>all:
+...
+firmware_logging:
+    enabled: <span class="nb">true</span>
+    default_topics:
+    pose:
+        frequency: <span class="m">10</span> <span class="c1"># Hz</span>
+</pre></div>
+</div>
+<p>In the first terminal, launch the server (CFlib backend only for now)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py backend:<span class="o">=</span>cflib
+</pre></div>
+</div>
+<p>In the second terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rviz2
+</pre></div>
+</div>
+<p>Then set ‘fixed frame’ to ‘world’ and add the TF plugin. Then in ‘TF’, check  the ‘show names’ checkbox.
+The crazyflie names should appear with their estimated position.</p>
 </section>
 </section>
 </section>
