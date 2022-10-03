@@ -17,6 +17,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,7 +51,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#physical-experiments">Physical Experiments</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#ros2-terminal">ROS2 terminal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-logblocks">Enabling Logblocks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#teleoperation">Teleoperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teleoperation-controller">Teleoperation controller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teleoperation-keyboard">Teleoperation keyboard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-scripts">Python scripts</a></li>
 </ul>
 </li>
@@ -124,11 +126,10 @@ ros2 service call cf1/land crazyflie_interfaces/srv/Land <span class="s2">&quot;
 </section>
 <section id="enabling-logblocks">
 <h3>Enabling Logblocks<a class="headerlink" href="#enabling-logblocks" title="Permalink to this heading"></a></h3>
-<p>In one terminal run
-.. code-block:: bash</p>
-<blockquote>
-<div><p>ros2 launch crazyflie launch.py backend:=cflib</p>
-</div></blockquote>
+<p>In one terminal run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py backend:<span class="o">=</span>cflib
+</pre></div>
+</div>
 <p>In another terminal after sourcing the right setup.bash files, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 service call /cf2/add_logging crazyflie_interfaces/srv/AddLogging <span class="s2">&quot;{topic_name: &#39;topic_test&#39;, frequency: 10, vars: [&#39;stateEstimate.x&#39;,&#39;stateEstimate.y&#39;,&#39;stateEstimate.z&#39;]}&quot;</span>
 ros2 service call /cf2/add_logging crazyflie_interfaces/srv/AddLogging <span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}</span>
@@ -141,12 +142,27 @@ ros2 service call /cf2/remove_logging crazyflie_interfaces/srv/RemoveLogging <sp
 </pre></div>
 </div>
 </section>
-<section id="teleoperation">
-<h3>Teleoperation<a class="headerlink" href="#teleoperation" title="Permalink to this heading"></a></h3>
+<section id="teleoperation-controller">
+<h3>Teleoperation controller<a class="headerlink" href="#teleoperation-controller" title="Permalink to this heading"></a></h3>
 <p>We currently assume an XBox controller (the button mapping can be changed in teleop.yaml). It is possible to fly in different modes, including attitude-control and position-control (in which case any localization system can assist.)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py
 </pre></div>
 </div>
+</section>
+<section id="teleoperation-keyboard">
+<h3>Teleoperation keyboard<a class="headerlink" href="#teleoperation-keyboard" title="Permalink to this heading"></a></h3>
+<p>We have an example of the telop_twist_keyboard package working together with the crazyflie</p>
+<p>First make sure that the crazyflies.yaml has the right URI and if you are using the flowdeck,
+set the controller to 1 (PID)</p>
+<p>Then, run the following launch file to start up the crazyflie server (CFlib):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie_examples keyboard_velmux_launch.py
+</pre></div>
+</div>
+<p>in another terminal run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run teleop_twist_keyboard telop_twist_keyboard
+</pre></div>
+</div>
+<p>Use ‘t’ to take off, and ‘b’ to land. For the rest, use the instructions of the telop package.</p>
 </section>
 <section id="python-scripts">
 <h3>Python scripts<a class="headerlink" href="#python-scripts" title="Permalink to this heading"></a></h3>
