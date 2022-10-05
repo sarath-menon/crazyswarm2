@@ -47,6 +47,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ROS2 Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#teleoperation-keyboard">Teleoperation keyboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vizualization-with-rviz2">Vizualization with RVIZ2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapping-with-the-slam-toolbox">Mapping with the SLAM toolbox</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#preperation">Preperation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#connecting-with-the-crazyflie">Connecting with the Crazyflie</a></li>
@@ -54,7 +56,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#connecting-with-nav2-bringup">Connecting with Nav2 Bringup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Preperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Preperation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#looking-at-the-launch-file">Looking at the Launch file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#navigate-the-crazyflie">Navigate the Crazyflie</a></li>
 </ul>
@@ -95,6 +97,54 @@
 <p>These tutorials are advanced and still underdevelopment. Beware of errors and bugs and be sure to use <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2/discussions">https://github.com/IMRCLab/crazyswarm2/discussions</a> for any support questions.</p>
 </div>
 <p>This page shows tutorials that connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
+<section id="teleoperation-keyboard">
+<h2>Teleoperation keyboard<a class="headerlink" href="#teleoperation-keyboard" title="Permalink to this heading"></a></h2>
+<p>We have an example of the telop_twist_keyboard package working together with the crazyflie</p>
+<p>First make sure that the crazyflies.yaml has the right URI and if you are using the <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.
+set the controller to 1 (PID)</p>
+<p>Then, run the following launch file to start up the crazyflie server (CFlib):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie_examples keyboard_velmux_launch.py
+</pre></div>
+</div>
+<p>in another terminal run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run teleop_twist_keyboard telop_twist_keyboard
+</pre></div>
+</div>
+<p>Use ‘t’ to take off, and ‘b’ to land. For the rest, use the instructions of the telop package.</p>
+</section>
+<section id="vizualization-with-rviz2">
+<h2>Vizualization with RVIZ2<a class="headerlink" href="#vizualization-with-rviz2" title="Permalink to this heading"></a></h2>
+<p>Make sure your crazyflie knows it’s position, either by a  <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.</p>
+<p>In crazyflie.yaml, make sure that this following is added or uncommented</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>all:
+...
+firmware_logging:
+    enabled: <span class="nb">true</span>
+    default_topics:
+    pose:
+        frequency: <span class="m">10</span> <span class="c1"># Hz</span>
+</pre></div>
+</div>
+<p>In the first terminal, launch the server (CFlib backend only for now)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py backend:<span class="o">=</span>cflib
+</pre></div>
+</div>
+<p>In the second terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rviz2
+</pre></div>
+</div>
+<p>Then set ‘fixed frame’ to ‘world’ and add the TF plugin. Then in ‘TF’, check  the ‘show names’ checkbox.
+The crazyflie names should appear with their estimated position.</p>
+<p>This RVIZ2 visualization can be done for the default topics:</p>
+<ul class="simple">
+<li><p>‘pose’: ‘/cf1/pose/’ Transforms and Pose</p></li>
+<li><p>‘odom’: ‘/cf1/odom/’ Odometry</p></li>
+<li><p>‘scan’: ‘/cf1/scan’ Scan</p></li>
+</ul>
+<p>Here you can see an example of 5 crazyflies with the Pose default topic enabled, while taking off and landing</p>
+<div style="position: relative; padding-bottom: 56.25%; margin-bottom: 20pt; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+    <iframe src="https://www.youtube.com/embed/w99hLldcSp4" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div></section>
 <section id="mapping-with-the-slam-toolbox">
 <h2>Mapping with the SLAM toolbox<a class="headerlink" href="#mapping-with-the-slam-toolbox" title="Permalink to this heading"></a></h2>
 <p>You can connect the Crazyflie through ROS2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
@@ -243,8 +293,8 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 <section id="connecting-with-nav2-bringup">
 <h2>Connecting with Nav2 Bringup<a class="headerlink" href="#connecting-with-nav2-bringup" title="Permalink to this heading"></a></h2>
 <p>With the previous tutorial you made a map of the environment, so now it is time to use it for navigation!</p>
-<section id="id2">
-<h3>Preperation<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<section id="id5">
+<h3>Preperation<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This tutorial assume you have taken the above mapping tutorial first.</p>
