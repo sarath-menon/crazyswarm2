@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorials &mdash; Crazyswarm2 1.0a1 documentation</title>
+  <title>ROS2 Tutorials &mdash; Crazyswarm2 1.0a1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
@@ -46,11 +46,17 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorials</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS2 Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mapping-with-the-slam-toolbox">Mapping with the SLAM toolbox</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#preperation">Preperation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#connecting-with-the-crazyflie">Connecting with the Crazyflie</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flying-and-mapping">Flying and mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#connecting-with-nav2-bringup">Connecting with Nav2 Bringup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Preperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#looking-at-the-launch-file">Looking at the Launch file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#navigate-the-crazyflie">Navigate the Crazyflie</a></li>
 </ul>
 </li>
 </ul>
@@ -72,7 +78,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Tutorials</li>
+      <li>ROS2 Tutorials</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/tutorials.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -82,8 +88,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tutorials">
-<span id="id1"></span><h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this heading"></a></h1>
+  <section id="ros2-tutorials">
+<span id="tutorials"></span><h1>ROS2 Tutorials<a class="headerlink" href="#ros2-tutorials" title="Permalink to this heading"></a></h1>
+<p>This page shows tutorials that connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
 <section id="mapping-with-the-slam-toolbox">
 <h2>Mapping with the SLAM toolbox<a class="headerlink" href="#mapping-with-the-slam-toolbox" title="Permalink to this heading"></a></h2>
 <p>You can connect the Crazyflie through ROS2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
@@ -91,7 +98,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 ) a simple map can be created.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Mind that this will only show the mapping part of SLAM, as the ray matching with the sparse multiranger is quite challenging for the SLAM toolbox.</p>
+<p>Mind that this will only show the mapping part of SLAM, as the ray matching with the sparse multiranger is quite challenging for the SLAM toolbox</p>
 </div>
 <section id="preperation">
 <h3>Preperation<a class="headerlink" href="#preperation" title="Permalink to this heading"></a></h3>
@@ -169,7 +176,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 <li><p>The second node is a velocity command handler, which takes an incoming twist message, makes the Crazyflie take off to a fixed height and enables velocity control of external packages (you’ll see why soon enough).</p></li>
 <li><p>The third node is the slam toolbox node. You noted that we gave it some different parameters, where we upped the speed of the map generation, descreased the resolution and turn of ray matching as mentioned in the warning above.</p></li>
 </ul>
-<p>Turn on your crazyflie and put it in the middle of the room you would like to map.</p>
+<p>Turn on your crazyflie and put it in the middle of the room you would like to map. Make sure to mark the starting position for later.</p>
 <p>Now startup the crazyflie server with the following example launch file, after sourcing the setup.bash ofcourse:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
 ros2 launch crazyflie_examples multiranger_mapping_launch.py
@@ -227,6 +234,114 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 </div><p>Tip: start with turning slowely with yaw, which should be enough to get most of the room.</p>
 <p>Once you are happy, you can save the map with ‘Save Map’ in the SLAM toolbox panel, and land the crazyflie with ‘t’ with teleop_twist_keyboard.</p>
 <p>If not, you could tweak with the parameters of  the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a> to get a better result.</p>
+</section>
+</section>
+<section id="connecting-with-nav2-bringup">
+<h2>Connecting with Nav2 Bringup<a class="headerlink" href="#connecting-with-nav2-bringup" title="Permalink to this heading"></a></h2>
+<p>With the previous tutorial you made a map of the environment, so now it is time to use it for navigation!</p>
+<section id="id2">
+<h3>Preperation<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial assume you have taken the above mapping tutorial first.</p>
+</div>
+<p>Find the all the files that were created by the RVIZ2 slam toolbox plugin, which should be in format *.yaml, *.posegraph, *.data and *.pgm, and copy them in the /crazyflie_examples/data/ folder.
+Either you can replace those that are there already, or call them different and just change the name in the launch file, which I will explain now.</p>
+<p>Next, install the Navigation2 Bringup package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>NAV2 sudo apt-get install ros-galactic-nav2-bringup
+</pre></div>
+</div>
+</section>
+<section id="looking-at-the-launch-file">
+<h3>Looking at the Launch file<a class="headerlink" href="#looking-at-the-launch-file" title="Permalink to this heading"></a></h3>
+<p>Let’s take a look at the launch file (multiranger_nav3_launch.py) now</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span>
+    <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;crazyflie&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;crazyflie_server.py&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;crazyflie_server&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;world_tf_name&quot;</span><span class="p">:</span> <span class="s1">&#39;map&#39;</span><span class="p">},</span>
+                    <span class="n">server_params</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;crazyflie&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;vel_mux.py&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vel_mux&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;hover_height&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&quot;incoming_twist_topic&quot;</span><span class="p">:</span> <span class="s2">&quot;/cmd_vel&quot;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&quot;robot_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/cf1&quot;</span><span class="p">}]</span>
+    <span class="p">),</span>
+    <span class="n">Node</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">[</span>
+      <span class="p">{</span><span class="s1">&#39;odom_frame&#39;</span><span class="p">:</span> <span class="s1">&#39;odom&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;map_frame&#39;</span><span class="p">:</span> <span class="s1">&#39;map&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;base_frame&#39;</span><span class="p">:</span> <span class="s1">&#39;cf1&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;scan_topic&#39;</span><span class="p">:</span> <span class="s1">&#39;/cf1/scan&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;use_scan_matching&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;max_laser_range&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;resolution&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;minimum_travel_distance&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;minimum_travel_heading&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;map_update_interval&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+      <span class="p">{</span><span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;localization&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s2">&quot;map_file_name&quot;</span><span class="p">:</span>  <span class="o">+</span> <span class="s1">&#39;/data/map&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s2">&quot;map_start_pose&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]}</span> <span class="p">],</span>
+    <span class="n">package</span><span class="o">=</span><span class="s1">&#39;slam_toolbox&#39;</span><span class="p">,</span>
+    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;localization_slam_toolbox_node&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;slam_toolbox&#39;</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">),</span>
+    <span class="n">IncludeLaunchDescription</span><span class="p">(</span>
+        <span class="n">PythonLaunchDescriptionSource</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bringup_launch_dir</span><span class="p">,</span> <span class="s1">&#39;bringup_launch.py&#39;</span><span class="p">)),</span>
+        <span class="n">launch_arguments</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;slam&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;use_sim_time&#39;</span><span class="p">:</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="n">cf_examples_dir</span> <span class="o">+</span> <span class="s1">&#39;/data/map.yaml&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;params_file&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cf_examples_dir</span><span class="p">,</span> <span class="s1">&#39;nav2_params.yaml&#39;</span><span class="p">),</span>
+                        <span class="s1">&#39;autostart&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;use_composition&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;transform_publish_period&#39;</span><span class="p">:</span> <span class="s1">&#39;0.02&#39;</span>
+                        <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">),</span>
+    <span class="n">IncludeLaunchDescription</span><span class="p">(</span>
+        <span class="n">PythonLaunchDescriptionSource</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bringup_launch_dir</span><span class="p">,</span> <span class="s1">&#39;rviz_launch.py&#39;</span><span class="p">)),</span>
+        <span class="n">launch_arguments</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;rviz_config&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bringup_dir</span><span class="p">,</span> <span class="s1">&#39;rviz&#39;</span><span class="p">,</span> <span class="s1">&#39;nav2_default_view.rviz&#39;</span><span class="p">)}</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>The crazyflie_server, vel_mux and slam toolbox nodes are obviously the same as the mapping launch file example, with some key differences:</p>
+<ul class="simple">
+<li><p>crazyflie_server: An extra parameter called ‘world_tf_name’ which changes the name of the ‘world’ transform to ‘map’. This is to ensure compatibilty with the NAV2 bringup node later.</p></li>
+<li><p>slam toolbox:  ‘map_frame’ set to ‘map, ‘mode’ set to localization with a ‘map_file_name’ and ‘map_start_pose’ (now remember marking the start position of the mapping tutorial?)</p></li>
+</ul>
+<p>The next two nodes are new, which are included IncludeLaunchDescription to include other launch files (since these are pretty big).</p>
+<ul class="simple">
+<li><p>Navigation Bringup: ‘slam’ is set to false since that is already enabled, ‘map’ includes the yaml file of what was created in the previous mapping tutorial. ‘params_file’ contains all the parameters that have been altered a bit for the crazyflie.</p></li>
+<li><p>RVIZ2: ‘rviz_config’ is set to a default rviz2 file of Nav2 that saves us the trouble of setting everything up by hand.</p></li>
+</ul>
+</section>
+<section id="navigate-the-crazyflie">
+<h3>Navigate the Crazyflie<a class="headerlink" href="#navigate-the-crazyflie" title="Permalink to this heading"></a></h3>
+<p>In a terminal run the following from the crazyswarm2 source folder.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
+ros2 launch crazyflie_examples multiranger_nav2_launch.py
+</pre></div>
+</div>
+<p>We will not now show all the print-outs, just make sure that at the crazyflie is connected and it’s outputing the right transforms and topics like in the mapping tutorial</p>
+<p>Now, open another terminal and open up a teleop_twist_keyboard just like last time. Press ‘t’ on your keyboard to make the crazyflie fly</p>
+<p>On top of the RVIZ2 window, you see the button ‘Nav2 goal’. Click at in a free spot in the map and watch the crazyflie go places :).</p>
+<p>Also try it out by putting obstacles along the path of the crazyflie like in the video here.</p>
+<div style="position: relative; padding-bottom: 56.25%; margin-bottom: 20pt; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+    <iframe src="https://www.youtube.com/embed/1BKLPkQ6Gz8" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div><p>As you noticed, the movement around the obstacles are pretty conservative. You can tune the values in /config/nav2_params.yaml, like the global or local planner’s inflation_layer or the size of the robot.
+Please check out  <a class="reference external" href="https://navigation.ros.org/tuning/index.html/">NAV2’s tuning documentation</a> for more explanation of these values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Final note. The SLAM performance and navigation performance of the Crazyflie with the multiranger is doable but not perfect. We absolutely encourage you to tweak and tune the parameters to get something better! (And if you do, please share :D)</p>
+</div>
 </section>
 </section>
 </section>
