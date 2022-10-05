@@ -90,14 +90,18 @@
              
   <section id="ros2-tutorials">
 <span id="tutorials"></span><h1>ROS2 Tutorials<a class="headerlink" href="#ros2-tutorials" title="Permalink to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These tutorials are advanced and still underdevelopment. Beware of errors and bugs and be sure to use <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2/discussions">https://github.com/IMRCLab/crazyswarm2/discussions</a> for any support questions.</p>
+</div>
 <p>This page shows tutorials that connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
 <section id="mapping-with-the-slam-toolbox">
 <h2>Mapping with the SLAM toolbox<a class="headerlink" href="#mapping-with-the-slam-toolbox" title="Permalink to this heading"></a></h2>
 <p>You can connect the Crazyflie through ROS2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
 With a <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> and <a class="reference external" href="https://www.bitcraze.io/products/multi-ranger-deck/">Multi-ranger</a>
 ) a simple map can be created.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Mind that this will only show the mapping part of SLAM, as the ray matching with the sparse multiranger is quite challenging for the SLAM toolbox</p>
 </div>
 <section id="preperation">
@@ -248,7 +252,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 <p>Find the all the files that were created by the RVIZ2 slam toolbox plugin, which should be in format *.yaml, *.posegraph, *.data and *.pgm, and copy them in the /crazyflie_examples/data/ folder.
 Either you can replace those that are there already, or call them different and just change the name in the launch file, which I will explain now.</p>
 <p>Next, install the Navigation2 Bringup package:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>NAV2 sudo apt-get install ros-galactic-nav2-bringup
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install ros-galactic-nav2-bringup
 </pre></div>
 </div>
 </section>
@@ -286,10 +290,10 @@ Either you can replace those that are there already, or call them different and 
       <span class="p">{</span><span class="s1">&#39;minimum_travel_heading&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">},</span>
       <span class="p">{</span><span class="s1">&#39;map_update_interval&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
       <span class="p">{</span><span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;localization&#39;</span><span class="p">},</span>
-      <span class="p">{</span><span class="s2">&quot;map_file_name&quot;</span><span class="p">:</span>  <span class="o">+</span> <span class="s1">&#39;/data/map&#39;</span><span class="p">},</span>
+      <span class="p">{</span><span class="s2">&quot;map_file_name&quot;</span><span class="p">:</span> <span class="n">cf_examples_dir</span> <span class="o">+</span> <span class="s2">&quot;/data/&quot;</span> <span class="o">+</span> <span class="n">map_name</span><span class="p">},</span>
       <span class="p">{</span><span class="s2">&quot;map_start_pose&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]}</span> <span class="p">],</span>
     <span class="n">package</span><span class="o">=</span><span class="s1">&#39;slam_toolbox&#39;</span><span class="p">,</span>
-    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;localization_slam_toolbox_node&#39;</span><span class="p">,</span>
+    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;async_slam_toolbox_node&#39;</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;slam_toolbox&#39;</span><span class="p">,</span>
     <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">),</span>
     <span class="n">IncludeLaunchDescription</span><span class="p">(</span>
@@ -297,7 +301,7 @@ Either you can replace those that are there already, or call them different and 
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bringup_launch_dir</span><span class="p">,</span> <span class="s1">&#39;bringup_launch.py&#39;</span><span class="p">)),</span>
         <span class="n">launch_arguments</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;slam&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;use_sim_time&#39;</span><span class="p">:</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="n">cf_examples_dir</span> <span class="o">+</span> <span class="s1">&#39;/data/map.yaml&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="n">cf_examples_dir</span> <span class="o">+</span> <span class="s2">&quot;/data/&quot;</span> <span class="o">+</span> <span class="n">map_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span>
                         <span class="s1">&#39;params_file&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cf_examples_dir</span><span class="p">,</span> <span class="s1">&#39;nav2_params.yaml&#39;</span><span class="p">),</span>
                         <span class="s1">&#39;autostart&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;use_composition&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
@@ -325,7 +329,7 @@ Either you can replace those that are there already, or call them different and 
 </section>
 <section id="navigate-the-crazyflie">
 <h3>Navigate the Crazyflie<a class="headerlink" href="#navigate-the-crazyflie" title="Permalink to this heading"></a></h3>
-<p>In a terminal run the following from the crazyswarm2 source folder.</p>
+<p>In a terminal run the following from the ros2 workspace.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
 ros2 launch crazyflie_examples multiranger_nav2_launch.py
 </pre></div>
