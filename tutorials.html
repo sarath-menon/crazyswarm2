@@ -92,15 +92,15 @@
              
   <section id="ros2-tutorials">
 <span id="tutorials"></span><h1>ROS2 Tutorials<a class="headerlink" href="#ros2-tutorials" title="Permalink to this heading"></a></h1>
+<p>This page shows tutorials which connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>These tutorials are advanced and still underdevelopment. Beware of errors and bugs and be sure to use <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2/discussions">https://github.com/IMRCLab/crazyswarm2/discussions</a> for any support questions.</p>
+<p>These tutorials are for advanced use and still under development. Beware of errors and bugs and be sure to use <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2/discussions">https://github.com/IMRCLab/crazyswarm2/discussions</a> for any support questions.</p>
 </div>
-<p>This page shows tutorials that connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
 <section id="teleoperation-keyboard">
 <h2>Teleoperation keyboard<a class="headerlink" href="#teleoperation-keyboard" title="Permalink to this heading"></a></h2>
 <p>We have an example of the telop_twist_keyboard package working together with the crazyflie</p>
-<p>First make sure that the crazyflies.yaml has the right URI and if you are using the <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.
+<p>First, make sure that the crazyflies.yaml has the right URI and if you are using the <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.
 set the controller to 1 (PID)</p>
 <p>Then, run the following launch file to start up the crazyflie server (CFlib):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie_examples keyboard_velmux_launch.py
@@ -114,7 +114,7 @@ set the controller to 1 (PID)</p>
 </section>
 <section id="vizualization-with-rviz2">
 <h2>Vizualization with RVIZ2<a class="headerlink" href="#vizualization-with-rviz2" title="Permalink to this heading"></a></h2>
-<p>Make sure your crazyflie knows it’s position, either by a  <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.</p>
+<p>Make sure your crazyflie knows its position, either by a  <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.</p>
 <p>In crazyflie.yaml, make sure that this following is added or uncommented</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>all:
 ...
@@ -133,7 +133,7 @@ firmware_logging:
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rviz2
 </pre></div>
 </div>
-<p>Then set ‘fixed frame’ to ‘world’ and add the TF plugin. Then in ‘TF’, check  the ‘show names’ checkbox.
+<p>Then set ‘fixed frame’ to ‘world’ and add the TF plugin. Then in ‘TF’, check the ‘show names’ checkbox.
 The crazyflie names should appear with their estimated position.</p>
 <p>This RVIZ2 visualization can be done for the default topics:</p>
 <ul class="simple">
@@ -152,7 +152,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 ) a simple map can be created.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Mind that this will only show the mapping part of SLAM, as the ray matching with the sparse multiranger is quite challenging for the SLAM toolbox</p>
+<p>Mind that this will only show the mapping part of SLAM, as the ray matching with the sparse sensing Multi-ranger is quite challenging for the SLAM toolbox</p>
 </div>
 <section id="preperation">
 <h3>Preperation<a class="headerlink" href="#preperation" title="Permalink to this heading"></a></h3>
@@ -176,7 +176,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
       frequency: <span class="m">10</span> <span class="c1"># Hz</span>
 </pre></div>
 </div>
-<p>Also make sure that that the standard controller is set to 1 (PID) for the flowdeck and the state estimator is set to 2 (kalman):</p>
+<p>Also, make sure that the standard controller is set to 1 (PID) for the flowdeck and the state estimator is set to 2 (kalman):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>firmware_params:
   stabilizer:
     estimator: <span class="m">2</span> <span class="c1"># 1: complementary, 2: kalman</span>
@@ -226,12 +226,12 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 </div>
 <p>Here is an explanation of the nodes:</p>
 <ul class="simple">
-<li><p>The first node enables the crazyflie server, namely the python version (cflib) as that currently has logging enabled. This takes the crazyflies.yaml file you just edited and uses those values to setup the crazyflie.</p></li>
+<li><p>The first node enables the crazyflie server, namely the python version (cflib) as that currently has logging enabled. This takes the crazyflies.yaml file you just edited and uses those values to set up the crazyflie.</p></li>
 <li><p>The second node is a velocity command handler, which takes an incoming twist message, makes the Crazyflie take off to a fixed height and enables velocity control of external packages (you’ll see why soon enough).</p></li>
-<li><p>The third node is the slam toolbox node. You noted that we gave it some different parameters, where we upped the speed of the map generation, descreased the resolution and turn of ray matching as mentioned in the warning above.</p></li>
+<li><p>The third node is the slam toolbox node. You noted that we gave it some different parameters, where we upped the speed of the map generation, decreased the resolution and turn of ray matching as mentioned in the warning above.</p></li>
 </ul>
 <p>Turn on your crazyflie and put it in the middle of the room you would like to map. Make sure to mark the starting position for later.</p>
-<p>Now startup the crazyflie server with the following example launch file, after sourcing the setup.bash ofcourse:</p>
+<p>Now startup the crazyflie server with the following example launch file, after sourcing the ‘setup.bash’ of course:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
 ros2 launch crazyflie_examples multiranger_mapping_launch.py
 </pre></div>
@@ -285,7 +285,10 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 <p>and make the crazyflie take off with the ‘t’ key on your keyboard. Now fly around the room to make a map of it.</p>
 <div style="position: relative; padding-bottom: 56.25%; margin-bottom: 20pt; height: 0; overflow: hidden; max-width: 100%; height: auto;">
     <iframe src="https://www.youtube.com/embed/-NfKnlJMAHQ" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-</div><p>Tip: start with turning slowely with yaw, which should be enough to get most of the room.</p>
+</div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Tip: start with turning slowly with yaw, which should be enough to get most of the room.</p>
+</div>
 <p>Once you are happy, you can save the map with ‘Save Map’ in the SLAM toolbox panel, and land the crazyflie with ‘t’ with teleop_twist_keyboard.</p>
 <p>If not, you could tweak with the parameters of  the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a> to get a better result.</p>
 </section>
@@ -300,7 +303,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 <p>This tutorial assume you have taken the above mapping tutorial first.</p>
 </div>
 <p>Find the all the files that were created by the RVIZ2 slam toolbox plugin, which should be in format *.yaml, *.posegraph, *.data and *.pgm, and copy them in the /crazyflie_examples/data/ folder.
-Either you can replace those that are there already, or call them different and just change the name in the launch file, which I will explain now.</p>
+Either you can replace those that are there already (‘map.*’), or call them different and just change the name in the launch file, which will be explain now.</p>
 <p>Next, install the Navigation2 Bringup package:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install ros-galactic-nav2-bringup
 </pre></div>
@@ -308,7 +311,7 @@ Either you can replace those that are there already, or call them different and 
 </section>
 <section id="looking-at-the-launch-file">
 <h3>Looking at the Launch file<a class="headerlink" href="#looking-at-the-launch-file" title="Permalink to this heading"></a></h3>
-<p>Let’s take a look at the launch file (multiranger_nav3_launch.py) now</p>
+<p>Let’s take a look at the launch file (multiranger_nav3_launch.py):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span>
     <span class="n">Node</span><span class="p">(</span>
         <span class="n">package</span><span class="o">=</span><span class="s1">&#39;crazyflie&#39;</span><span class="p">,</span>
@@ -384,8 +387,8 @@ Either you can replace those that are there already, or call them different and 
 ros2 launch crazyflie_examples multiranger_nav2_launch.py
 </pre></div>
 </div>
-<p>We will not now show all the print-outs, just make sure that at the crazyflie is connected and it’s outputing the right transforms and topics like in the mapping tutorial</p>
-<p>Now, open another terminal and open up a teleop_twist_keyboard just like last time. Press ‘t’ on your keyboard to make the crazyflie fly</p>
+<p>We will not now show all the print-outs, just make sure that at the crazyflie is connected and it outputs the right transforms and topics like in the mapping tutorial</p>
+<p>Now, open another terminal and open up a teleop_twist_keyboard just like last time. Press ‘t’ on your keyboard to make the crazyflie fly.</p>
 <p>On top of the RVIZ2 window, you see the button ‘Nav2 goal’. Click at in a free spot in the map and watch the crazyflie go places :).</p>
 <p>Also try it out by putting obstacles along the path of the crazyflie like in the video here.</p>
 <div style="position: relative; padding-bottom: 56.25%; margin-bottom: 20pt; height: 0; overflow: hidden; max-width: 100%; height: auto;">
