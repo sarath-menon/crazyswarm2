@@ -1,4 +1,5 @@
 py_crazyswarm2/py_crazyswarm2/crazyflie-firmware/
+ros2setup.sh
 build/
 log/
 install/
