@@ -6,40 +6,43 @@ import numpy as np
 
 
 
-Ids = [2, 6]
+Ids = [2, 5, 6]
 # TAKEOFF_HEIGHT = 1.3490287
-TAKEOFF_HEIGHT = 1.03894699
+TAKEOFF_HEIGHT = 1.24045172
 LAND_HEIGHT    = 0.5
 Heights = [0.85778483, 0.85778483]
 
 # offset UAVs from payload for 20 degrees
 offsets = {
     2: {
-        'offset' : [0.0, 0.44165386, 0.63074707],  #y, z = 0.32541606, 0.697857 for 25 degrees
-                                                 #y, z = 0.26335551, 0.72356332 for 20 degrees
-                                                 #y, z = 0.44165386, 0.63074707 for 35 degrees
+        'offset' : [0.0,  -0.4275,  0.74045172], #offset for 30 degrees  
+                                            
+    },
+    5: {
+        'offset': [0.37022586, 0.21375, 0.74045172],
+    
     },
     6: {
-        'offset' : [0.0, -0.40437139, 0.57750219], #y,z = -0.29794587,  0.63894699 for 25 degrees,
-                                                    #y,z = -0.2411242,  0.6624833   for 20 degrees,                                                     
-    }                                               #y, z = -0.40437139, 0.57750219 for 35 degrees
+        'offset' : [-0.37022586,  0.21375, 0.74045172],
+    }
 }
 
 cf_config = {
     2: {
         'waypoints': [
-            [0.0, 0.44165386, 1.03074707],   #y, z = 0.32541606, 1.097857 for 25 degrees,   z = 0.4
-            [0.0, 0.7462545 , 0.88597561], #y, z = 0.26335551, 1.12356332 for 20 degrees, z = 0.4 
-                                           #y, z = 0.44165386, 1.03074707 for 35 degrees, z = 0.4
-                                        
+            [0.0,  -0.4275, 1.24045172],  
+        ]                                  
+
+    },
+    5: {
+        'waypoints': [
+            [0.37022586, 0.21375, 1.24045172], 
         ]                                  
 
     },
     6: {
         'waypoints': [
-            [0.0,  -0.40437139,  0.97750219], #y,z  =-0.29794587,   1.03894699 for 25 degrees,  z = 0.4 
-            [0.0, 0.2605859, 0.85778483],     #y,z = -0.2411242,    1.0624833 for 20 degrees,   z = 0.4
-                                              #y, z =  -0.40437139,  0.97750219 for 35 degrees, z = 0.4
+            [-0.37022586,  0.21375, 1.24045172],                             
         ]                                      
     }
 }
@@ -48,17 +51,23 @@ cf_values = {
     2: {
         'value' : 0,
     },
-    6: {
+    5: {
         'value' : 1,
+    },
+    6: {
+        'value' : 2,
     }
 }
 
 lengths = {
     2: {
-        'length' : 0.77,
+        'length' : 0.855,
+    },
+    5: {
+        'length' : 0.855,
     },
     6: {
-        'length' : 0.705,
+        'length' : 0.855,
     }
 }
 
@@ -75,7 +84,6 @@ def main():
         cf.goTo(pos, 0, 3.0)
 
     timeHelper.sleep(5.0)
-
 
     for cfid in Ids:
         print(cfid)
