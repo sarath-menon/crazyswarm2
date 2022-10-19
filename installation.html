@@ -50,7 +50,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -88,15 +87,15 @@
 <td><p>ROS2</p></td>
 </tr>
 <tr class="row-even"><td><p>20.04</p></td>
-<td><p>3.7, 3.8</p></td>
+<td><p>3.7</p></td>
 <td><p>Galactic</p></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/about">Windows Subsystem for Linux (WSL)</a> is experimentally supported but you’ll have to use <a class="reference external" href="https://github.com/dorssel/usbipd-win/">usbipd-win</a>.
-This program will link the crazyradio directly with WS, but beware of bugs. Check out their <a class="reference external" href="https://github.com/dorssel/usbipd-win/wiki/WSL-support/">WSL connect guide</a>.</p>
+<p>The <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/about">Windows Subsystem for Linux (WSL)</a> is not supported.
+You must install Ubuntu either directly on the computer (recommended) or in a VM.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -106,13 +105,6 @@ This program will link the crazyradio directly with WS, but beware of bugs. Chec
 <h2>First Installation<a class="headerlink" href="#first-installation" title="Permalink to this heading"></a></h2>
 <ol class="arabic">
 <li><p>If needed, install ROS2 using the instructions at <a class="reference external" href="https://docs.ros.org/en/galactic/Installation.html">https://docs.ros.org/en/galactic/Installation.html</a>.</p></li>
-<li><p>Install dependencies</p>
-<blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libboost-program-options-dev libusb-1.0-0-dev
-</pre></div>
-</div>
-</div></blockquote>
-</li>
 <li><p>Set up your ROS2 workspace</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p ros2_ws/src
@@ -137,8 +129,8 @@ colcon build --symlink-install
 </li>
 <li><p>Set up software-in-the-loop simulation</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> crazyflie_py/crazyflie_py/cfsim
-<span class="nv">CSW_PYTHON</span><span class="o">=</span>python3 make
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> py_crazyswarm2/py_crazyswarm2/cfsim
+make
 </pre></div>
 </div>
 </div></blockquote>
@@ -170,7 +162,7 @@ colcon build --symlink-install
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors..</p>
+    <p>&#169; Copyright 2021-2022, Wolfgang Hönig and contributors..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
