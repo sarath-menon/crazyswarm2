@@ -26,7 +26,7 @@ cf2:
   uri: "radio://0/80/2M/E7E7E7E702"
   # id: 1
   # channel: 80
-  initial_position: [0.0,-0.5,0.0]
+  initial_position: [0.0,-0.33809461,0.0]
   type: "cf21"
   # firmware_params:
   #   kalman:
@@ -37,7 +37,7 @@ cf5:
   uri: "radio://0/80/2M/E7E7E7E705"
   # id: 1
   # channel: 80
-  initial_position: [0.5,0.5,0.0]
+  initial_position: [0.29279852, 0.1690473,0.0]
   type: "cf21"
   # firmware_params:
   #   kalman:
@@ -49,7 +49,7 @@ cf6:
   uri: "radio://0/80/2M/E7E7E7E706"
   # id: 1
   # channel: 80
-  initial_position: [-0.5,0.5,0.0]
+  initial_position: [-0.29279852, 0.1690473,0.0]
   type: "cf21"
   # firmware_params:
   #   kalman:

@@ -15,34 +15,34 @@ Heights = [0.85778483, 0.85778483]
 # offset UAVs from payload for 20 degrees
 offsets = {
     2: {
-        'offset' : [0.0,  -0.4275,  0.74045172], #offset for 30 degrees  
+        'offset' : [ 0, -0.33809461,  0.72504623], #offset for 25 degrees  
                                             
     },
     5: {
-        'offset': [0.37022586, 0.21375, 0.74045172],
+        'offset': [0.29279852, 0.1690473,  0.72504623],
     
     },
     6: {
-        'offset' : [-0.37022586,  0.21375, 0.74045172],
+        'offset' : [-0.29279852, 0.1690473,  0.72504623],
     }
 }
 
 cf_config = {
     2: {
         'waypoints': [
-            [0.0,  -0.4275, 1.24045172],  
+            [0, -0.33809461, 1.22504623],  
         ]                                  
 
     },
     5: {
         'waypoints': [
-            [0.37022586, 0.21375, 1.24045172], 
+            [0.29279852, 0.1690473, 1.22504623], 
         ]                                  
 
     },
     6: {
         'waypoints': [
-            [-0.37022586,  0.21375, 1.24045172],                             
+            [-0.29279852, 0.1690473, 1.22504623],                             
         ]                                      
     }
 }
@@ -61,13 +61,13 @@ cf_values = {
 
 lengths = {
     2: {
-        'length' : 0.855,
+        'length' : 0.8,
     },
     5: {
-        'length' : 0.855,
+        'length' : 0.8,
     },
     6: {
-        'length' : 0.855,
+        'length' : 0.8,
     }
 }
 
@@ -76,8 +76,8 @@ def main():
     timeHelper = swarm.timeHelper
     allcfs = swarm.allcfs
     for cfid in Ids:
-        allcfs.crazyfliesById[cfid].takeoff(targetHeight=TAKEOFF_HEIGHT, duration=3.0)
-    timeHelper.sleep(3.5)
+        allcfs.crazyfliesById[cfid].takeoff(targetHeight=TAKEOFF_HEIGHT, duration=5.0)
+    timeHelper.sleep(5.5)
     
     for cf in allcfs.crazyflies:
         pos = np.array(cf.initialPosition) + np.array([0, 0, TAKEOFF_HEIGHT])
@@ -115,7 +115,7 @@ def main():
         allcfs.crazyfliesById[cfid].setParam('stabilizer.controller', 7)
 
     
-    timeHelper.sleep(15.0)
+    timeHelper.sleep(1.0)
 
 ###### Linear trajectory on x,y -axes #######################
     # for cfid in Ids:
