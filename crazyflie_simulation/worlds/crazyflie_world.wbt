@@ -1,0 +1,21 @@
+#VRML_SIM R2022a utf8
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.11449215170032705 0.7144664474001132 0.6902385404615498 0.7206999245927307
+  position -2.7405086039935207 -1.7448405724507838 2.147022074418678
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  appearance Parquetry {
+  }
+}
+Panel {
+  translation 0.74 -0.5 0
+}
+Crazyflie {
+  controller "<extern>"
+}
