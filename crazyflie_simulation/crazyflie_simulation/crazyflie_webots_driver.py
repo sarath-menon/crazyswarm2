@@ -221,4 +221,4 @@ class CrazyflieWebotsDriver:
         self.past_x_global = x_global
         self.past_y_global = y_global
         self.past_z_global = z_global
-        self.node.get_logger().info('step...')
+        #self.node.get_logger().info('step...')

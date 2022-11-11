@@ -40,7 +40,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'crazyflie_webots_driver = crazyflie_simulation.crazyflie_webots_driver:main'
+            'crazyflie_webots_driver = crazyflie_simulation.crazyflie_webots_driver:main',
+            'supervisor_driver = crazyflie_simulation.crazyflie_webots_spawner:main'
+
         ],
     },
 )
