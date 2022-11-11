@@ -160,7 +160,8 @@ class CrazyflieWebotsDriver:
         t_base.transform.rotation.w = cos(yaw / 2)
         self.tfbr.sendTransform(t_base)
 
-"""         ## Put measurement in state estimate
+        """
+        ## Put measurement in state estimate
         # TODO replace these with a EKF python binding
         state = cffirmware.state_t()
         state.attitude.roll = degrees(roll)
@@ -208,15 +209,16 @@ class CrazyflieWebotsDriver:
         motorPower_m1 =  cmd_thrust - cmd_roll + cmd_pitch + cmd_yaw
         motorPower_m2 =  cmd_thrust - cmd_roll - cmd_pitch - cmd_yaw
         motorPower_m3 =  cmd_thrust + cmd_roll - cmd_pitch + cmd_yaw
-        motorPower_m4 =  cmd_thrust + cmd_roll + cmd_pitch - cmd_yaw
-
+        motorPower_m4 =  cmd_thrust + cmd_roll + cmd_pitch - cmd_yaw"""
+        
         scaling = 1000 ##Todo, remove necessity of this scaling (SI units in firmware)
-        self.m1_motor.setVelocity(-motorPower_m1/scaling)
-        self.m2_motor.setVelocity(motorPower_m2/scaling)
-        self.m3_motor.setVelocity(-motorPower_m3/scaling)
-        self.m4_motor.setVelocity(motorPower_m4/scaling) """
+        self.m1_motor.setVelocity(-1)
+        self.m2_motor.setVelocity(1)
+        self.m3_motor.setVelocity(-1)
+        self.m4_motor.setVelocity(1) 
 
         self.past_time = self.robot.getTime()
         self.past_x_global = x_global
         self.past_y_global = y_global
         self.past_z_global = z_global
+        self.node.get_logger().info('step...')
