@@ -12,15 +12,17 @@ import tf_transformations
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 
+import os
 # Change this path to your crazyflie-firmware folder
-#sys.path.append('/home/knmcguire/Development/bitcraze/c/crazyflie-firmware')
-#import cffirmware
+sys.path.append('/home/kimberly/Development/bitcraze/c/crazyflie-firmware/')
+import cffirmware
 
 
 class CrazyflieWebotsDriver:
     def init(self, webots_node, properties):
         self.robot = webots_node.robot
         timestep = int(self.robot.getBasicTimeStep())
+
 
         ## Initialize motors
         self.m1_motor = self.robot.getDevice("m1_motor")
@@ -68,13 +70,16 @@ class CrazyflieWebotsDriver:
         self.first_y_global = 0.0
 
 
-        #cffirmware.controllerPidInit()
+        cffirmware.controllerPidInit()
 
         rclpy.init(args=None)
         self.node = rclpy.create_node('crazyflie_webots_driver')
-        self.node.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 1)
-        self.laser_publisher = self.node.create_publisher(LaserScan, 'scan', 10)
-        self.odom_publisher = self.node.create_publisher(Odometry, 'odom', 10)
+        self.node.get_logger().info(os.environ['WEBOTS_CONTROLLER_URL'])
+        self.crazyflie_name = os.environ['WEBOTS_CONTROLLER_URL']
+
+        self.node.create_subscription(Twist, self.crazyflie_name + '/cmd_vel', self.cmd_vel_callback, 1)
+        self.laser_publisher = self.node.create_publisher(LaserScan, self.crazyflie_name + '/scan', 10)
+        self.odom_publisher = self.node.create_publisher(Odometry,  self.crazyflie_name + '/odom', 10)
 
         self.tfbr = TransformBroadcaster(self.node)
 
@@ -100,7 +105,7 @@ class CrazyflieWebotsDriver:
 
         self.msg_laser = LaserScan()
         self.msg_laser.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-        self.msg_laser.header.frame_id = 'base_link'
+        self.msg_laser.header.frame_id = self.crazyflie_name
         self.msg_laser.range_min = 0.1
         self.msg_laser.range_max = max_range
         self.msg_laser.ranges = [back_range, left_range, front_range, right_range, back_range]
@@ -140,7 +145,7 @@ class CrazyflieWebotsDriver:
         odom = Odometry()
         odom.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
         odom.header.frame_id = 'odom'
-        odom.child_frame_id = 'base_link'
+        odom.child_frame_id = self.crazyflie_name
         odom.pose.pose.position.x = x_global
         odom.pose.pose.position.y = y_global
         odom.pose.pose.position.z = 0.0
@@ -152,7 +157,7 @@ class CrazyflieWebotsDriver:
         t_base = TransformStamped()
         t_base.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
         t_base.header.frame_id = 'odom'
-        t_base.child_frame_id = 'base_link'
+        t_base.child_frame_id = self.crazyflie_name
         t_base.transform.translation.x = x_global
         t_base.transform.translation.y = y_global
         t_base.transform.translation.z = 0.0
@@ -160,7 +165,6 @@ class CrazyflieWebotsDriver:
         t_base.transform.rotation.w = cos(yaw / 2)
         self.tfbr.sendTransform(t_base)
 
-        """
         ## Put measurement in state estimate
         # TODO replace these with a EKF python binding
         state = cffirmware.state_t()
@@ -209,13 +213,13 @@ class CrazyflieWebotsDriver:
         motorPower_m1 =  cmd_thrust - cmd_roll + cmd_pitch + cmd_yaw
         motorPower_m2 =  cmd_thrust - cmd_roll - cmd_pitch - cmd_yaw
         motorPower_m3 =  cmd_thrust + cmd_roll - cmd_pitch + cmd_yaw
-        motorPower_m4 =  cmd_thrust + cmd_roll + cmd_pitch - cmd_yaw"""
+        motorPower_m4 =  cmd_thrust + cmd_roll + cmd_pitch - cmd_yaw
         
         scaling = 1000 ##Todo, remove necessity of this scaling (SI units in firmware)
-        self.m1_motor.setVelocity(-1)
-        self.m2_motor.setVelocity(1)
-        self.m3_motor.setVelocity(-1)
-        self.m4_motor.setVelocity(1) 
+        self.m1_motor.setVelocity(-motorPower_m1/scaling)
+        self.m2_motor.setVelocity(motorPower_m2/scaling)
+        self.m3_motor.setVelocity(-motorPower_m3/scaling)
+        self.m4_motor.setVelocity(motorPower_m4/scaling)
 
         self.past_time = self.robot.getTime()
         self.past_x_global = x_global
