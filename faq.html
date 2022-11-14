@@ -51,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-can-i-get-help">How can I get help?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-can-i-report-an-issue">How can I report an issue?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-do-crazyswarm2-and-crazyswarm-differ">How do Crazyswarm2 and Crazyswarm differ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-is-crazyswarm2-different-from-bitcraze-s-cflib">How is Crazyswarm2 different from Bitcraze’s cflib?</a></li>
 </ul>
 </li>
 </ul>
@@ -119,6 +120,31 @@ In Crazyswarm1, a common swarm monitoring tool is the chooser.py (to enable/disa
 In contrast, Crazyswarm2 will allow common swarm monitoring tasks without restarting ROS nodes or launching additional tools.</p></li>
 </ul>
 </section>
+<section id="how-is-crazyswarm2-different-from-bitcraze-s-cflib">
+<h2>How is Crazyswarm2 different from Bitcraze’s cflib?<a class="headerlink" href="#how-is-crazyswarm2-different-from-bitcraze-s-cflib" title="Permalink to this heading"></a></h2>
+<p>Both can be used to control several Crazyflies from a Python script.
+Here are some differences:</p>
+<ul class="simple">
+<li><p><strong>Motion capture integration.</strong>
+Crazyswarm2 supports common motion capture systems using the ROS2 package <a class="reference external" href="https://github.com/IMRCLab/motion_capture_tracking/tree/ros2">motion_capture_tracking</a>.
+The Bitcraze API can <em>send</em> position measurements to the Crazyflie,
+but does not know how to <em>get</em> position measurements from mocap hardware.
+Moreover, the use of motion_capture_tracking allows to use identical or single motion capture markers.</p></li>
+<li><p><strong>Broadcasts.</strong>
+Crazyswarm2 uses broadcast communication whenever possible to require fewer radios per Crazyflie. In contrast, the official SDK uses unicast communication instead.</p></li>
+<li><p><strong>Simulation.</strong>
+Crazyswarm2 has a simulation mode with 3D graphics,
+which makes it easy to validate complex scripts before running them on real hardware.</p></li>
+<li><p><strong>Python firmware bindings.</strong>
+Crazyswarm2’s simulator is built upon automatically generated Python bindings
+for certain modules in the Crazyflie firmware.
+The binding system can be helpful when developing new firmware modules,
+especially when they are mathematically complex and hard to debug.</p></li>
+<li><p><strong>ROS2 foundation.</strong>
+The Crazyswarm2 server program is a ROS2 node.
+Our Python API is a thin wrapper around the ROS2 interface.</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -131,7 +157,7 @@ In contrast, Crazyswarm2 will allow common swarm monitoring tasks without restar
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors..</p>
+    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
