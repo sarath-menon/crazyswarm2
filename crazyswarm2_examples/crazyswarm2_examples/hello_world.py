@@ -6,7 +6,7 @@ import numpy as np
 
 
 
-Ids = [2, 5, 6]
+Ids = [4, 5, 6]
 # TAKEOFF_HEIGHT = 1.3490287
 TAKEOFF_HEIGHT = 1.24045172
 LAND_HEIGHT    = 0.5
@@ -14,21 +14,21 @@ Heights = [0.85778483, 0.85778483]
 
 # offset UAVs from payload for 20 degrees
 offsets = {
-    2: {
-        'offset' : [ 0, -0.33809461,  0.72504623], #offset for 25 degrees  
+    4: {
+        'offset' : [0, -0.33809461,  0.72504623], #offset for 25 degrees  
                                             
     },
     5: {
-        'offset': [0.29279852, 0.1690473,  0.72504623],
+        'offset': [0.28987054, 0.16735683, 0.71779577],
     
     },
     6: {
-        'offset' : [-0.29279852, 0.1690473,  0.72504623],
+        'offset' : [-0.30194847,  0.17433003,  0.74770392],
     }
 }
 
 cf_config = {
-    2: {
+    4: {
         'waypoints': [
             [0, -0.33809461, 1.22504623],  
         ]                                  
@@ -36,19 +36,19 @@ cf_config = {
     },
     5: {
         'waypoints': [
-            [0.29279852, 0.1690473, 1.22504623], 
+            [0.28987054, 0.16735683, 1.21779577], 
         ]                                  
 
     },
     6: {
         'waypoints': [
-            [-0.29279852, 0.1690473, 1.22504623],                             
+            [-0.30194847,  0.17433003,  1.24770392],                             
         ]                                      
     }
 }
 
 cf_values = {
-    2: {
+    4: {
         'value' : 0,
     },
     5: {
@@ -60,14 +60,14 @@ cf_values = {
 }
 
 lengths = {
-    2: {
+    4: {
         'length' : 0.8,
     },
     5: {
-        'length' : 0.8,
+        'length' : 0.792,
     },
     6: {
-        'length' : 0.8,
+        'length' : 0.825,
     }
 }
 
@@ -76,17 +76,17 @@ def main():
     timeHelper = swarm.timeHelper
     allcfs = swarm.allcfs
     for cfid in Ids:
+        print(cfid, 'take off')
         allcfs.crazyfliesById[cfid].takeoff(targetHeight=TAKEOFF_HEIGHT, duration=5.0)
     timeHelper.sleep(5.5)
     
-    for cf in allcfs.crazyflies:
-        pos = np.array(cf.initialPosition) + np.array([0, 0, TAKEOFF_HEIGHT])
-        cf.goTo(pos, 0, 3.0)
+    for cfid in Ids:
+        pos = np.array(allcfs.crazyfliesById[cfid].initialPosition) + np.array([0, 0, TAKEOFF_HEIGHT])
+        allcfs.crazyfliesById[cfid].goTo(pos, 0, 3.0)
 
     timeHelper.sleep(5.0)
 
     for cfid in Ids:
-        print(cfid)
         pos = np.array(cf_config[cfid]['waypoints'][0])
         print(cfid, pos)
         allcfs.crazyfliesById[cfid].goTo(pos, 0, 5.0)
@@ -99,12 +99,13 @@ def main():
     for cfid in Ids: 
         value = int(cf_values[cfid]['value'])
         offset = offsets[cfid]['offset']
+        length = lengths[cfid]['length']
         print('value and ID: ', value, cfid)
         allcfs.crazyfliesById[cfid].setParam('ctrlLeeP.value', value)
         allcfs.crazyfliesById[cfid].setParam('ctrlLeeP.offsetx', offset[0])
         allcfs.crazyfliesById[cfid].setParam('ctrlLeeP.offsety', offset[1])
         allcfs.crazyfliesById[cfid].setParam('ctrlLeeP.offsetz', offset[2])
-
+        allcfs.crazyfliesById[cfid].setParam('ctrlLeeP.length', length)
     timeHelper.sleep(5.5)
 
     print('start hovering with QP lee payload')
@@ -137,9 +138,9 @@ def main():
         allcfs.crazyfliesById[cfid].setParam('stabilizer.controller', 6)
 
 
-    for cf in allcfs.crazyflies:
-        pos = np.array(cf.initialPosition) + np.array([0, 0, LAND_HEIGHT])
-        cf.goTo(pos, 0, 3.0)
+    for cfid in Ids:
+        pos = np.array(allcfs.crazyfliesById[cfid].initialPosition) + np.array([0, 0, LAND_HEIGHT])
+        allcfs.crazyfliesById[cfid].goTo(pos, 0, 3.0)
     timeHelper.sleep(2.0)
 
 

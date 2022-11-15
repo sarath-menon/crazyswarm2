@@ -1,10 +1,17 @@
-cf2:
+cf255:
+  initial_position:
+  - 0.0
+  - 0.0
+  - 0.0
+  type: cf21
+  uri: radio://0/80/2M/E7E7E7E7FF
+cf4:
   initial_position:
   - 0.0
   - -0.33809461
   - 0.0
   type: cf21
-  uri: radio://0/80/2M/E7E7E7E702
+  uri: radio://0/80/2M/E7E7E7E704
 cf5:
   initial_position:
   - 0.29279852
