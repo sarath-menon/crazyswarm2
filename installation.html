@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Overview" href="overview.html" />
+    <link rel="next" title="Usage" href="usage.html" />
     <link rel="prev" title="Crazyswarm2: A ROS2 testbed for Aerial Robot Teams" href="index.html" /> 
 </head>
 
@@ -49,9 +49,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#updating">Updating</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -89,19 +87,15 @@
 <td><p>ROS2</p></td>
 </tr>
 <tr class="row-even"><td><p>20.04</p></td>
-<td><p>3.7, 3.8</p></td>
+<td><p>3.7</p></td>
 <td><p>Galactic</p></td>
-</tr>
-<tr class="row-odd"><td><p>22.04</p></td>
-<td><p>3.10</p></td>
-<td><p>Humble</p></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/about">Windows Subsystem for Linux (WSL)</a> is experimentally supported but you’ll have to use <a class="reference external" href="https://github.com/dorssel/usbipd-win/">usbipd-win</a>.
-This program will link the crazyradio directly with WS, but beware of bugs. Check out their <a class="reference external" href="https://github.com/dorssel/usbipd-win/wiki/WSL-support/">WSL connect guide</a>.</p>
+<p>The <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/about">Windows Subsystem for Linux (WSL)</a> is not supported.
+You must install Ubuntu either directly on the computer (recommended) or in a VM.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -110,19 +104,7 @@ This program will link the crazyradio directly with WS, but beware of bugs. Chec
 <section id="first-installation">
 <h2>First Installation<a class="headerlink" href="#first-installation" title="Permalink to this heading"></a></h2>
 <ol class="arabic">
-<li><p>If needed, install ROS2 using the instructions at <a class="reference external" href="https://docs.ros.org/en/galactic/Installation.html">https://docs.ros.org/en/galactic/Installation.html</a> or <a class="reference external" href="https://docs.ros.org/en/humble/Installation.html">https://docs.ros.org/en/humble/Installation.html</a>.</p></li>
-<li><p>Install dependencies</p>
-<blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libboost-program-options-dev libusb-1.0-0-dev
-</pre></div>
-</div>
-<p>If you are planning to use the CFlib backend, do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install cflib transforms3d
-sudo apt-get install ros-*DISTRO*-tf-transformations
-</pre></div>
-</div>
-</div></blockquote>
-</li>
+<li><p>If needed, install ROS2 using the instructions at <a class="reference external" href="https://docs.ros.org/en/galactic/Installation.html">https://docs.ros.org/en/galactic/Installation.html</a>.</p></li>
 <li><p>Set up your ROS2 workspace</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p ros2_ws/src
@@ -147,8 +129,8 @@ colcon build --symlink-install
 </li>
 <li><p>Set up software-in-the-loop simulation</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> crazyflie_py/crazyflie_py/cfsim
-<span class="nv">CSW_PYTHON</span><span class="o">=</span>python3 make
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> py_crazyswarm2/py_crazyswarm2/cfsim
+make
 </pre></div>
 </div>
 </div></blockquote>
@@ -174,13 +156,13 @@ colcon build --symlink-install
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Crazyswarm2: A ROS2 testbed for Aerial Robot Teams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="overview.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors.</p>
+    <p>&#169; Copyright 2021-2022, Wolfgang Hönig and contributors..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
