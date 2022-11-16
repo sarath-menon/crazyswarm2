@@ -6,23 +6,25 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 
-from math import cos, sin, degrees, radians, pi
+from math import cos, sin, degrees, radians, pi, isnan
 import sys
 import tf_transformations
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
+import numpy as np
+
+from crazyflie_interfaces.srv import Takeoff, Land, GoTo
+
 
 import os
 # Change this path to your crazyflie-firmware folder
 sys.path.append('/home/kimberly/Development/bitcraze/c/crazyflie-firmware/')
 import cffirmware
 
-
 class CrazyflieWebotsDriver:
     def init(self, webots_node, properties):
         self.robot = webots_node.robot
         timestep = int(self.robot.getBasicTimeStep())
-
 
         ## Initialize motors
         self.m1_motor = self.robot.getDevice("m1_motor")
@@ -80,11 +82,41 @@ class CrazyflieWebotsDriver:
         self.node.create_subscription(Twist, self.crazyflie_name + '/cmd_vel', self.cmd_vel_callback, 1)
         self.laser_publisher = self.node.create_publisher(LaserScan, self.crazyflie_name + '/scan', 10)
         self.odom_publisher = self.node.create_publisher(Odometry,  self.crazyflie_name + '/odom', 10)
+        self.node.create_service(Takeoff, self.crazyflie_name + "/takeoff", self._takeoff_callback)
 
         self.tfbr = TransformBroadcaster(self.node)
 
         self.msg_laser = LaserScan()
         self.node.create_timer(1.0/30.0, self.publish_laserscan_data)
+
+        self.planner = cffirmware.planner()
+        cffirmware.plan_init(self.planner)
+
+    def _takeoff_callback(self, request, response):
+
+        duration = float(request.duration.sec) + \
+            float(request.duration.nanosec / 1e9)
+        self.node.get_logger().info(
+            f"takeoff(height={request.height} m,"
+            + f"duration={duration} s,"
+            + f"group_mask={request.group_mask}) {self.crazyflie_name}"
+        )
+
+        x_global = self.gps.getValues()[0]- self.first_x_global
+        y_global = self.gps.getValues()[1] - self.first_y_global
+        z_global = self.gps.getValues()[2]
+        yaw = self.imu.getRollPitchYaw()[2]
+
+        current_pos = np.array([x_global,y_global,z_global])
+        state_pos = cffirmware.mkvec(*current_pos)
+
+        t = self.robot.getTime()
+        cffirmware.plan_takeoff(self.planner,
+                state_pos, yaw, request.height,
+                0.0, duration, t)
+
+        return response
+
 
     def publish_laserscan_data(self):
 
@@ -119,6 +151,9 @@ class CrazyflieWebotsDriver:
     
     def step(self):
         rclpy.spin_once(self.node, timeout_sec=0)
+        t = self.robot.getTime()
+
+
 
         dt = self.robot.getTime() - self.past_time
 
@@ -186,11 +221,19 @@ class CrazyflieWebotsDriver:
         yawDesired=0
 
         ## Fill in Setpoints
+            
+        setState = cffirmware.plan_current_goal(self.planner, t)
+        self.node.get_logger().info(str(t) + ' ' +str(setState.pos[2]))
+        if isnan(setState.pos[2]):
+            zpos = 0.0
+        else:
+            zpos = setState.pos[2]
+
+
         setpoint = cffirmware.setpoint_t()
         setpoint.mode.z = cffirmware.modeAbs
-        setpoint.position.z = 1.0
+        setpoint.position.z = 1.0 #zpos
         setpoint.mode.yaw = cffirmware.modeVelocity
-        # TODO: find out why this multipication is necessary...
         setpoint.attitudeRate.yaw = degrees(self.target_twist.angular.z)*5
         setpoint.mode.x = cffirmware.modeVelocity
         setpoint.mode.y = cffirmware.modeVelocity
@@ -215,7 +258,7 @@ class CrazyflieWebotsDriver:
         motorPower_m3 =  cmd_thrust + cmd_roll - cmd_pitch + cmd_yaw
         motorPower_m4 =  cmd_thrust + cmd_roll + cmd_pitch - cmd_yaw
         
-        scaling = 1000 ##Todo, remove necessity of this scaling (SI units in firmware)
+        scaling = 1000 #Todo, remove necessity of this scaling (SI units in firmware)
         self.m1_motor.setVelocity(-motorPower_m1/scaling)
         self.m2_motor.setVelocity(motorPower_m2/scaling)
         self.m3_motor.setVelocity(-motorPower_m3/scaling)
