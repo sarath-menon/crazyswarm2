@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Frequently Asked Questions" href="faq.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="ROS2 Tutorials" href="tutorials.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,17 +45,23 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#crazyflies-yaml">crazyflies.yaml</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#physical-experiments">Physical Experiments</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#ros2-terminal">ROS2 terminal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#teleoperation">Teleoperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enabling-logblocks-in-runtime">Enabling Logblocks in runtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teleoperation-controller">Teleoperation controller</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-scripts">Python scripts</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -94,14 +100,94 @@
 </div>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
-<p>All configuration files are in crazyswarm2/config.</p>
+<p>All configuration files are in crazyflie/config.</p>
+<ul class="simple">
+<li><p>crazyflies.yaml : setting up everything related to the crazyflie connection server.</p></li>
+<li><p>motion_capture.yaml : configs for the motion capture package.</p></li>
+<li><p>teleop_*.yaml : configs for remote controls.</p></li>
+</ul>
+<section id="crazyflies-yaml">
+<h3>crazyflies.yaml<a class="headerlink" href="#crazyflies-yaml" title="Permalink to this heading"></a></h3>
+<p>Each crazyflie should have an unique URI which can <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-clients-python/master/userguides/userguide_client/#firmware-configuration/">be changed in Bitcraze’s CFclient</a>.
+They can also be enabled in case you don’t want the server to connect with it.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>robots:
+cf231:
+    enabled: <span class="nb">true</span>
+    uri: radio://0/80/2M/E7E7E7E7E7
+    initial_position: <span class="o">[</span><span class="m">0</span>, <span class="m">0</span>, <span class="m">0</span><span class="o">]</span>
+    type: cf21  <span class="c1"># see robot_types</span>
+
+cf5:
+    enabled: <span class="nb">false</span>
+    uri: radio://0/80/2M/E7E7E7E705
+    initial_position: <span class="o">[</span><span class="m">0</span>, -0.5, <span class="m">0</span><span class="o">]</span>
+    type: cf21  <span class="c1"># see robot_types</span>
+</pre></div>
+</div>
+<p>The yaml file also contains different robot_types, to indicate differences between each platform:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>robot_types:
+cf21:
+    motion_capture:
+    enabled: <span class="nb">true</span>
+    <span class="c1"># only if enabled; see motion_capture.yaml</span>
+    marker: default_single_marker
+    dynamics: default
+    big_quad: <span class="nb">false</span>
+    battery:
+    voltage_warning: <span class="m">3</span>.8  <span class="c1"># V</span>
+    voltage_critical: <span class="m">3</span>.7 <span class="c1"># V</span>
+
+cf21_mocap_deck:
+    motion_capture:
+    enabled: <span class="nb">true</span>
+    <span class="c1"># only if enabled; see motion_capture.yaml</span>
+    marker: mocap_deck
+    dynamics: default
+    big_quad: <span class="nb">false</span>
+    battery:
+    voltage_warning: <span class="m">3</span>.8  <span class="c1"># V</span>
+    voltage_critical: <span class="m">3</span>.7 <span class="c1"># V</span>
+</pre></div>
+</div>
+<p>The yaml file also contain an ‘all’ field, in case you have parameters or logging that you want enabled for all the connected crazyflies.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>all:
+firmware_logging:
+    enabled: <span class="nb">false</span>
+    default_topics:
+        pose:
+        frequency: <span class="m">10</span> <span class="c1"># Hz</span>
+    <span class="c1">#custom_topics:</span>
+    <span class="c1">#  topic_name1:</span>
+    <span class="c1">#    frequency: 10 # Hz</span>
+    <span class="c1">#    vars: [&quot;stateEstimateZ.x&quot;, &quot;stateEstimateZ.y&quot;, &quot;stateEstimateZ.z&quot;, &quot;pm.vbat&quot;]</span>
+    <span class="c1">#  topic_name2:</span>
+    <span class="c1">#    frequency: 1 # Hz</span>
+    <span class="c1">#    vars: [&quot;stabilizer.roll&quot;, &quot;stabilizer.pitch&quot;, &quot;stabilizer.yaw&quot;]</span>
+firmware_params:
+    commander:
+        enHighLevel: <span class="m">1</span>
+    stabilizer:
+        estimator: <span class="m">2</span> <span class="c1"># 1: complementary, 2: kalman</span>
+        controller: <span class="m">2</span> <span class="c1"># 1: PID, 2: mellinger</span>
+</pre></div>
+</div>
+<p>The above also contains an example of the firmware_logging field, where default topics can be enabled or custom topics based on the <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/api/logs//">existing log toc of the crazyflie</a>.
+Moreover, it also contains the firmware_params field, where parameters can be set at startup.
+Also see the <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/api/params//">parameter list of the crazyflie</a> for that.</p>
+<p>Mind that you can also place the firmware_params and firmware_logging fields per crazyflie in ‘robots’  or the ‘robot_types’ field.
+The server node will upon initialization, first look at the params/logs from the individual crazyflie’s settings, then the robot_types, and then anything in ‘all’ which has lowest priority.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The logging is currently only supported in the CFLIB backend of the server, while Parameters is available in both the cpp backend</p>
+</div>
+</section>
 </section>
 <section id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading"></a></h2>
 <p>High-level Python scripts can be visualized before execution. The initial position and number of robots is taken from the crazyflies.yaml configuration file.
 The simulation uses the firmware code as software-in-the-loop, but (currently) does not include any dynamics.</p>
 <p>Example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyswarm2_examples hello_world --sim
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyflie_examples hello_world --sim
 </pre></div>
 </div>
 </section>
@@ -109,28 +195,50 @@ The simulation uses the firmware code as software-in-the-loop, but (currently) d
 <h2>Physical Experiments<a class="headerlink" href="#physical-experiments" title="Permalink to this heading"></a></h2>
 <section id="ros2-terminal">
 <h3>ROS2 terminal<a class="headerlink" href="#ros2-terminal" title="Permalink to this heading"></a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 param <span class="nb">set</span> crazyswarm2_server cf1/params/commander/enHighLevel <span class="m">1</span>
-ros2 param <span class="nb">set</span> crazyswarm2_server cf3/params/stabilizer/estimator <span class="m">2</span>
-ros2 service call cf1/takeoff crazyswarm2_interfaces/srv/Takeoff <span class="s2">&quot;{height: 0.5, duration: {sec: 2}}&quot;</span>
-ros2 service call cf1/land crazyswarm2_interfaces/srv/Land <span class="s2">&quot;{height: 0.0, duration: {sec: 2}}&quot;</span>
+<p>The following shows an simple take off and land example without any launch files or yaml files</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyflie reboot --uri radio://0/80/2M/E7E7E7E706 --mode sysoff
+ros2 param <span class="nb">set</span> crazyflie cf1/params/commander/enHighLevel <span class="m">1</span>
+ros2 param <span class="nb">set</span> crazyflie cf1/params/stabilizer/estimator <span class="m">2</span>
+ros2 service call cf1/takeoff crazyflie_interfaces/srv/Takeoff <span class="s2">&quot;{height: 0.5, duration: {sec: 2}}&quot;</span>
+ros2 service call cf1/land crazyflie_interfaces/srv/Land <span class="s2">&quot;{height: 0.0, duration: {sec: 2}}&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="teleoperation">
-<h3>Teleoperation<a class="headerlink" href="#teleoperation" title="Permalink to this heading"></a></h3>
+<section id="enabling-logblocks-in-runtime">
+<h3>Enabling Logblocks in runtime<a class="headerlink" href="#enabling-logblocks-in-runtime" title="Permalink to this heading"></a></h3>
+<p>Above we explained how to enable log blocks at startup, but what if you would like to enable or disable logging blocks in runtime?
+This section will show how to do that by using services</p>
+<p>In one terminal run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py backend:<span class="o">=</span>cflib
+</pre></div>
+</div>
+<p>In another terminal after sourcing the right setup.bash files, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 service call /cf2/add_logging crazyflie_interfaces/srv/AddLogging <span class="s2">&quot;{topic_name: &#39;topic_test&#39;, frequency: 10, vars: [&#39;stateEstimate.x&#39;,&#39;stateEstimate.y&#39;,&#39;stateEstimate.z&#39;]}&quot;</span>
+ros2 service call /cf2/add_logging crazyflie_interfaces/srv/AddLogging <span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}</span>
+</pre></div>
+</div>
+<p>With ROS2’s rqt you can checkout the topics, or with ‘ROS2 topics echo /cf2/pose’</p>
+<p>To close the logblocks again, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 service call /cf2/remove_logging crazyflie_interfaces/srv/RemoveLogging <span class="s2">&quot;{topic_name: &#39;topic_test&#39;}&quot;</span>
+ros2 service call /cf2/remove_logging crazyflie_interfaces/srv/RemoveLogging <span class="s2">&quot;{topic_name: &#39;pose&#39;}&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="teleoperation-controller">
+<h3>Teleoperation controller<a class="headerlink" href="#teleoperation-controller" title="Permalink to this heading"></a></h3>
 <p>We currently assume an XBox controller (the button mapping can be changed in teleop.yaml). It is possible to fly in different modes, including attitude-control and position-control (in which case any localization system can assist.)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyswarm2 launch.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py
 </pre></div>
 </div>
 </section>
 <section id="python-scripts">
 <h3>Python scripts<a class="headerlink" href="#python-scripts" title="Permalink to this heading"></a></h3>
 <p>In the first terminal, launch</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyswarm2 launch.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py
 </pre></div>
 </div>
 <p>In the second terminal</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyswarm2_examples hello_world
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyflie_examples hello_world
 </pre></div>
 </div>
 </section>
@@ -141,14 +249,14 @@ ros2 service call cf1/land crazyswarm2_interfaces/srv/Land <span class="s2">&quo
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="ROS2 Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Wolfgang Hönig and contributors..</p>
+    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
