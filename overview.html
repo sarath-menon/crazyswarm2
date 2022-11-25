@@ -106,65 +106,99 @@
 <p>It handles several low level communication aspects with the Crazyflies:</p>
 <ul class="simple">
 <li><p><strong>Parameter to ROS2 parameters handling</strong>: It receives the parameter ToC from the Crazyflie, transforms it into ROS2 parameters, and sets the CF2 parameters based on the <em>crazyflies.yaml</em> input.</p></li>
-<li><p><strong>Logging to ROS2 topics handling</strong>: The server sets up logblocks for data streaming in the crazyflie, and transforms the received variables into ROS2 topcs.</p></li>
+<li><p><strong>Logging to ROS2 topics handling</strong>: The server sets up logblocks for data streaming in the crazyflie, and transforms the received variables into ROS2 topics.</p></li>
 <li><p><strong>Run-time configuration</strong>: Both parameters and logging can be configured in run-time while the server is connected with the Crazyflies. Please check <a class="reference internal" href="usage.html#usage"><span class="std std-ref">Usage</span></a>.</p></li>
 </ul>
 <p>It also setups several flight command services:</p>
 <ul class="simple">
 <li><p><strong>Takeoff / Land / GoTo</strong>: With a single service command and a given height or coordinate, you can make the connected crazyflies take off, go to a position and land.</p></li>
 <li><p><strong>Upload / Start trajectory</strong>: You can upload a predefined trajectory and indicate if the Crazyflies need to start flying it.</p></li>
-<li><p><strong>Emergency</strong> : To turn off the motors in case something gooes wrong.</p></li>
+<li><p><strong>Emergency</strong> : To turn off the motors in case something goes wrong.</p></li>
 <li><p><strong>/all or /cf2</strong> : The services are setup either for all crazyflies to respond to, or each individual crazyflie, depended on the prefix.</p></li>
 </ul>
 </section>
 <section id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading"></a></h2>
-<p><em>Under development</em></p>
-<p>Currently only a simple position based simulation exists (see <a class="reference internal" href="usage.html#usage"><span class="std std-ref">Usage</span></a>), however this will change soon!</p>
+<p>The simulator uses the Crazyflie firmware as a software-in-the-loop (SIL). It provides the same ROS interface as the server and therefore can be used with C++ or Python user code.</p>
+<p>Currently, the desired setpoint is visualized in rviz (see <a class="reference internal" href="usage.html#usage"><span class="std std-ref">Usage</span></a>). However, the code is prepared to support physics-based simulation in the future as well.</p>
 </section>
 <section id="support-functionality-with-backends">
 <h2>Support functionality with backends<a class="headerlink" href="#support-functionality-with-backends" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Functionality</strong></p></td>
-<td><p><strong>Cpp</strong></p></td>
-<td><p><strong>CFlib</strong></p></td>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Functionality</strong></p></th>
+<th class="head"><p><strong>Cpp</strong></p></th>
+<th class="head"><p><strong>CFlib</strong></p></th>
+<th class="head"><p><strong>Sim</strong></p></th>
 </tr>
+</thead>
+<tbody>
 <tr class="row-even"><td><p>Parameters</p></td>
 <td><p>Yes</p></td>
 <td><p>Yes</p></td>
+<td><p>No</p></td>
 </tr>
 <tr class="row-odd"><td><p>Logging</p></td>
 <td><p>No</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p>Manual control</p></td>
-<td><p>Yes</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p>Position control</p></td>
-<td><p>Yes</p></td>
-<td><p>No</p></td>
-</tr>
-<tr class="row-even"><td><p>Hover control</p></td>
-<td><p>No</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p>Takeoff/Land srv</p></td>
-<td><p>Yes</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-even"><td><p>Go_To srv</p></td>
-<td><p>Yes</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td><p>Upload/start traj</p></td>
 <td><p>Yes</p></td>
 <td><p>No</p></td>
 </tr>
 <tr class="row-even"><td><p>Broadcasts</p></td>
 <td><p>Yes</p></td>
 <td><p>No</p></td>
+<td><p>n/a</p></td>
+</tr>
+<tr class="row-odd"><td colspan="4"><p>Manual control</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>cmd_full_state</p></li>
+</ul>
+</td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>cmd_position</p></li>
+</ul>
+</td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>cmd_hover</p></li>
+</ul>
+</td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td colspan="4"><p>High-level control</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>takeoff/land</p></li>
+</ul>
+</td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li><p>go_to</p></li>
+</ul>
+</td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>upload/start traj</p></li>
+</ul>
+</td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
 </tr>
 </tbody>
 </table>

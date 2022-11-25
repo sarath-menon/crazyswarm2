@@ -98,6 +98,15 @@
 </pre></div>
 </div>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you work in a shared network (lab, classroom) or similar, you might want to avoid
+controlling other robots. This is in particular true for simulation. In this case,
+you can use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">ROS_LOCALHOST_ONLY</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</div>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
 <p>All configuration files are in crazyflie/config.</p>
@@ -184,10 +193,11 @@ The server node will upon initialization, first look at the params/logs from the
 </section>
 <section id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading"></a></h2>
-<p>High-level Python scripts can be visualized before execution. The initial position and number of robots is taken from the crazyflies.yaml configuration file.
-The simulation uses the firmware code as software-in-the-loop, but (currently) does not include any dynamics.</p>
+<p>Any usage of the ROS API, including high-level Python scripts, can be visualized before execution. The initial position and number of robots is taken from the crazyflies.yaml configuration file.
+The simulation uses the firmware code as software-in-the-loop, but (currently) does not include any robot dynamics.</p>
 <p>Example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 run crazyflie_examples hello_world --sim
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch crazyflie launch.py backend:<span class="o">=</span>sim
+ros2 run crazyflie_examples hello_world --ros-args -p use_sim_time:<span class="o">=</span>True
 </pre></div>
 </div>
 </section>

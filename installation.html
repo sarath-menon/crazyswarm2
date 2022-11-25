@@ -114,6 +114,7 @@ This program will link the crazyradio directly with WS, but beware of bugs. Chec
 <li><p>Install dependencies</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libboost-program-options-dev libusb-1.0-0-dev
+pip3 install rowan
 </pre></div>
 </div>
 <p>If you are planning to use the CFlib backend, do:</p>
@@ -145,10 +146,12 @@ colcon build --symlink-install
 </div>
 </div></blockquote>
 </li>
-<li><p>Set up software-in-the-loop simulation</p>
+<li><p>Set up software-in-the-loop simulation (optional)</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> crazyflie_py/crazyflie_py/cfsim
-<span class="nv">CSW_PYTHON</span><span class="o">=</span>python3 make
+<div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS2 workspace!):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/bitcraze/crazyflie-firmware.git
+make bindings_python
+<span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>&lt;replace-with-path-to&gt;/crazyflie-firmware:<span class="nv">$PYTHONPATH</span>
 </pre></div>
 </div>
 </div></blockquote>
