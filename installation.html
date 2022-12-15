@@ -154,10 +154,12 @@ colcon build --symlink-install
 </li>
 <li><p>Set up software-in-the-loop simulation (optional)</p>
 <blockquote>
-<div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS2 workspace!):</p>
+<div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS2 workspace!),</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/bitcraze/crazyflie-firmware.git
-make bindings_python
-<span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>&lt;replace-with-path-to&gt;/crazyflie-firmware:<span class="nv">$PYTHONPATH</span>
+</pre></div>
+</div>
+<p>First follow <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/building-and-flashing/build/#build-python-bindings">the instructions to build the python bindings</a> from the bitcraze website. Afterwards, make sure that the bindings can be found in the python path:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>&lt;replace-with-path-to&gt;/crazyflie-firmware:<span class="nv">$PYTHONPATH</span>
 </pre></div>
 </div>
 </div></blockquote>
