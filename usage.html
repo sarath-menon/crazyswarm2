@@ -296,8 +296,8 @@ ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span c
 <h3>ROS2 terminal<a class="headerlink" href="#ros2-terminal" title="Permalink to this heading">¶</a></h3>
 <p>The following shows a simple take off and land example without any launch files or yaml files</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie<span class="w"> </span>reboot<span class="w"> </span>--uri<span class="w"> </span>radio://0/80/2M/E7E7E7E706<span class="w"> </span>--mode<span class="w"> </span>sysoff
-ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie<span class="w"> </span>cf1/params/commander/enHighLevel<span class="w"> </span><span class="m">1</span>
-ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie<span class="w"> </span>cf1/params/stabilizer/estimator<span class="w"> </span><span class="m">2</span>
+ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.commander.enHighLevel<span class="w"> </span><span class="m">1</span>
+ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.stabilizer.estimator<span class="w"> </span><span class="m">2</span>
 ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>cf1/takeoff<span class="w"> </span>crazyflie_interfaces/srv/Takeoff<span class="w"> </span><span class="s2">&quot;{height: 0.5, duration: {sec: 2}}&quot;</span>
 ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>cf1/land<span class="w"> </span>crazyflie_interfaces/srv/Land<span class="w"> </span><span class="s2">&quot;{height: 0.0, duration: {sec: 2}}&quot;</span>
 </pre></div>
