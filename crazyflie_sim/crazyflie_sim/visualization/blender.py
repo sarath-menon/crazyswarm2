@@ -16,7 +16,8 @@ class Visualization:
     def __init__(self, node: Node, names: list[str], states: list[State]):
         self.node = node
 
-        # initial rotation to ensure that Z<0 is in front, Y>0 is up, and X>0 is right
+        # internal rotation to ensure that Z<0 is in front, X>0 is right, and Y>0 is up
+        # so that blender takes picture from cf's perspective, where X>0 is front, Y>0 is left, and Z>0 is up
         self._rot_world_2_cam = np.array([
             [ 0, 0,-1, 0],
             [-1, 0, 0, 0],
