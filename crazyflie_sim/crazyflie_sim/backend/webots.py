@@ -18,7 +18,6 @@ os.environ['WEBOTS_HOME'] = '/usr/local/webots'
 os.environ['PYTHONPATH'] = '${WEBOTS_HOME}/lib/controller/python38:$PYTHONPATH'
 os.environ['PYTHONIOENCODING'] = 'UTF-8'
 
-
 from controller import Supervisor  # noqa
 
 
@@ -29,33 +28,31 @@ class Backend:
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.locked = True
-        self.t = 0
         self.robot = Supervisor()
-        self.dt = self.robot.getBasicTimeStep()
+        self.dt = int(self.robot.getBasicTimeStep())
+        self.t = self.robot.getTime()
 
         self.uavs = []
         for state in states:
             uav = Quadrotor(state)
             self.uavs.append(uav)
 
-
     def time(self) -> float:
         return self.t
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
-        
-        # advance the time
-        self.t += self.dt
+
+        self.robot.step(self.dt)
+        self.t = self.robot.getTime()
 
         next_states = []
-
-        for uav, action in zip(self.uavs, actions):
-            uav.step(action, self.dt)
-            next_states.append(uav.state)
+        #for uav, action in zip(self.uavs, actions):
+        #    uav.step(action, self.dt)
+        #    next_states.append(uav.state)
 
         # publish the current clock
         clock_message = Clock()
-        clock_message.clock = Time(seconds=self.robot.getTime()).to_msg()
+        clock_message.clock = Time(seconds=self.t).to_msg()
         self.clock_publisher.publish(clock_message)
 
         return next_states
