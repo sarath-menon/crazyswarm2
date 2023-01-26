@@ -37,14 +37,15 @@ class Backend:
         children_field = root_node.getField('children')
         h = 0
         for name in names:
-            location = states[h].pos
-            string_robot =  'Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<generic>"}'
+            state = states[h]
+            location = state.pos
+            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<generic>"}'
             children_field.importMFNodeFromString(-1, string_robot)
+            crazyflie_node = self.supervisor.getFromDef('cf8')
+            print(name)
+            print(crazyflie_node)
+            uav = Quadrotor(state, crazyflie_node)
             h+=1
-        for state in states:
-            uav = Quadrotor(state)
-            self.uavs.append(uav)
-            
 
     def time(self) -> float:
         return self.t
@@ -72,9 +73,12 @@ class Backend:
 
 class Quadrotor:
 
-    def __init__(self, state):
+    def __init__(self, state, webots_node):
         print("hello! I'm a crazyflie!")
         self.state = state
+        # Error here... can't access the crazyflie internals from the supervisor :(
+        #self.robot = webots_node.robot
+
 
     def step(self, action, dt):
         print("step drone")
