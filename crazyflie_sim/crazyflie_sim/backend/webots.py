@@ -18,7 +18,7 @@ os.environ['WEBOTS_HOME'] = '/usr/local/webots'
 os.environ['PYTHONPATH'] = '${WEBOTS_HOME}/lib/controller/python38:$PYTHONPATH'
 os.environ['PYTHONIOENCODING'] = 'UTF-8'
 
-from controller import Supervisor  # noqa
+from controller import Supervisor, Robot  # noqa
 
 
 class Backend:
@@ -27,6 +27,9 @@ class Backend:
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.locked = True
+        os.environ['WEBOTS_CONTROLLER_URL'] = 'supervisor'
+        print(os.getenv('WEBOTS_CONTROLLER_URL'))
+
         self.supervisor = Supervisor()
         self.dt = int(self.supervisor.getBasicTimeStep())
         self.t = self.supervisor.getTime()
@@ -39,12 +42,9 @@ class Backend:
         for name in names:
             state = states[h]
             location = state.pos
-            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<generic>"}'
+            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<extern>"}'
             children_field.importMFNodeFromString(-1, string_robot)
-            crazyflie_node = self.supervisor.getFromDef('cf8')
-            print(name)
-            print(crazyflie_node)
-            uav = Quadrotor(state, crazyflie_node)
+            uav = Quadrotor(state, name)
             h+=1
 
     def time(self) -> float:
@@ -73,11 +73,14 @@ class Backend:
 
 class Quadrotor:
 
-    def __init__(self, state, webots_node):
+    def __init__(self, state, name):
         print("hello! I'm a crazyflie!")
         self.state = state
-        # Error here... can't access the crazyflie internals from the supervisor :(
-        #self.robot = webots_node.robot
+
+        os.environ['WEBOTS_CONTROLLER_URL'] =  name
+        print(os.getenv('WEBOTS_CONTROLLER_URL'))
+        self.robot = Robot()
+
 
 
     def step(self, action, dt):
