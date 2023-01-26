@@ -22,28 +22,37 @@ from controller import Supervisor  # noqa
 
 
 class Backend:
-
     def __init__(self, node: Node, names: list[str], states: list[State]):
         self.node = node
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.locked = True
-        self.robot = Supervisor()
-        self.dt = int(self.robot.getBasicTimeStep())
-        self.t = self.robot.getTime()
+        self.supervisor = Supervisor()
+        self.dt = int(self.supervisor.getBasicTimeStep())
+        self.t = self.supervisor.getTime()
 
         self.uavs = []
+
+        root_node = self.supervisor.getRoot()
+        children_field = root_node.getField('children')
+        h = 0
+        for name in names:
+            location = states[h].pos
+            string_robot =  'Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<generic>"}'
+            children_field.importMFNodeFromString(-1, string_robot)
+            h+=1
         for state in states:
             uav = Quadrotor(state)
             self.uavs.append(uav)
+            
 
     def time(self) -> float:
         return self.t
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
 
-        self.robot.step(self.dt)
-        self.t = self.robot.getTime()
+        self.supervisor.step(self.dt)
+        self.t = self.supervisor.getTime()
 
         next_states = []
         #for uav, action in zip(self.uavs, actions):

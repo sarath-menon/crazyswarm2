@@ -26,4 +26,5 @@ Floor {
 Robot {
   name "supervisor"
   controller "<extern>"
+  supervisor TRUE
 }
