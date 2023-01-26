@@ -13,6 +13,10 @@ import threading
 webots_time = 0.0
 lock = threading.Lock()
 
+sys.path.insert(1, os.path.dirname(vehicle.__file__))
+sys.path.insert(1, os.path.dirname(controller.__file__))
+from controller import Supervisor  # noqa
+
 
 class Backend:
 
@@ -20,10 +24,10 @@ class Backend:
         self.node = node
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
-        self.node.create_service(Empty, '/syncing', self.sync_callback)
         self.locked = True
         self.t = 0
-        self.dt = 0.0005
+        self.robot = Supervisor()
+        self.dt = self.robot.getBasicTimeStep()
 
         self.uavs = []
         for state in states:
@@ -41,8 +45,7 @@ class Backend:
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
         
-        if self.locked == True:
-            return
+
 
 
         # advance the time
@@ -75,27 +78,4 @@ class Quadrotor:
     def step(self, action, dt):
         print("step drone")
         
-
-class WebotsSupervisor:
-
-    def init(self, webots_node, properties):
-
-        self.robot = webots_node.robot
-        rclpy.init(args=None)
-        self.node = rclpy.create_node('webots_supervisor')
-        self.node.get_logger().info('Hello! Im the webots supervisor')
-        webots_time = self.robot.getTime()
-        self.client = self.node.create_client(Empty, '/syncing')
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not available, waiting again...')
-
-    def step(self):
-        rclpy.spin_once(self.node, timeout_sec=0)
-        self.node.get_logger().info('step')
-        time.sleep(3)
-        webots_time = self.robot.getTime()
-        self.node.get_logger().info(f'time {webots_time}')
-        req = Empty.Request()
-
-        self.client.call_async(req)
 
