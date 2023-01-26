@@ -7,14 +7,18 @@ from rosgraph_msgs.msg import Clock
 from rclpy.time import Time
 from ..sim_data_types import State, Action
 from std_srvs.srv import Empty
-
-import threading
+import os
+import sys
 
 webots_time = 0.0
-lock = threading.Lock()
 
-sys.path.insert(1, os.path.dirname(vehicle.__file__))
-sys.path.insert(1, os.path.dirname(controller.__file__))
+
+import os
+os.environ['WEBOTS_HOME'] = '/usr/local/webots'
+os.environ['PYTHONPATH'] = '${WEBOTS_HOME}/lib/controller/python38:$PYTHONPATH'
+os.environ['PYTHONIOENCODING'] = 'UTF-8'
+
+
 from controller import Supervisor  # noqa
 
 
@@ -35,19 +39,11 @@ class Backend:
             self.uavs.append(uav)
 
 
-    def sync_callback(self, request, response):
-        print("hello")
-        self.locked = False   
-        return response     
-
     def time(self) -> float:
         return self.t
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
         
-
-
-
         # advance the time
         self.t += self.dt
 
@@ -59,8 +55,7 @@ class Backend:
 
         # publish the current clock
         clock_message = Clock()
-        print(webots_time)
-        clock_message.clock = Time(seconds=webots_time).to_msg()
+        clock_message.clock = Time(seconds=self.robot.getTime()).to_msg()
         self.clock_publisher.publish(clock_message)
 
         return next_states
