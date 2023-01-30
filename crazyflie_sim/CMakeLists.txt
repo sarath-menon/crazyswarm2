@@ -12,8 +12,8 @@ ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_N
 install(DIRECTORY
 #   config
 #   data
-#   launch
-#   resource
+   launch
+   resource
    worlds
    DESTINATION share/${PROJECT_NAME}/
  )

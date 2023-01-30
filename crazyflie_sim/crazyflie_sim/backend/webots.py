@@ -49,13 +49,10 @@ class Backend:
             location = state.pos
             string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<extern>"}'
             children_field.importMFNodeFromString(-1, string_robot)
-            thread = threading.Thread(target=self.create_quadcopter, args=( state, name))
-            thread.start()
+            #uav = Quadrotor(state, name)
+            #self.uavs.append(uav)
+
             h+=1
-
-    def create_quadcopter(self, state, name):
-        uav = Quadrotor(state, name)
-
 
     def time(self) -> float:
         return self.t
@@ -92,12 +89,13 @@ class Quadrotor:
         self.robot = Robot()
 
 
-    def step_external(self):
-        action = Action()
-        dt = 0.1
-        self.step(action,dt)
-
     def step(self, action, dt):
         print("step drone")
         
+class CrazyflieDriver:
+    def init(self, webots_node, properties):
+        self.robot = webots_node.robot
+        timestep = int(self.robot.getBasicTimeStep())
 
+    def step(self):
+        t = self.robot.getTime()
