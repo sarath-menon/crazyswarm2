@@ -14,11 +14,16 @@ webots_time = 0.0
 
 
 import os
+import sys
+
 os.environ['WEBOTS_HOME'] = '/usr/local/webots'
-os.environ['PYTHONPATH'] = '${WEBOTS_HOME}/lib/controller/python38:$PYTHONPATH'
+os.environ['PYTHONPATH'] = os.path.expandvars('${WEBOTS_HOME}/lib/controller/python:$PYTHONPATH')
 os.environ['PYTHONIOENCODING'] = 'UTF-8'
 
+sys.path.append('/usr/local/webots/lib/controller/python')
+
 from controller import Supervisor, Robot  # noqa
+import threading
 
 
 class Backend:
@@ -44,8 +49,13 @@ class Backend:
             location = state.pos
             string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<extern>"}'
             children_field.importMFNodeFromString(-1, string_robot)
-            uav = Quadrotor(state, name)
+            thread = threading.Thread(target=self.create_quadcopter, args=( state, name))
+            thread.start()
             h+=1
+
+    def create_quadcopter(self, state, name):
+        uav = Quadrotor(state, name)
+
 
     def time(self) -> float:
         return self.t
@@ -82,6 +92,10 @@ class Quadrotor:
         self.robot = Robot()
 
 
+    def step_external(self):
+        action = Action()
+        dt = 0.1
+        self.step(action,dt)
 
     def step(self, action, dt):
         print("step drone")
