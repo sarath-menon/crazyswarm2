@@ -16,12 +16,20 @@ class Visualization:
     def __init__(self, node: Node, names: list[str], states: list[State]):
         self.node = node
 
-        # internal rotation to ensure that Z<0 is in front, X>0 is right, and Y>0 is up
-        # so that blender takes picture from cf's perspective, where X>0 is front, Y>0 is left, and Z>0 is up
-        self._rot_world_2_cam = np.array([
-            [ 0, 0,-1, 0],
+        ### # internal rotation to ensure that Z<0 is in front, X>0 is right, and Y>0 is up
+        ### # so that blender takes picture from cf's perspective, where X>0 is front, Y>0 is left, and Z>0 is up
+        ### self._rot_world_2_cam = np.array([
+        ###     [ 0, 0,-1, 0],
+        ###     [-1, 0, 0, 0],
+        ###     [ 0, 1, 0, 0],
+        ###     [ 0, 0, 0, 1],
+        ### ])
+
+        # internal rotation to ensure that objects are in front of the camera as planned
+        self._rot_cam_2_world = np.array([
+            [ 0,-1, 0, 0],
+            [ 0, 0, 1, 0],
             [-1, 0, 0, 0],
-            [ 0, 1, 0, 0],
             [ 0, 0, 0, 1],
         ])
 
@@ -60,6 +68,8 @@ class Visualization:
         self.camera.data.sensor_height = 18
         self.camera.data.angle = 1.518436431884765  # 87 deg
         self.camera.data.clip_start = 1.1e-6
+        # link camera to scene
+
 
         self.cf_default.hide_render = False
         # set rotation mode to quaternion
@@ -98,18 +108,17 @@ class Visualization:
         for idx, (name, state) in enumerate(zip(names, states)):
             self.names_idx_map[name] = idx
             if idx == 0:
-                self.cf_default.location = np.array(state.pos)
+                self.cf_default.location = self._rot_cam_2_world[:3,:3] @ np.array(state.pos)
                 # TODO: no initial orientation?
-                #self.cf_default.rotation_quaternion = state.quat
+                self.cf_default.rotation_quaternion = rw.from_matrix(self._rot_cam_2_world[:3,:3])
             else:
                 # cf copies
                 cf_copy = self.cf_default.copy()
                 bpy.context.collection.objects.link(cf_copy)
                 self.cf_list.append(cf_copy)
                 # place copy
-                cf_copy.location = np.array(state.pos)
-                # TODO: no initial orientation?
-                #cf_copy.rotation_quaternion = state.quat
+                cf_copy.location = self.cf_default.location
+                cf_copy.rotation_quaternion = self.cf_default.rotation_quaternion
 
     def step(self, t, states: list[State], states_desired: list[State], actions: list[Action]):
         # only render and record every 150th frame:
@@ -125,10 +134,10 @@ class Visualization:
                 idx = self.names_idx_map[name]
                 # set rotations
                 Q[idx] = np.array(state.quat)
-                self.cf_list[idx].rotation_quaternion = Q[idx]
+                self.cf_list[idx].rotation_quaternion = rw.from_matrix(rw.to_matrix(Q[idx]) @ self._rot_cam_2_world[:3,:3]) 
                 # set positions
                 P[idx] = np.array(state.pos) 
-                self.cf_list[idx].location = P[idx]
+                self.cf_list[idx].location = self._rot_cam_2_world[:3,:3] @ P[idx]
 
                 
                 # record states 
@@ -138,14 +147,12 @@ class Visualization:
                     file.write(f"{image_name},{t},{P[idx,0]},{P[idx,1]},{P[idx,2]},{Q[idx,0]},{Q[idx,1]},{Q[idx,2]},{Q[idx,3]}\n")
                 
                 # render image from cf's pov
-                # camera and lamp axes need to be adjusted for blender to capture the image as expected
-                q_cam = rw.from_matrix(rw.to_matrix(Q[idx]) @ self._rot_world_2_cam[:3,:3])
-                self.camera.rotation_quaternion = q_cam
-                self.lamp.rotation_quaternion = q_cam
+                self.camera.rotation_quaternion = Q[idx]
+                self.lamp.rotation_quaternion = Q[idx]
                 # set camera and light positions
-                p_cam = rw.to_matrix(Q[idx]) @ (P[idx] + np.array([0.025, 0.0, 0.01]))
-                self.camera.location = p_cam
-                self.lamp.location = p_cam
+                p_cam = P[idx] + rw.to_matrix(Q[idx]) @ np.array([0.025, 0.0, 0.01])
+                self.camera.location = self._rot_cam_2_world[:3,:3] @ p_cam
+                self.lamp.location = self._rot_cam_2_world[:3,:3] @ p_cam
                 # record camera state in world frame
                 with open(self.cam_state_filenames[idx], "a") as file:
                     file.write(f"{image_name},{t},{p_cam[0]},{p_cam[1]},{p_cam[2]},{Q[idx,0]},{Q[idx,1]},{Q[idx,2]},{Q[idx,3]}\n")
