@@ -51,7 +51,9 @@ class Backend:
         for name in names:
             state = states[h]
             location = state.pos
-            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name  +'"  controller "<extern>"}'
+            string_robot = ( 'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' ' + 
+                str(location[1])+' '+str(location[2])+' name "'+ name  +'"  controller "<extern>"' + 
+                'extensionSlot [ Receiver { } Emitter { } ]' + '}')
             children_field.importMFNodeFromString(-1, string_robot)
             uav = Quadrotor(state, name)
             self.uavs.append(uav)

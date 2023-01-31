@@ -24,6 +24,12 @@ TexturedBackgroundLight {
 Floor {
 }
 Robot {
+  children [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
   name "supervisor"
   controller "<extern>"
   supervisor TRUE
