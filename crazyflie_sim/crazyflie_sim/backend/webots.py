@@ -55,15 +55,14 @@ class Backend:
             children_field.importMFNodeFromString(-1, string_robot)
             uav = Quadrotor(state, name)
             self.uavs.append(uav)
-            subprocess.run(["python3", package_dir + "/backend/webots_driver.py"])
-
+            subprocess.Popen(["python3", package_dir + "/backend/webots_driver.py"])
         #    h+=1
 
     def time(self) -> float:
         return self.t
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
-
+        print(str(self.supervisor.getTime()) + "supervisor step")
         self.supervisor.step(self.dt)
         self.t = self.supervisor.getTime()
 
