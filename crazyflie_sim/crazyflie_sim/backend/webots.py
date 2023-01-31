@@ -41,6 +41,11 @@ class Backend:
         self.dt = int(self.supervisor.getBasicTimeStep())
         self.t = self.supervisor.getTime()
 
+        # Get receiver and emitter
+        self.receiver = self.supervisor.getDevice('receiver')
+        self.receiver.enable(self.dt)
+        self.emitter = self.supervisor.getDevice('emitter')
+
         self.uavs = []
 
         root_node = self.supervisor.getRoot()
@@ -65,9 +70,20 @@ class Backend:
         return self.t
 
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
-        #print(str(self.supervisor.getTime()) + "supervisor step")
-        self.supervisor.step(self.dt)
+        print(str(self.supervisor.getTime()) + "supervisor step")
+
+        message = str(self.supervisor.getTime()) + '[all] hallo from supervisor'
+        self.emitter.send(message)
+
         self.t = self.supervisor.getTime()
+        self.supervisor.step(self.dt)
+
+        while self.receiver.getQueueLength() > 0:
+
+            message= self.receiver.getString()
+            print(str(self.supervisor.getTime()) + 'supervisor received: ' + message)
+            self.receiver.nextPacket()
+
 
         next_states = []
         #for uav, action in zip(self.uavs, actions):
@@ -78,6 +94,8 @@ class Backend:
         clock_message = Clock()
         clock_message.clock = Time(seconds=self.t).to_msg()
         self.clock_publisher.publish(clock_message)
+
+
 
         return next_states
 
