@@ -27,19 +27,21 @@ from controller import Supervisor, Robot  # noqa
         
 class CrazyflieWebotsDriver:
     def __init__(self, name):
-        os.environ['WEBOTS_CONTROLLER_URL'] = 'ipc://1234/cf231'
+        os.environ['WEBOTS_CONTROLLER_URL'] = name
+        self.name = name
         self.robot = Robot()
 
-    def step(self, time_step):
-        print('crazyflie step')
 
 
 if __name__ == '__main__':
-    webots_driver = CrazyflieWebotsDriver('cf321')
+    # get arguments from command line not ROS
+
+    name = sys.argv[1]
+    webots_driver = CrazyflieWebotsDriver(name)
     time_step = int(webots_driver.robot.getBasicTimeStep())
 
     # Keep looping until the simulation is over
     # This step goes before the supervisor step
     while webots_driver.robot.step(time_step) != -1:
-        print(str(webots_driver.robot.getTime())+ 'Crazyflie step')
-
+        #print(str(webots_driver.robot.getTime())+ webots_driver.robot.name +' step')
+        pass
