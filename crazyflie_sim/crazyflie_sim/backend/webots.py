@@ -60,8 +60,6 @@ class Backend:
                 str(location[1])+' '+str(location[2])+' name "'+ name  +'"  controller "<extern>"' + 
                 'extensionSlot [ Receiver { } Emitter { } ]' + '}')
             children_field.importMFNodeFromString(-1, string_robot)
-            uav = Quadrotor(state, name)
-            self.uavs.append(uav)
             args = [name]
             h = h + 1
             subprocess.Popen(["python3", package_dir + "/backend/webots_driver.py"] + args)
@@ -72,17 +70,18 @@ class Backend:
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
         print(str(self.supervisor.getTime()) + "supervisor step")
 
-        message = str(self.supervisor.getTime()) + '[all] hallo from supervisor'
-        self.emitter.send(message)
+        # Go through list of actions
+        h = 0
+        for action, name in zip(actions, self.names):
+            #create a string with delimiters between the values
+            ## rpm to rps
+            rpss = [action.rpm[0]/60,action.rpm[1]/60,action.rpm[2]/60,action.rpm[3]/60]
+            message = '['+name+'] ' + str(rpss[0]) + ' ' + str(rpss[1]) + ' ' + str(rpss[2]) + ' ' + str(rpss[3])
+            self.emitter.send(message)
 
-        self.t = self.supervisor.getTime()
+        # Step in the simulation, and get the next states
         self.supervisor.step(self.dt)
 
-        while self.receiver.getQueueLength() > 0:
-
-            message= self.receiver.getString()
-            print(str(self.supervisor.getTime()) + 'supervisor received: ' + message)
-            self.receiver.nextPacket()
 
 
         next_states = []
@@ -101,13 +100,3 @@ class Backend:
 
     def shutdown(self):
         pass
-
-class Quadrotor:
-
-    def __init__(self, state, name):
-        print("hello! I'm a crazyflie!")
-        self.state = state
-
-    def step(self, action, dt):
-        print("step drone")
-        
