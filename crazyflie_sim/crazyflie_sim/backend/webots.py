@@ -17,9 +17,9 @@ import os
 import sys
 import subprocess
 
-#os.environ['WEBOTS_HOME'] = '/usr/local/webots'
-#os.environ['PYTHONPATH'] = os.path.expandvars('${WEBOTS_HOME}/lib/controller/python:$PYTHONPATH')
-#os.environ['PYTHONIOENCODING'] = 'UTF-8'
+os.environ['WEBOTS_HOME'] = '/usr/local/webots'
+os.environ['PYTHONPATH'] = os.path.expandvars('${WEBOTS_HOME}/lib/controller/python:$PYTHONPATH')
+os.environ['PYTHONIOENCODING'] = 'UTF-8'
 
 sys.path.append('/usr/local/webots/lib/controller/python')
 
