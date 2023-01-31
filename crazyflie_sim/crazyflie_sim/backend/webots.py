@@ -15,16 +15,18 @@ webots_time = 0.0
 
 import os
 import sys
+import subprocess
 
-os.environ['WEBOTS_HOME'] = '/usr/local/webots'
-os.environ['PYTHONPATH'] = os.path.expandvars('${WEBOTS_HOME}/lib/controller/python:$PYTHONPATH')
-os.environ['PYTHONIOENCODING'] = 'UTF-8'
+#os.environ['WEBOTS_HOME'] = '/usr/local/webots'
+#os.environ['PYTHONPATH'] = os.path.expandvars('${WEBOTS_HOME}/lib/controller/python:$PYTHONPATH')
+#os.environ['PYTHONIOENCODING'] = 'UTF-8'
 
 sys.path.append('/usr/local/webots/lib/controller/python')
 
 from controller import Supervisor, Robot  # noqa
 import threading
 
+from ament_index_python.packages import get_package_share_directory
 
 class Backend:
     def __init__(self, node: Node, names: list[str], states: list[State]):
@@ -32,8 +34,8 @@ class Backend:
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.locked = True
+
         os.environ['WEBOTS_CONTROLLER_URL'] = 'supervisor'
-        print(os.getenv('WEBOTS_CONTROLLER_URL'))
 
         self.supervisor = Supervisor()
         self.dt = int(self.supervisor.getBasicTimeStep())
@@ -43,16 +45,19 @@ class Backend:
 
         root_node = self.supervisor.getRoot()
         children_field = root_node.getField('children')
+        package_dir = get_package_share_directory('crazyflie_sim')
+
         h = 0
         for name in names:
             state = states[h]
             location = state.pos
-            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name +'"  controller "<extern>"}'
+            string_robot =  'DEF ' + name + ' Crazyflie {  translation '+str(location[0])+' '+ str(location[1])+' '+str(location[2])+' name "'+ name  +'"  controller "<extern>"}'
             children_field.importMFNodeFromString(-1, string_robot)
-            #uav = Quadrotor(state, name)
-            #self.uavs.append(uav)
+            uav = Quadrotor(state, name)
+            self.uavs.append(uav)
+            subprocess.run(["python3", package_dir + "/backend/webots_driver.py"])
 
-            h+=1
+        #    h+=1
 
     def time(self) -> float:
         return self.t
@@ -77,25 +82,12 @@ class Backend:
     def shutdown(self):
         pass
 
-
 class Quadrotor:
 
     def __init__(self, state, name):
         print("hello! I'm a crazyflie!")
         self.state = state
 
-        os.environ['WEBOTS_CONTROLLER_URL'] =  name
-        print(os.getenv('WEBOTS_CONTROLLER_URL'))
-        self.robot = Robot()
-
-
     def step(self, action, dt):
         print("step drone")
         
-class CrazyflieDriver:
-    def init(self, webots_node, properties):
-        self.robot = webots_node.robot
-        timestep = int(self.robot.getBasicTimeStep())
-
-    def step(self):
-        t = self.robot.getTime()
