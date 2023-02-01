@@ -12,9 +12,9 @@ ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_N
 install(DIRECTORY
 #   config
 #   data
-   launch
-   resource
-   worlds
+#   launch
+#   resource
+#   worlds
    crazyflie_sim/backend
    DESTINATION share/${PROJECT_NAME}/
  )

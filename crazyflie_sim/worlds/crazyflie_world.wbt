@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 
 WorldInfo {
   info [
-    "Bitcraze's Crazyflie drone."
-    "This simulation allows you to pilot the drone with your keyboard."
+    "Crazyflie world."
+    "This simulation is for the simulation of the Crazyflie."
   ]
   title "Crazyflie"
 }

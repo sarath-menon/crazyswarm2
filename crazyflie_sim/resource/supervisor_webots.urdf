@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<robot name="supervisor">
-    <webots>
-        <plugin type="crazyflie_sim.crazyflie_server.CrazyflieServer" />
-    </webots>
-</robot>
