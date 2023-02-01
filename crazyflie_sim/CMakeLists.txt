@@ -14,7 +14,7 @@ install(DIRECTORY
 #   data
 #   launch
 #   resource
-#   worlds
+   worlds
    crazyflie_sim/backend
    DESTINATION share/${PROJECT_NAME}/
  )

@@ -36,6 +36,10 @@ class Backend:
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.locked = True
+        package_dir = get_package_share_directory('crazyflie_sim')
+
+        print(package_dir + "/worlds/crazyflie_world.wbt")
+        subprocess.Popen(["webots", package_dir + "/worlds/crazyflie_world.wbt"])
 
         os.environ['WEBOTS_CONTROLLER_URL'] = 'supervisor'
 
@@ -52,7 +56,9 @@ class Backend:
 
         root_node = self.supervisor.getRoot()
         children_field = root_node.getField('children')
-        package_dir = get_package_share_directory('crazyflie_sim')
+
+        # Start webots
+
 
         h = 0
         self.cf_nodes = []
@@ -65,7 +71,7 @@ class Backend:
             children_field.importMFNodeFromString(-1, string_robot)
             args = [name]
             h = h + 1
-            subprocess.Popen(["python3", package_dir + "/backend/webots_driver.py"] + args)
+            subprocess.Popen(["python3", package_dir + "/backend/webots_cf_driver.py"] + args)
             self.cf_nodes.append(self.supervisor.getFromDef(name))
 
     def time(self) -> float:
