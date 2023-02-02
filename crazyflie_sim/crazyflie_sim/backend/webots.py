@@ -27,19 +27,21 @@ from controller import Supervisor, Robot  # noqa
 import threading
 
 import numpy as np
+import rowan
 
 from ament_index_python.packages import get_package_share_directory
+
+import tf_transformations
 
 class Backend:
     def __init__(self, node: Node, names: list[str], states: list[State]):
         self.node = node
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
-        self.locked = True
         package_dir = get_package_share_directory('crazyflie_sim')
 
-        print(package_dir + "/worlds/crazyflie_world.wbt")
-        subprocess.Popen(["webots", package_dir + "/worlds/crazyflie_world.wbt"])
+        #print(package_dir + "/worlds/crazyflie_world.wbt")
+        #subprocess.Popen(["webots", package_dir + "/worlds/crazyflie_world.wbt"])
 
         os.environ['WEBOTS_CONTROLLER_URL'] = 'supervisor'
 
@@ -52,14 +54,10 @@ class Backend:
         self.receiver.enable(self.dt)
         self.emitter = self.supervisor.getDevice('emitter')
 
-        self.uavs = []
-
         root_node = self.supervisor.getRoot()
         children_field = root_node.getField('children')
 
         # Start webots
-
-
         h = 0
         self.cf_nodes = []
         for name in names:
@@ -87,25 +85,65 @@ class Backend:
             ## rpm to rps
             rpss = [action.rpm[0]/60,action.rpm[1]/60,action.rpm[2]/60,action.rpm[3]/60]
             # multiply numpy array with a scalar float
-            rpss = np.multiply(rpss, 0.8)
+            rpss = np.multiply(rpss, 1/7.0)
+            #print(rpss)
+
             message = '['+name+'] ' + str(rpss[0]) + ' ' + str(rpss[1]) + ' ' + str(rpss[2]) + ' ' + str(rpss[3])
             self.emitter.send(message)
 
         # Step in the simulation, and get the next states
         self.supervisor.step(self.dt)
 
+        '''imu_values = []
+        while self.receiver.getQueueLength() > 0:
+            message= self.receiver.getString()
+            
+            # Get string between brackets in message
+            receipient_id = message[message.find('[')+1:message.find(']')]
+            # Get the rest of the string
+            message = message[message.find(']')+1:]
+            # parse the values in a numpy array of floats
+            values = np.fromstring(message, dtype=float, sep=' ')
 
+            # save value with name in dictionary
+            imu_values.append({receipient_id: values})
+            
+            self.receiver.nextPacket()'''
+
+    
 
         next_states = []
-        for node in self.cf_nodes:
+        for name, node in zip(self.names,self.cf_nodes):
             next_state = State()
             next_state.pos = node.getPosition()
             velocity = node.getVelocity()
             next_state.vel = velocity[0:3]
             matrix = node.getOrientation()
+            # find imu array in list of dictionaries
+            '''if len(imu_values) > 0:
+                imu_value = next((d[name] for d in imu_values if name in d), None)
+            else:
+                imu_value = [0,0,0]
+
+            print('imu',imu_value)
+            roll = imu_value[0]
+            pitch = imu_value[1]
+            yaw = imu_value[2]
+
+            q_base = tf_transformations.quaternion_from_euler(roll,pitch, yaw)
+            next_state.quat = q_base'''
+
             # make list into 3 x 3 matrix in numpy
             matrix = np.reshape(matrix, (3,3))
-            next_state.quat = self.rotationMatrixToQuaternion1(matrix)
+
+            #q_base= tf_transformations.quaternion_from_matrix(matrix)
+
+            #print('rotation',tf_transformations.random_rotation_matrix())
+            #next_state.quat = q_base
+
+            next_state.quat = rowan.from_matrix(matrix)
+            #print('quat',next_state.quat)
+
 
 
             # get angular velocity in world axis
@@ -114,16 +152,14 @@ class Backend:
             angular_velocity_body = np.matmul(np.linalg.inv(matrix), angular_velocity)
 
             next_state.omega = angular_velocity_body
-    
+
             next_states.append(next_state)
-            print('position',node.getPosition())
 
-
+        self.t = self.supervisor.getTime()
         # publish the current clock
         clock_message = Clock()
         clock_message.clock = Time(seconds=self.t).to_msg()
         self.clock_publisher.publish(clock_message)
-
 
         
         return next_states

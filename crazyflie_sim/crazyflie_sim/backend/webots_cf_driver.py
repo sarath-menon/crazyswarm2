@@ -43,10 +43,13 @@ class CrazyflieWebotsDriver:
         self.m4_motor = self.robot.getDevice("m4_motor")
         self.m4_motor.setPosition(float('inf'))
         self.m4_motor.setVelocity(1)
-        
+
         self.receiver = self.robot.getDevice("receiver")
         self.receiver.enable(self.time_step)
         self.emitter = self.robot.getDevice("emitter")
+
+        self.imu = self.robot.getDevice("inertial unit")
+        self.imu.enable(self.time_step)
     
     def set_motor_velocity(self, motor, velocity):
         if abs(velocity) > 600:
@@ -78,6 +81,13 @@ class CrazyflieWebotsDriver:
 
             
             self.receiver.nextPacket()
+        
+        # Get IMU data
+        #imu_data = self.imu.getRollPitchYaw()
+
+        # Send IMU data
+        #message = '['+name+'] ' + str(imu_data[0]) + ' ' + str(imu_data[1]) + ' ' + str(imu_data[2])
+        #self.emitter.send(message)
             
     
 if __name__ == '__main__':
