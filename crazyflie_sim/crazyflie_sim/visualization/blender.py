@@ -13,7 +13,7 @@ from ..sim_data_types import State, Action
 class Visualization:
 
 
-    def __init__(self, node: Node, names: list[str], states: list[State]):
+    def __init__(self, node: Node, params: dict, names: list[str], states: list[State]):
         self.node = node
 
         ### # internal rotation to ensure that Z<0 is in front, X>0 is right, and Y>0 is up
@@ -91,24 +91,26 @@ class Visualization:
 
         self.ts = []
         self.frame = 0
-        # TODO: configure interval (read from parameters)
-        self.interval = 400  # number of frames/time steps between renders
+        self.interval = params["interval"]  # number of frames/time steps between renders
 
         self.names = names
         self.n = len(names)
         self.state_filenames = []
         self.cam_state_filenames = []
 
-        # setup fixed observer camera 
-        self.p_fixed_obs_cam = np.array([0,0,1])
-        self.q_fixed_obs_cam = np.array([1,0,0,0])
-        os.mkdir(self.path + "/cam/")  # create dir camera to save images in (cfs have their own as well)
-        self.cam_sf = f"{self.path}/cam/cam.csv"
-        with open(self.cam_sf, "w") as file:
-            file.write("image_name,timestamp,x,y,z,qw,qx,qy,qz\n")
-        calibration_sf = f"{self.path}/cam/calibration.yaml"
-        with open(calibration_sf, "w") as file:
-            file.write("camera_matrix:\n- - -170.0 # maybe causing mirroring effect, re-projection with opencv (-170)\n  - 0.0\n  - 160.0\n- - 0.0\n  - 170.0\n  - 160.0\n- - 0.0\n  - 0.0\n  - 1.0\ndist_coeff:\n- - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\nrvec:\n- - -1.2092 # inverse of camera to world in blender\n- - 1.2092\n- - 1.2092\ntvec:\n- - 0.0\n- - 0.0\n- - 0.0\n")
+        # setup fixed observer camera if enabled
+        self.observer_cam = False
+        if params["observer"] and params["observer"]["enabled"]:
+            self.observer_cam = True
+            self.p_fixed_obs_cam = np.array(params["observer"]["pos"])
+            self.q_fixed_obs_cam = np.array(params["observer"]["quat"])
+            os.mkdir(self.path + "/cam/")  # create dir camera to save images in (cfs have their own as well)
+            self.cam_sf = f"{self.path}/cam/cam.csv"
+            with open(self.cam_sf, "w") as file:
+                file.write("image_name,timestamp,x,y,z,qw,qx,qy,qz\n")
+            calibration_sf = f"{self.path}/cam/calibration.yaml"
+            with open(calibration_sf, "w") as file:
+                file.write("camera_matrix:\n- - -170.0 # maybe causing mirroring effect, re-projection with opencv (-170)\n  - 0.0\n  - 160.0\n- - 0.0\n  - 170.0\n  - 160.0\n- - 0.0\n  - 0.0\n  - 1.0\ndist_coeff:\n- - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\nrvec:\n- - -1.2092 # inverse of camera to world in blender\n- - 1.2092\n- - 1.2092\ntvec:\n- - 0.0\n- - 0.0\n- - 0.0\n")
 
         for name in names:
             os.mkdir(self.path + "/" + name + "/")  # create dir for every cf for saving images
@@ -119,13 +121,16 @@ class Visualization:
             ### self.cam_state_filenames.append(cam_sf)
             with open(csf, "w") as file:
                 file.write("image_name,timestamp,x,y,z,qw,qx,qy,qz\n")
-            with open(calibration_sf, "w") as file:
-                file.write("camera_matrix:\n- - -170.0 # maybe causing mirroring effect, re-projection with opencv (-170)\n  - 0.0\n  - 160.0\n- - 0.0\n  - 170.0\n  - 160.0\n- - 0.0\n  - 0.0\n  - 1.0\ndist_coeff:\n- - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\nrvec:\n- - -1.2092 # inverse of camera to world in blender\n- - 1.2092\n- - 1.2092\ntvec:\n- - 0.0\n- - 0.0\n- - 0.0\n")
+            if name in params["cf_cameras"]:
+                with open(calibration_sf, "w") as file:
+                    file.write("camera_matrix:\n- - -170.0 # maybe causing mirroring effect, re-projection with opencv (-170)\n  - 0.0\n  - 160.0\n- - 0.0\n  - 170.0\n  - 160.0\n- - 0.0\n  - 0.0\n  - 1.0\ndist_coeff:\n- - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\n  - 0.0\nrvec:\n- - -1.2092 # inverse of camera to world in blender\n- - 1.2092\n- - 1.2092\ntvec:\n- - 0.0\n- - 0.0\n- - 0.0\n")
 
         # dictionary with (name, idx) pairs to later find corresponding cf
         self.names_idx_map = dict()
         # init list
         self.cf_list = [self.cf_default]
+        # parallel boolean list. cf_cameras[i] == True iff cf_i carries a camera
+        self.cf_cameras = []
 
         for idx, (name, state) in enumerate(zip(names, states)):
             self.names_idx_map[name] = idx
@@ -138,11 +143,12 @@ class Visualization:
             self.cf_list[idx].rotation_quaternion = rw.from_matrix(rw.to_matrix(state.quat))
             # set positions
             self.cf_list[idx].location = np.array(state.pos)
+            # save whether cf carries a camera or not
+            self.cf_cameras.append(name in params["cf_cameras"])
 
     def step(self, t, states: list[State], states_desired: list[State], actions: list[Action]):
         # only render and record every `self.interval`th frame:
         if self.frame % self.interval == 0: 
-            # TODO: configure which cfs have cameras on them (read from parameters)
             # quaternion matrix
             Q = np.zeros((self.n, 4))  
             # position matrix
@@ -159,31 +165,34 @@ class Visualization:
                 # set positions
                 self.cf_list[idx].location = P[idx]
                 # record states 
-                image_name = f"{self.names[idx]}_{self.frame//self.interval:05}.jpg"  # image capturing scene from cf's pov
-                # record cfi's state in world frame
+                image_name = f"{self.names[idx]}_{self.frame//self.interval:05}.jpg" if self.cf_cameras[idx] else "None" # image capturing scene from cf's pov or None
+                # record cf's state in world frame
                 with open(self.state_filenames[idx], "a") as file:
                     file.write(f"{image_name},{t},{P[idx,0]},{P[idx,1]},{P[idx,2]},{Q[idx,0]},{Q[idx,1]},{Q[idx,2]},{Q[idx,3]}\n")
 
-            # take picture from fixed observer camera's pov
-            # rotation
-            q_cam = rw.from_matrix(rw.to_matrix(self.q_fixed_obs_cam) @ self._rot_cam_2_world[:3,:3].T)
-            self.camera.rotation_quaternion = q_cam
-            self.lamp.rotation_quaternion = q_cam
-            # positions
-            p_cam = self.p_fixed_obs_cam
-            self.camera.location = p_cam
-            self.lamp.location = p_cam
-            image_name = f"cam_{self.frame//self.interval:05}.jpg"  # image capturing scene from cf's pov
-            # record observer camera state in world frame
-            with open(self.cam_sf, "a") as file:
-                file.write(f"{image_name},{t},{self.p_fixed_obs_cam[0]},{self.p_fixed_obs_cam[1]},{self.p_fixed_obs_cam[2]},{self.q_fixed_obs_cam[0]},{self.q_fixed_obs_cam[1]},{self.q_fixed_obs_cam[2]},{self.q_fixed_obs_cam[3]}\n")
-            # Render image
-            self.scene.render.filepath = f"{self.path}/cam/{image_name}"
-            bpy.ops.render.render(write_still=True)
+            if self.observer_cam:
+                # take picture from fixed observer camera's pov
+                # rotation
+                q_cam = rw.from_matrix(rw.to_matrix(self.q_fixed_obs_cam) @ self._rot_cam_2_world[:3,:3].T)
+                self.camera.rotation_quaternion = q_cam
+                self.lamp.rotation_quaternion = q_cam
+                # positions
+                p_cam = self.p_fixed_obs_cam
+                self.camera.location = p_cam
+                self.lamp.location = p_cam
+                image_name = f"cam_{self.frame//self.interval:05}.jpg"  # image capturing scene from cf's pov
+                # record observer camera state in world frame if enabled
+                with open(self.cam_sf, "a") as file:
+                    file.write(f"{image_name},{t},{self.p_fixed_obs_cam[0]},{self.p_fixed_obs_cam[1]},{self.p_fixed_obs_cam[2]},{self.q_fixed_obs_cam[0]},{self.q_fixed_obs_cam[1]},{self.q_fixed_obs_cam[2]},{self.q_fixed_obs_cam[3]}\n")
+                # Render image
+                self.scene.render.filepath = f"{self.path}/cam/{image_name}"
+                bpy.ops.render.render(write_still=True)
 
             # render images from cfs' perspectives
             for name, state in zip(self.names, states):
                 idx = self.names_idx_map[name]
+                if not self.cf_cameras[idx]:
+                    continue
                 # rotation
                 self.camera.rotation_quaternion = rw.from_matrix(rw.to_matrix(Q[idx]) @ self._rot_cam_2_world[:3,:3].T)
                 self.lamp.rotation_quaternion = rw.from_matrix(rw.to_matrix(Q[idx]) @ self._rot_cam_2_world[:3,:3].T)

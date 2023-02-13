@@ -10,4 +10,14 @@
         pdf:
           enabled: false
           output_file: "result.pdf"
+        blender:
+          enabled: false
+          interval: 400    # number of time steps between taking images
+          cf_cameras:      # names of crazyflies with cameras on them if enabled in `crazyflies.yaml`
+            - cf231
+            #- cf5
+          observer:        # static observer camera 
+            enabled: true
+            pos: [0,0,1]
+            quat: [1,0,0,0]
       controller: mellinger # none, pid, mellinger
