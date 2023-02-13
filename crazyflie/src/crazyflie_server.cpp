@@ -1,6 +1,7 @@
 #include <memory>
 #include <vector>
 #include <regex>
+#include <chrono>
 
 #include <crazyflie_cpp/Crazyflie.h>
 
@@ -35,6 +36,8 @@ using std_srvs::srv::Empty;
 
 using motion_capture_tracking_interfaces::msg::NamedPoseArray;
 using crazyflie_interfaces::msg::FullState;
+
+using namespace std::chrono_literals;
 
 // Helper class to convert crazyflie_cpp logging messages to ROS logging messages
 class CrazyflieLogger : public Logger
@@ -107,6 +110,8 @@ public:
     const std::string& cf_type,
     const std::string& name,
     rclcpp::Node* node,
+    rclcpp::CallbackGroup::SharedPtr callback_group_cf_cmd,
+    rclcpp::CallbackGroup::SharedPtr callback_group_cf_srv,
     bool enable_parameters = true)
     : logger_(rclcpp::get_logger(name))
     , cf_logger_(logger_)
@@ -118,17 +123,29 @@ public:
     , node_(node)
     , tf_broadcaster_(node)
   {
-    service_emergency_ = node->create_service<Empty>(name + "/emergency", std::bind(&CrazyflieROS::emergency, this, _1, _2));
-    service_start_trajectory_ = node->create_service<StartTrajectory>(name + "/start_trajectory", std::bind(&CrazyflieROS::start_trajectory, this, _1, _2));
-    service_takeoff_ = node->create_service<Takeoff>(name + "/takeoff", std::bind(&CrazyflieROS::takeoff, this, _1, _2));
-    service_land_ = node->create_service<Land>(name + "/land", std::bind(&CrazyflieROS::land, this, _1, _2));
-    service_go_to_ = node->create_service<GoTo>(name + "/go_to", std::bind(&CrazyflieROS::go_to, this, _1, _2));
-    service_upload_trajectory_ = node->create_service<UploadTrajectory>(name + "/upload_trajectory", std::bind(&CrazyflieROS::upload_trajectory, this, _1, _2));
-    service_notify_setpoints_stop_ = node->create_service<NotifySetpointsStop>(name + "/notify_setpoints_stop", std::bind(&CrazyflieROS::notify_setpoints_stop, this, _1, _2));
+    auto sub_opt_cf_cmd = rclcpp::SubscriptionOptions();
+    sub_opt_cf_cmd.callback_group = callback_group_cf_cmd;
 
-    subscription_cmd_vel_legacy_ = node->create_subscription<geometry_msgs::msg::Twist>(name + "/cmd_vel_legacy", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_vel_legacy_changed, this, _1));
-    subscription_cmd_full_state_ = node->create_subscription<crazyflie_interfaces::msg::FullState>(name + "/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_full_state_changed, this, _1));
-    subscription_cmd_position_ = node->create_subscription<crazyflie_interfaces::msg::Position>(name + "/cmd_position", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_position_changed, this, _1));
+    // Services
+    auto service_qos = rmw_qos_profile_services_default;
+
+    service_emergency_ = node->create_service<Empty>(name + "/emergency", std::bind(&CrazyflieROS::emergency, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_start_trajectory_ = node->create_service<StartTrajectory>(name + "/start_trajectory", std::bind(&CrazyflieROS::start_trajectory, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_takeoff_ = node->create_service<Takeoff>(name + "/takeoff", std::bind(&CrazyflieROS::takeoff, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_land_ = node->create_service<Land>(name + "/land", std::bind(&CrazyflieROS::land, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_go_to_ = node->create_service<GoTo>(name + "/go_to", std::bind(&CrazyflieROS::go_to, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_upload_trajectory_ = node->create_service<UploadTrajectory>(name + "/upload_trajectory", std::bind(&CrazyflieROS::upload_trajectory, this, _1, _2), service_qos, callback_group_cf_srv);
+    service_notify_setpoints_stop_ = node->create_service<NotifySetpointsStop>(name + "/notify_setpoints_stop", std::bind(&CrazyflieROS::notify_setpoints_stop, this, _1, _2), service_qos, callback_group_cf_srv);
+
+    // Topics
+
+    subscription_cmd_vel_legacy_ = node->create_subscription<geometry_msgs::msg::Twist>(name + "/cmd_vel_legacy", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_vel_legacy_changed, this, _1), sub_opt_cf_cmd);
+    subscription_cmd_full_state_ = node->create_subscription<crazyflie_interfaces::msg::FullState>(name + "/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_full_state_changed, this, _1), sub_opt_cf_cmd);
+    subscription_cmd_position_ = node->create_subscription<crazyflie_interfaces::msg::Position>(name + "/cmd_position", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_position_changed, this, _1), sub_opt_cf_cmd);
+
+    // spinning timer
+    spin_timer_ = node->create_wall_timer(std::chrono::milliseconds(100), std::bind(&CrazyflieROS::spin_once, this), callback_group_cf_srv);
+
 
     auto start = std::chrono::system_clock::now();
 
@@ -169,25 +186,25 @@ public:
         switch (entry.type)
         {
         case Crazyflie::ParamTypeUint8:
-          node->declare_parameter(paramName, cf_.getParam<uint8_t>(entry.id));
+          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint8_t>(entry.id));
           break;
         case Crazyflie::ParamTypeInt8:
-          node->declare_parameter(paramName, cf_.getParam<int8_t>(entry.id));
+          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int8_t>(entry.id));
           break;
         case Crazyflie::ParamTypeUint16:
-          node->declare_parameter(paramName, cf_.getParam<uint16_t>(entry.id));
+          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint16_t>(entry.id));
           break;
         case Crazyflie::ParamTypeInt16:
-          node->declare_parameter(paramName, cf_.getParam<int16_t>(entry.id));
+          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int16_t>(entry.id));
           break;
         case Crazyflie::ParamTypeUint32:
-          node->declare_parameter<int64_t>(paramName, cf_.getParam<uint32_t>(entry.id));
+          node->declare_parameter<int64_t>(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint32_t>(entry.id));
           break;
         case Crazyflie::ParamTypeInt32:
-          node->declare_parameter(paramName, cf_.getParam<int32_t>(entry.id));
+          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int32_t>(entry.id));
           break;
         case Crazyflie::ParamTypeFloat:
-          node->declare_parameter(paramName, cf_.getParam<float>(entry.id));
+          node->declare_parameter(paramName, 0.0f);//rclcpp::PARAMETER_DOUBLE);//cf_.getParam<float>(entry.id));
           break;
         default:
           RCLCPP_WARN(logger_, "Unknown param type for %s/%s", entry.group.c_str(), entry.name.c_str());
@@ -317,13 +334,22 @@ public:
       }
     }
 
+    // Needed for trajectory upload
     RCLCPP_INFO(logger_, "Requesting memories...");
     cf_.requestMemoryToc();
+    RCLCPP_INFO(logger_, "ctor done");
+    // connection stats
+    timer_connection_stats_ = node_->create_wall_timer(1s, [this]() {
+        const auto& stats = cf_.connectionStats();
+        RCLCPP_INFO(logger_, "connection ping: %lu, enq: %lu", stats.sent_ping_count - stats_previous_.sent_ping_count, (size_t)stats.enqueued_count);
+        stats_previous_ = stats;
+    });
   }
 
-  void spin_some()
+  void spin_once()
   {
-    cf_.sendPing();
+    cf_.spin_once();
+    // cf_.sendPing();
   }
 
   std::string broadcastUri() const
@@ -662,6 +688,15 @@ private:
 
   std::list<std::unique_ptr<LogBlockGeneric>> log_blocks_generic_;
   std::list<rclcpp::Publisher<crazyflie_interfaces::msg::LogDataGeneric>::SharedPtr> publishers_generic_;
+
+  // multithreading
+  rclcpp::CallbackGroup::SharedPtr callback_group_cf_;
+  rclcpp::TimerBase::SharedPtr spin_timer_;
+  
+  // connection stats
+  bitcraze::crazyflieLinkCpp::Connection::Statistics stats_previous_;
+  rclcpp::TimerBase::SharedPtr timer_connection_stats_;
+
 };
 
 class CrazyflieServer : public rclcpp::Node
@@ -671,17 +706,38 @@ public:
       : Node("crazyflie_server")
       , logger_(rclcpp::get_logger("all"))
   {
-    // topics for "all"
+    // Create callback groups (each group can run in a separate thread)
+    callback_group_mocap_ = this->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto sub_opt_mocap = rclcpp::SubscriptionOptions();
+    sub_opt_mocap.callback_group = callback_group_mocap_;
 
-    subscription_cmd_full_state_ = this->create_subscription<crazyflie_interfaces::msg::FullState>("all/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_full_state_changed, this, _1));
+    callback_group_all_cmd_ = this->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto sub_opt_all_cmd = rclcpp::SubscriptionOptions();
+    sub_opt_all_cmd.callback_group = callback_group_all_cmd_;
+
+    callback_group_all_srv_ = this->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+    callback_group_cf_cmd_ = this->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+    callback_group_cf_srv_ = this->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+    // topics for "all"
+    subscription_cmd_full_state_ = this->create_subscription<crazyflie_interfaces::msg::FullState>("all/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_full_state_changed, this, _1), sub_opt_all_cmd);
 
     // services for "all"
-    service_emergency_ = this->create_service<Empty>("all/emergency", std::bind(&CrazyflieServer::emergency, this, _1, _2));
-    service_start_trajectory_ = this->create_service<StartTrajectory>("all/start_trajectory", std::bind(&CrazyflieServer::start_trajectory, this, _1, _2));
-    service_takeoff_ = this->create_service<Takeoff>("all/takeoff", std::bind(&CrazyflieServer::takeoff, this, _1, _2));
-    service_land_ = this->create_service<Land>("all/land", std::bind(&CrazyflieServer::land, this, _1, _2));
-    service_go_to_ = this->create_service<GoTo>("all/go_to", std::bind(&CrazyflieServer::go_to, this, _1, _2));
-    service_notify_setpoints_stop_ = this->create_service<NotifySetpointsStop>("all/notify_setpoints_stop", std::bind(&CrazyflieServer::notify_setpoints_stop, this, _1, _2));
+    auto service_qos = rmw_qos_profile_services_default;
+
+    service_emergency_ = this->create_service<Empty>("all/emergency", std::bind(&CrazyflieServer::emergency, this, _1, _2), service_qos, callback_group_all_srv_);
+    service_start_trajectory_ = this->create_service<StartTrajectory>("all/start_trajectory", std::bind(&CrazyflieServer::start_trajectory, this, _1, _2), service_qos, callback_group_all_srv_);
+    service_takeoff_ = this->create_service<Takeoff>("all/takeoff", std::bind(&CrazyflieServer::takeoff, this, _1, _2), service_qos, callback_group_all_srv_);
+    service_land_ = this->create_service<Land>("all/land", std::bind(&CrazyflieServer::land, this, _1, _2), service_qos, callback_group_all_srv_);
+    service_go_to_ = this->create_service<GoTo>("all/go_to", std::bind(&CrazyflieServer::go_to, this, _1, _2), service_qos, callback_group_all_srv_);
+    service_notify_setpoints_stop_ = this->create_service<NotifySetpointsStop>("all/notify_setpoints_stop", std::bind(&CrazyflieServer::notify_setpoints_stop, this, _1, _2), service_qos, callback_group_all_srv_);
 
        // declare global commands
     this->declare_parameter("all.broadcasts.num_repeats", 15);
@@ -711,7 +767,13 @@ public:
         // if it is a Crazyflie, try to connect
         if (constr == "crazyflie") {
           std::string uri = parameter_overrides.at("robots." + name + ".uri").get<std::string>();
-          crazyflies_.emplace(name, std::make_unique<CrazyflieROS>(uri, cf_type, name, this));
+          crazyflies_.emplace(name, std::make_unique<CrazyflieROS>(
+            uri,
+            cf_type,
+            name,
+            this,
+            callback_group_cf_cmd_,
+            callback_group_cf_srv_));
 
           auto broadcastUri = crazyflies_[name]->broadcastUri();
           RCLCPP_INFO(logger_, "%s", broadcastUri.c_str());
@@ -731,8 +793,13 @@ public:
       }
     }
 
+    rclcpp::SensorDataQoS sensor_data_qos;
+    sensor_data_qos.keep_last(1);
+    sensor_data_qos.deadline(rclcpp::Duration(0/*s*/, 1e6/110 /*ns*/));
     sub_poses_ = this->create_subscription<NamedPoseArray>(
-        "poses", 1, std::bind(&CrazyflieServer::posesChanged, this, _1));
+        "poses", sensor_data_qos, std::bind(&CrazyflieServer::posesChanged, this, _1), sub_opt_mocap);
+
+    
 
     // support for all.params
 
@@ -740,14 +807,26 @@ public:
     param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
     cb_handle_ = param_subscriber_->add_parameter_event_callback(std::bind(&CrazyflieServer::on_parameter_event, this, _1));
 
+    watchdog_timer_ = this->create_wall_timer(std::chrono::milliseconds(1000), std::bind(&CrazyflieServer::on_watchdog_timer, this), callback_group_all_srv_);
+
+    // connection stats
+    timer_connection_stats_ = this->create_wall_timer(1s, [this]() {
+      for (auto &bc : broadcaster_) {
+        auto &cfbc = bc.second;
+        const auto& stats = cfbc->connectionStats();
+        RCLCPP_INFO(logger_, "connection sent: %lu, enq: %lu", stats.sent_count - stats_previous_.sent_count, (size_t)stats.enqueued_count);
+        stats_previous_ = stats;
+      }
+    });
+
   }
 
-  void spin_some()
-  {
-    for (auto& cf : crazyflies_) {
-      cf.second->spin_some();
-    }
-  }
+  // void spin_some()
+  // {
+  //   for (auto& cf : crazyflies_) {
+  //     cf.second->spin_some();
+  //   }
+  // }
 
 private:
   void emergency(const std::shared_ptr<Empty::Request> request,
@@ -884,6 +963,15 @@ private:
 
   void posesChanged(const NamedPoseArray::SharedPtr msg)
   {
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<double> diff = now - poses_last_time_point_;
+    double rate = 1.0 / diff.count();
+    poses_last_time_point_ = now;
+
+    if (fabs(rate - 100.0) > 10) {
+      RCLCPP_WARN(logger_, "Motion capture rate off (Is: %f)", rate);
+    }
+
     // Here, we send all the poses to all CFs
     // In Crazyswarm1, we only sent the poses of the same group (i.e. channel)
 
@@ -988,6 +1076,16 @@ private:
     }
   }
 
+  void on_watchdog_timer()
+  {
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<double> diff = now - poses_last_time_point_;
+
+    if (diff.count() > 1.0/90.0) {
+      RCLCPP_WARN(logger_, "Motion capture did not receive data for %f s", diff.count());
+    }
+  }
+
   template<class T>
   void broadcast_set_param(
     const std::string& group,
@@ -1043,21 +1141,43 @@ private:
     // parameter updates
     std::shared_ptr<rclcpp::ParameterEventHandler> param_subscriber_;
     std::shared_ptr<rclcpp::ParameterEventCallbackHandle> cb_handle_;
+
+    // sanity checks
+    rclcpp::TimerBase::SharedPtr watchdog_timer_;
+    std::chrono::time_point<std::chrono::steady_clock> poses_last_time_point_;
+
+    // multithreading
+    rclcpp::CallbackGroup::SharedPtr callback_group_mocap_;
+    rclcpp::CallbackGroup::SharedPtr callback_group_all_cmd_;
+    rclcpp::CallbackGroup::SharedPtr callback_group_all_srv_;
+    rclcpp::CallbackGroup::SharedPtr callback_group_cf_cmd_;
+    rclcpp::CallbackGroup::SharedPtr callback_group_cf_srv_;
+
+    // connection stats
+    bitcraze::crazyflieLinkCpp::Connection::Statistics stats_previous_;
+    rclcpp::TimerBase::SharedPtr timer_connection_stats_;
   };
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
 
-  // rclcpp::spin(std::make_shared<CrazyflieServer>());
-  auto node = std::make_shared<CrazyflieServer>();
-  while (true)
-  {
-    node->spin_some();
-    rclcpp::spin_some(node);
+  // // rclcpp::spin(std::make_shared<CrazyflieServer>());
+  // auto node = std::make_shared<CrazyflieServer>();
+  // while (true)
+  // {
+  //   node->spin_some();
+  //   rclcpp::spin_some(node);
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-  }
+  //   std::this_thread::yield();
+  // }
+
+  auto node = std::make_shared<CrazyflieServer>();
+
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(node);
+  executor.spin();
+
   rclcpp::shutdown();
   return 0;
 }
