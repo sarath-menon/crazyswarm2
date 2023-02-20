@@ -1,5 +1,6 @@
 import bpy
 import numpy as np
+from scipy.spatial.distance import cdist
 import os
 import datetime
 import rowan as rw
@@ -98,7 +99,19 @@ class Visualization:
 
         self.ts = []
         self.frame = 0
-        self.interval = params["interval"]  # number of frames/time steps between renders
+        self.fps = params["fps"]    # frames per second
+
+        self.auto_yaw = params["auto_yaw"]["enabled"] if "auto_yaw" in params else False 
+        if self.auto_yaw:
+            self.radps = params["auto_yaw"]["radps"]
+
+        # for collision check
+        self.intersection_thresh = 0.15
+
+        # clip scene
+        # TODO: do not hardcode
+        self.bbox_min = np.array([-0.5,-0.5,0.2])
+        self.bbox_max = np.array([0.5,0.5,1.25])
 
         self.names = names
         self.n = len(names)
@@ -173,8 +186,10 @@ class Visualization:
 
 
     def step(self, t, states: list[State], states_desired: list[State], actions: list[Action]):
-        # only render and record every `self.interval`th frame:
-        if self.frame % self.interval == 0: 
+        self.ts.append(t)
+        # render and record `self.fps` frames per second 
+        if t - self.frame / self.fps >= 1 / self.fps:
+            self.frame += 1
             # quaternion matrix
             Q = np.zeros((self.n, 4))  
             # position matrix
@@ -183,15 +198,27 @@ class Visualization:
             # first put everything in place and record cfs's states
             for name, state in zip(self.names, states):
                 idx = self.names_idx_map[name]
-                Q[idx] = np.array(state.quat)
+                Q[idx] = np.array(state.quat) if not self.auto_yaw else rw.multiply(rw.from_euler(self.radps*t,0,0), np.array(state.quat))
                 P[idx] = np.array(state.pos) 
 
+            # check minimum distance between two robots
+            dists = cdist(P, P, metric="euclidean")
+            np.fill_diagonal(dists, self.intersection_thresh)
+            if dists.min() < self.intersection_thresh:
+                return
+
+            # clip scene
+            if not (np.all(self.bbox_min < P) and np.all(P < self.bbox_max)):
+                return
+
+            for name, state in zip(self.names, states):
+                idx = self.names_idx_map[name]
                 # set rotations
                 self.cf_list[idx].rotation_quaternion = Q[idx]
                 # set positions
                 self.cf_list[idx].location = P[idx]
                 # record states 
-                image_name = f"{self.names[idx]}_{self.frame//self.interval:05}.jpg" if name in self.cf_cameras else "None" # image capturing scene from cf's pov or None
+                image_name = f"{self.names[idx]}_{self.frame:05}.jpg" if name in self.cf_cameras else "None" # image capturing scene from cf's pov or None
                 # record cf's state in world frame
                 with open(self.state_filenames[idx], "a") as file:
                     file.write(f"{image_name},{t},{P[idx,0]},{P[idx,1]},{P[idx,2]},{Q[idx,0]},{Q[idx,1]},{Q[idx,2]},{Q[idx,3]}\n")
@@ -206,7 +233,7 @@ class Visualization:
                 p_cam = self.p_fixed_obs_cam
                 self.camera.location = p_cam
                 self.lamp.location = p_cam
-                image_name = f"cam_{self.frame//self.interval:05}.jpg"  # image capturing scene from cf's pov
+                image_name = f"cam_{self.frame:05}.jpg"  # image capturing scene from cf's pov
                 # record observer camera state in world frame if enabled
                 with open(self.cam_sf, "a") as file:
                     file.write(f"{image_name},{t},{self.p_fixed_obs_cam[0]},{self.p_fixed_obs_cam[1]},{self.p_fixed_obs_cam[2]},{self.q_fixed_obs_cam[0]},{self.q_fixed_obs_cam[1]},{self.q_fixed_obs_cam[2]},{self.q_fixed_obs_cam[3]}\n")
@@ -229,14 +256,12 @@ class Visualization:
                 # hide corresponding cf for rendering
                 self.cf_list[idx].hide_render = True
                 # Render image
-                image_name = f"{name}_{self.frame//self.interval:05}.jpg"  # image capturing scene from cf's pov
+                image_name = f"{name}_{self.frame:05}.jpg"  # image capturing scene from cf's pov
                 self.scene.render.filepath = f"{self.path}/{name}/{image_name}"
                 bpy.ops.render.render(write_still=True)
                 # show again after rendering
                 self.cf_list[idx].hide_render = False
-
-            self.ts.append(t)
-        self.frame += 1
+            #self.frame += 1
 
     def shutdown(self):
         for idx in range(1,self.n):
