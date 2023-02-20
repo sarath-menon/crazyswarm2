@@ -27,6 +27,11 @@ robots:
     #    topic_name3: 
     #      frequency: 1
     #      vars: ["acc.x", "acc.y", "acc.z"]
+  cf6:
+    enabled: true
+    uri: radio://0/80/2M/E7E7E7E706
+    initial_position: [0.15, 0.15, 0.0]
+    type: cf21  # see robot_types
 # Definition of the various robot types
 robot_types:
   cf21:
