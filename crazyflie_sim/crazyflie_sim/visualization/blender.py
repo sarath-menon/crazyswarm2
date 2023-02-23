@@ -45,14 +45,19 @@ class Visualization:
         # load environment
         world = bpy.context.scene.world
         world.use_nodes = True
-        env = world.node_tree.nodes.new("ShaderNodeTexEnvironment")
-        env.image = bpy.data.images.load("src/crazyswarm2/crazyflie_sim/data/env.hdr")
+        background_paths = [""]
+        self.env = world.node_tree.nodes.new("ShaderNodeTexEnvironment")
+        for subdir, dirs, files in os.walk("src/crazyswarm2/crazyflie_sim/data/env"):
+            bg_paths = [os.path.join(subdir, file) for file in files]
+        self.bg_idx = 0
+        self.bg_imgs = [bpy.data.images.load(bgp) for bgp in bg_paths]
+        self.env.image = self.bg_imgs[self.bg_idx]
         node_tree = world.node_tree
-        node_tree.links.new(env.outputs["Color"], node_tree.nodes["Background"].inputs["Color"])
+        node_tree.links.new(self.env.outputs["Color"], node_tree.nodes["Background"].inputs["Color"])
 
         # import crazyflie object 
-        bpy.ops.import_scene.obj(filepath="src/crazyswarm2/crazyflie_sim/data/cf.obj", axis_forward="Y", axis_up="Z")
-        self.cf_default = bpy.data.objects["cf"]
+        bpy.ops.import_scene.obj(filepath="src/crazyswarm2/crazyflie_sim/data/cf2.obj", axis_forward="Y", axis_up="Z")
+        self.cf_default = bpy.data.objects["cf2"]
         # save scene
         self.scene = bpy.context.scene
         self.scene.render.resolution_x = 320
@@ -222,6 +227,10 @@ class Visualization:
                 # record cf's state in world frame
                 with open(self.state_filenames[idx], "a") as file:
                     file.write(f"{image_name},{t},{P[idx,0]},{P[idx,1]},{P[idx,2]},{Q[idx,0]},{Q[idx,1]},{Q[idx,2]},{Q[idx,3]}\n")
+
+            # set background image
+            self.bg_idx = (self.bg_idx + 1) % len(self.bg_imgs)
+            self.env.image = self.bg_imgs[self.bg_idx]
 
             if self.observer_cam:
                 # take picture from fixed observer camera's pov
