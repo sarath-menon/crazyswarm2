@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ROS2 Tutorials" href="tutorials.html" />
+    <link rel="next" title="ROS 2 Tutorials" href="tutorials.html" />
     <link rel="prev" title="Overview" href="overview.html" /> 
 </head>
 
@@ -55,7 +55,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#physical-experiments">Physical Experiments</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#ros2-terminal">ROS2 terminal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ros-2-terminal">ROS 2 terminal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-logblocks-at-runtime">Enabling Logblocks at runtime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#teleoperation-controller">Teleoperation controller</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-scripts">Python scripts</a></li>
@@ -63,7 +63,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS 2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="howto.html">How To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -96,7 +96,7 @@
 <span id="id1"></span><h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Do not forget to source your ROS2 workspace in each terminal you would like to use it</p>
+<p>Do not forget to source your ROS 2 workspace in each terminal you would like to use it</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="w"> </span>install/local_setup.bash
 </pre></div>
 </div>
@@ -204,8 +204,8 @@ ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span c
 </section>
 <section id="physical-experiments">
 <h2>Physical Experiments<a class="headerlink" href="#physical-experiments" title="Permalink to this heading"></a></h2>
-<section id="ros2-terminal">
-<h3>ROS2 terminal<a class="headerlink" href="#ros2-terminal" title="Permalink to this heading"></a></h3>
+<section id="ros-2-terminal">
+<h3>ROS 2 terminal<a class="headerlink" href="#ros-2-terminal" title="Permalink to this heading"></a></h3>
 <p>The following shows a simple take off and land example without any launch files or yaml files</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie<span class="w"> </span>reboot<span class="w"> </span>--uri<span class="w"> </span>radio://0/80/2M/E7E7E7E706<span class="w"> </span>--mode<span class="w"> </span>sysoff
 ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.commander.enHighLevel<span class="w"> </span><span class="m">1</span>
@@ -232,7 +232,7 @@ This section will show how to do that by using services</p>
 ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}</span>
 </pre></div>
 </div>
-<p>With ROS2’s rqt you can look at the topics, or with ‘ROS2 topics echo /cf2/pose’</p>
+<p>With ROS 2’s rqt you can look at the topics, or with ‘ROS 2 topics echo /cf2/pose’</p>
 <p>To close the logblocks again, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/remove_logging<span class="w"> </span>crazyflie_interfaces/srv/RemoveLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;topic_test&#39;}&quot;</span>
 ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/remove_logging<span class="w"> </span>crazyflie_interfaces/srv/RemoveLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;}&quot;</span>
@@ -265,7 +265,7 @@ ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tutorials.html" class="btn btn-neutral float-right" title="ROS2 Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="ROS 2 Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

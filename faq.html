@@ -48,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS 2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="howto.html">How To</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Frequently Asked Questions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-can-i-get-help">How can I get help?</a></li>
@@ -107,7 +107,7 @@ Provide as much details as possible to reproduce the problem, your observation, 
 <li><p><strong>Motion capture integration.</strong>
 In Crazyswarm1, the motion capture integration is part of the crazyswarm_server, due to limitations in the ROS1 pub/sub system.
 In contrast, Crazyswarm2 now follows a better ROS-style design, where our motion capture abstraction layer and custom
-frame-by-frame tracking is available as a <a class="reference external" href="https://github.com/IMRCLab/motion_capture_tracking">separate ROS2 package</a>.
+frame-by-frame tracking is available as a <a class="reference external" href="https://github.com/IMRCLab/motion_capture_tracking">separate ROS 2 package</a>.
 In addition, Crazyswarm2 is designed to support other localization methods (lighthouse, or on-board only localization) from the start.</p></li>
 <li><p><strong>Communication backend.</strong>
 In Crazyswarm2, we rely on <a class="reference external" href="https://github.com/bitcraze/crazyflie-link-cpp">crazyflie-link-cpp</a> at the lowest layer, unlike a custom link implementation in Crazyswarm1.
@@ -129,7 +129,7 @@ In contrast, Crazyswarm2 will allow common swarm monitoring tasks without restar
 Here are some differences:</p>
 <ul class="simple">
 <li><p><strong>Motion capture integration.</strong>
-Crazyswarm2 supports common motion capture systems using the ROS2 package <a class="reference external" href="https://github.com/IMRCLab/motion_capture_tracking/tree/ros2">motion_capture_tracking</a>.
+Crazyswarm2 supports common motion capture systems using the ROS 2 package <a class="reference external" href="https://github.com/IMRCLab/motion_capture_tracking/tree/ROS2">motion_capture_tracking</a>.
 The Bitcraze API can <em>send</em> position measurements to the Crazyflie,
 but does not know how to <em>get</em> position measurements from mocap hardware.
 Moreover, the use of motion_capture_tracking allows to use identical or single motion capture markers.</p></li>
@@ -143,9 +143,9 @@ Crazyswarm2’s simulator is built upon automatically generated Python bindings
 for certain modules in the Crazyflie firmware.
 The binding system can be helpful when developing new firmware modules,
 especially when they are mathematically complex and hard to debug.</p></li>
-<li><p><strong>ROS2 foundation.</strong>
-The Crazyswarm2 server program is a ROS2 node.
-Our Python API is a thin wrapper around the ROS2 interface.</p></li>
+<li><p><strong>ROS 2 foundation.</strong>
+The Crazyswarm2 server program is a ROS 2 node.
+Our Python API is a thin wrapper around the ROS 2 interface.</p></li>
 </ul>
 </section>
 </section>

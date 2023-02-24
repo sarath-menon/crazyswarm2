@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Overview" href="overview.html" />
-    <link rel="prev" title="Crazyswarm2: A ROS2 testbed for Aerial Robot Teams" href="index.html" /> 
+    <link rel="prev" title="Crazyswarm2: A ROS 2 testbed for Aerial Robot Teams" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,7 +53,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS2 Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS 2 Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="howto.html">How To</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
@@ -89,7 +89,7 @@
 <tbody>
 <tr class="row-odd"><td><p>Ubuntu</p></td>
 <td><p>Python</p></td>
-<td><p>ROS2</p></td>
+<td><p>ROS 2</p></td>
 </tr>
 <tr class="row-even"><td><p>20.04</p></td>
 <td><p>3.7, 3.8</p></td>
@@ -113,7 +113,7 @@ This program will link the crazyradio directly with WS, but beware of bugs. Chec
 <section id="first-installation">
 <h2>First Installation<a class="headerlink" href="#first-installation" title="Permalink to this heading"></a></h2>
 <ol class="arabic">
-<li><p>If needed, install ROS2 using the instructions at <a class="reference external" href="https://docs.ros.org/en/galactic/Installation.html">https://docs.ros.org/en/galactic/Installation.html</a> or <a class="reference external" href="https://docs.ros.org/en/humble/Installation.html">https://docs.ros.org/en/humble/Installation.html</a>.</p></li>
+<li><p>If needed, install ROS 2 using the instructions at <a class="reference external" href="https://docs.ros.org/en/galactic/Installation.html">https://docs.ros.org/en/galactic/Installation.html</a> or <a class="reference external" href="https://docs.ros.org/en/humble/Installation.html">https://docs.ros.org/en/humble/Installation.html</a>.</p></li>
 <li><p>Install dependencies</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libboost-program-options-dev<span class="w"> </span>libusb-1.0-0-dev
@@ -127,7 +127,7 @@ sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w
 </div>
 </div></blockquote>
 </li>
-<li><p>Set up your ROS2 workspace</p>
+<li><p>Set up your ROS 2 workspace</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>ros2_ws/src
 <span class="nb">cd</span><span class="w"> </span>ros2_ws/src
@@ -137,7 +137,7 @@ git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w">
 </div>
 </div></blockquote>
 </li>
-<li><p>Build your ROS2 workspace</p>
+<li><p>Build your ROS 2 workspace</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>../
 colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install
@@ -151,7 +151,7 @@ colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install
 </li>
 <li><p>Set up software-in-the-loop simulation (optional)</p>
 <blockquote>
-<div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS2 workspace!),</p>
+<div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS 2 workspace!),</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/bitcraze/crazyflie-firmware.git
 </pre></div>
 </div>
@@ -182,7 +182,7 @@ colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Crazyswarm2: A ROS2 testbed for Aerial Robot Teams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Crazyswarm2: A ROS 2 testbed for Aerial Robot Teams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="overview.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

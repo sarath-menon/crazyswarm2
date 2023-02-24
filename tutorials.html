@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROS2 Tutorials &mdash; Crazyswarm2 1.0a1 documentation</title>
+  <title>ROS 2 Tutorials &mdash; Crazyswarm2 1.0a1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
@@ -49,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS2 Tutorials</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS 2 Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#teleoperation-keyboard">Teleoperation keyboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vizualization-with-rviz2">Vizualization with RVIZ2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapping-with-the-slam-toolbox">Mapping with the SLAM toolbox</a><ul>
@@ -84,7 +84,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">ROS2 Tutorials</li>
+      <li class="breadcrumb-item active">ROS 2 Tutorials</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/tutorials.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -94,8 +94,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ros2-tutorials">
-<span id="tutorials"></span><h1>ROS2 Tutorials<a class="headerlink" href="#ros2-tutorials" title="Permalink to this heading"></a></h1>
+  <section id="ros-2-tutorials">
+<span id="tutorials"></span><h1>ROS 2 Tutorials<a class="headerlink" href="#ros-2-tutorials" title="Permalink to this heading"></a></h1>
 <p>This page shows tutorials which connects the Crazyflie through Crazyswarm2 to with external packages like RVIZ2, teleop_twist_keyboard, SLAM toolbox and NAV2 bringup. Have fun!</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -151,7 +151,7 @@ The crazyflie names should appear with their estimated position.</p>
 </div></section>
 <section id="mapping-with-the-slam-toolbox">
 <h2>Mapping with the SLAM toolbox<a class="headerlink" href="#mapping-with-the-slam-toolbox" title="Permalink to this heading"></a></h2>
-<p>You can connect the Crazyflie through ROS2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
+<p>You can connect the Crazyflie through ROS 2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
 With a <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> and <a class="reference external" href="https://www.bitcraze.io/products/multi-ranger-deck/">Multi-ranger</a>
 ) a simple map can be created.</p>
 <div class="admonition note">
@@ -160,7 +160,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 </div>
 <section id="preperation">
 <h3>Preperation<a class="headerlink" href="#preperation" title="Permalink to this heading"></a></h3>
-<p>Assuming you have installed ROS2 and Crazyswarm2 according to the instructions and went through the guides on Usage, now install the slam toolbox:</p>
+<p>Assuming you have installed ROS 2 and Crazyswarm2 according to the instructions and went through the guides on Usage, now install the slam toolbox:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-galactic-slam-toolbox
 </pre></div>
 </div>
@@ -386,7 +386,7 @@ Either you can replace those that are there already (‘map.*’), or call them 
 </section>
 <section id="navigate-the-crazyflie">
 <h3>Navigate the Crazyflie<a class="headerlink" href="#navigate-the-crazyflie" title="Permalink to this heading"></a></h3>
-<p>In a terminal run the following from the ros2 workspace.</p>
+<p>In a terminal run the following from the ROS 2 workspace.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>install/setup.bash
 ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie_examples<span class="w"> </span>multiranger_nav2_launch.py
 </pre></div>
