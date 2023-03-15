@@ -415,7 +415,12 @@ public:
         cf_.setParam<int32_t>(entry->id, p.as_int());
         break;
       case Crazyflie::ParamTypeFloat:
-        cf_.setParam<float>(entry->id, p.as_double());
+        if (p.get_type() == rclcpp::PARAMETER_INTEGER) {
+          cf_.setParam<float>(entry->id, (float)p.as_int());
+        } else {
+          cf_.setParam<float>(entry->id, p.as_double());
+        }
+
         break;
       }
     } else {
@@ -1060,7 +1065,11 @@ private:
                 broadcast_set_param<int32_t>(group, name, p.as_int());
                 break;
               case Crazyflie::ParamTypeFloat:
-                broadcast_set_param<float>(group, name, p.as_double());
+                if (p.get_type() == rclcpp::PARAMETER_INTEGER) {
+                  broadcast_set_param<float>(group, name, (float)p.as_int());
+                } else {
+                  broadcast_set_param<float>(group, name, p.as_double());
+                }
                 break;
               }
               break;

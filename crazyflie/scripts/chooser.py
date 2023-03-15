@@ -18,8 +18,8 @@ if __name__ == '__main__':
 	parser.add_argument(
 		"--configpath",
 		type=str,
-		default=os.path.join(os.path.dirname(os.path.realpath(__file__)), "../config/"),
-		help="Path to the configuration *.yaml files")
+		default=os.path.join(os.path.dirname(os.path.realpath(__file__)), "../config/crazyflies.yaml"),
+		help="Path to the configuration .yaml file")
 	parser.add_argument(
 		"--stm32Fw",
 		type=str,
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 		help="Path to cf2_nrf.bin")
 	args = parser.parse_args()
 
-	if not os.path.exists(os.path.join(args.configpath, "crazyflies.yaml")):
+	if not os.path.exists(args.configpath):
 		print("ERROR: Could not find yaml configuration file in configpath ({}).".format(args.configpath))
 		exit()
 
@@ -52,12 +52,11 @@ if __name__ == '__main__':
 				node["enabled"] = True
 			else:
 				node["enabled"] = False
-		with open(os.path.join(args.configpath, "crazyflies.yaml"), 'w') as outfile:
-			yaml.dump(cfg, outfile)
+		# with open(args.configpath, 'w') as outfile:
+		# 	yaml.dump(cfg, outfile)
 
 	yaml = YAML()
-	cfg = yaml.load(pathlib.Path(args.configpath) / "crazyflies.yaml")
-
+	cfg = yaml.load(pathlib.Path(args.configpath))
 	cfTypes = cfg["robot_types"]
 	enabled = [name for name in cfg["robots"].keys() if cfg["robots"][name]["enabled"] == True]
 
@@ -68,8 +67,8 @@ if __name__ == '__main__':
 	RIGHT_DIR = [0, -1]
 	def dot(a, b):
 		return a[0] * b[0] + a[1] * b[1]
-	pixel_x = [120 * dot(pos, RIGHT_DIR) for pos in positions]
-	pixel_y = [120 * dot(pos, DOWN_DIR) for pos in positions]
+	pixel_x = [180 * dot(pos, RIGHT_DIR) for pos in positions]
+	pixel_y = [180 * dot(pos, DOWN_DIR) for pos in positions]
 	xmin, ymin = min(pixel_x), min(pixel_y)
 	xmax, ymax = max(pixel_x), max(pixel_y)
 

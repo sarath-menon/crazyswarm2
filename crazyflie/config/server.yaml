@@ -1,5 +1,7 @@
 /crazyflie_server:
   ros__parameters:
+    motion_capture:
+      warning_if_rate_outside: [90, 110]
     # simulation related
     sim:
       max_dt: 0 #0.1              # artificially limit the step() function (set to 0 to disable)

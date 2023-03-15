@@ -84,7 +84,7 @@ public:
         on_mode_switched();
 
         dt_ = 1.0f/frequency_;
-        is_low_level_flight_active_ = false;
+        is_low_level_flight_active_ = true;//false;
 
         // Create a parameter subscriber that can be used to monitor parameter changes
         param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
@@ -168,6 +168,10 @@ private:
             q = AngleAxisf(0, Vector3f::UnitX())
                     * AngleAxisf(0, Vector3f::UnitY())
                     * AngleAxisf(state_.yaw, Vector3f::UnitZ());
+
+            // q = AngleAxisf(state_.yaw, Vector3f::UnitX())
+            //     * AngleAxisf(0, Vector3f::UnitY())
+            //     * AngleAxisf(0, Vector3f::UnitZ());
 
             fullstate_.pose.position.x = state_.x; 
             fullstate_.pose.position.y = state_.y;
@@ -262,12 +266,13 @@ private:
         }
         auto request = std::make_shared<Takeoff::Request>();
         request->group_mask = 0;
-        request->height = 0.5;
-        request->duration = rclcpp::Duration::from_seconds(2);
+        request->height = 0.75; //1.25;
+        // request->height = 1.25;
+        request->duration = rclcpp::Duration::from_seconds(4);
         client_takeoff_->async_send_request(request);
 
-        timer_takeoff_ = this->create_wall_timer(2s, [this]() {
-            state_.z = 0.5;
+        timer_takeoff_ = this->create_wall_timer(4s, [this]() {
+            // state_.z = 1.0;
             is_low_level_flight_active_ = true;
             this->timer_takeoff_->cancel();
         });
