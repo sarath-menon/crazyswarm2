@@ -20,6 +20,8 @@
 #include "crazyflie_interfaces/srv/upload_trajectory.hpp"
 #include "motion_capture_tracking_interfaces/msg/named_pose_array.hpp"
 #include "crazyflie_interfaces/msg/full_state.hpp"
+#include "crazyflie_interfaces/msg/des_cable_angles.hpp"
+#include "crazyflie_interfaces/msg/des_cable_angles_item.hpp"
 #include "crazyflie_interfaces/msg/position.hpp"
 #include "crazyflie_interfaces/msg/log_data_generic.hpp"
 
@@ -733,6 +735,7 @@ public:
 
     // topics for "all"
     subscription_cmd_full_state_ = this->create_subscription<crazyflie_interfaces::msg::FullState>("all/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_full_state_changed, this, _1), sub_opt_all_cmd);
+    subscription_cmd_des_cable_angles_ = this->create_subscription<crazyflie_interfaces::msg::DesCableAngles>("all/cmd_des_cable_angles", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_des_cable_angles_changed, this, _1), sub_opt_all_cmd);
 
     // services for "all"
     auto service_qos = rmw_qos_profile_services_default;
@@ -966,6 +969,18 @@ private:
 
   }
 
+  void cmd_des_cable_angles_changed(const crazyflie_interfaces::msg::DesCableAngles::SharedPtr msg)
+  { 
+    std::vector<CrazyflieBroadcaster::desCableAngles> data;
+    for (const auto& cable : msg->cables) {
+      data.push_back({cable.id, cable.az, cable.el});
+    }
+    for (auto &bc : broadcaster_) {
+        auto &cfbc = bc.second;
+        cfbc->sendDesCableAnglesSetpoint(data);
+    }
+  }
+
   void posesChanged(const NamedPoseArray::SharedPtr msg)
   {
     auto now = std::chrono::steady_clock::now();
@@ -1125,6 +1140,7 @@ private:
 
     // subscribers
     rclcpp::Subscription<crazyflie_interfaces::msg::FullState>::SharedPtr subscription_cmd_full_state_;
+    rclcpp::Subscription<crazyflie_interfaces::msg::DesCableAngles>::SharedPtr subscription_cmd_des_cable_angles_;
     rclcpp::Subscription<NamedPoseArray>::SharedPtr sub_poses_;
 
     // services

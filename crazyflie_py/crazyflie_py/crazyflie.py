@@ -21,7 +21,7 @@ from geometry_msgs.msg import Point, Twist
 from rcl_interfaces.srv import GetParameters, SetParameters, ListParameters, GetParameterTypes
 from rcl_interfaces.msg import Parameter, ParameterValue, ParameterType
 from crazyflie_interfaces.srv import Takeoff, Land, GoTo, UploadTrajectory, StartTrajectory, NotifySetpointsStop
-from crazyflie_interfaces.msg import TrajectoryPolynomialPiece, FullState, Position
+from crazyflie_interfaces.msg import TrajectoryPolynomialPiece, FullState, Position, DesCableAngles, DesCableAnglesItem
 
 def arrayToGeometryPoint(a):
     result = Point()
@@ -186,6 +186,8 @@ class Crazyflie:
         self.cmdFullStatePublisher = node.create_publisher(FullState, prefix + "/cmd_full_state", 1)
         self.cmdFullStateMsg = FullState()
         self.cmdFullStateMsg.header.frame_id = "/world"
+
+        self.cmdDesCableAnglesPublisher = node.create_publisher(DesCableAngles, prefix + "/cmd_des_cable_angles", 1)
 
         # self.cmdStopPublisher = rospy.Publisher(prefix + "/cmd_stop", std_msgs.msg.Empty, queue_size=1)
 
@@ -897,3 +899,21 @@ class CrazyflieServer(rclpy.node.Node):
         self.cmdFullStateMsg.twist.angular.y    = omega[1]
         self.cmdFullStateMsg.twist.angular.z    = omega[2]
         self.cmdFullStatePublisher.publish(self.cmdFullStateMsg)
+
+    def cmdDesCableAngles(self, data):
+        """
+        data should be a list of tuples, e.g.
+        [(id0, az0, el0), (id1, az1, el1)] for two cables
+        Units for az/el are in rad
+        """
+
+        msg = DesCableAngles()
+        msg.header.frame_id = "/world"
+        msg.header.stamp = self.get_clock().now().to_msg()
+        for entry in data:
+            item = DesCableAnglesItem()
+            item.id = entry[0]
+            item.az = entry[1]
+            item.el = entry[2]
+            msg.cables.append(item)
+        self.cmdDesCableAnglesPublisher.publish(msg)
