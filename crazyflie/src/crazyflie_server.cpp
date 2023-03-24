@@ -803,7 +803,7 @@ public:
 
     rclcpp::SensorDataQoS sensor_data_qos;
     sensor_data_qos.keep_last(1);
-    sensor_data_qos.deadline(rclcpp::Duration(0/*s*/, 1e6/110 /*ns*/));
+    sensor_data_qos.deadline(rclcpp::Duration(0/*s*/, 1e9/100 /*ns*/));
     sub_poses_ = this->create_subscription<NamedPoseArray>(
         "poses", sensor_data_qos, std::bind(&CrazyflieServer::posesChanged, this, _1), sub_opt_mocap);
 
