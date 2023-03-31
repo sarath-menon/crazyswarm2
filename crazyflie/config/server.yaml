@@ -13,6 +13,18 @@
       visualizations:             # see visualization folder for a list
         rviz:
           enabled: true
+        vispy:
+          enabled: false
+          show_window: true   # FIXME
+          output_file: "recording.mp4"
+          fps: 30 # frames per second
+          dpi: 400
+          camera: # turntable camera 
+            fov: 30
+            elevation_angle: 10.0  # elevation angle in degrees
+            azimuth_angle: 30.0   # azimuth angle in degrees
+            distance: 5           # distance from center
+            center: [0.0, 0.0, 1.0]     # where camera looks at
         pdf:
           enabled: false
           output_file: "result.pdf"
