@@ -603,10 +603,10 @@ class Crazyflie:
         # q = rowan.from_euler(0, 0, yaw)
         q = np.array([float(q[0]), float(q[1]), float(q[2]), float(q[3])])
 
-        self.cmdFullStateMsg.pose.orientation.w = q[0]
-        self.cmdFullStateMsg.pose.orientation.x = q[1]
-        self.cmdFullStateMsg.pose.orientation.y = q[2]
-        self.cmdFullStateMsg.pose.orientation.z = q[3]
+        self.cmdFullStateMsg.pose.orientation.x = q[0]
+        self.cmdFullStateMsg.pose.orientation.y = q[1]
+        self.cmdFullStateMsg.pose.orientation.z = q[2]
+        self.cmdFullStateMsg.pose.orientation.w = q[3]
         self.cmdFullStateMsg.twist.angular.x    = omega[0]
         self.cmdFullStateMsg.twist.angular.y    = omega[1]
         self.cmdFullStateMsg.twist.angular.z    = omega[2]
@@ -992,10 +992,10 @@ class CrazyflieServer(rclpy.node.Node):
         self.cmdFullStateMsg.acc.z              = acc[2]
         # q = rowan.from_euler(0, 0, yaw)
         q = np.array([float(q[0]), float(q[1]), float(q[2]), float(q[3])])
-        self.cmdFullStateMsg.pose.orientation.w = q[0]
-        self.cmdFullStateMsg.pose.orientation.x = q[1]
-        self.cmdFullStateMsg.pose.orientation.y = q[2]
-        self.cmdFullStateMsg.pose.orientation.z = q[3]
+        self.cmdFullStateMsg.pose.orientation.x = q[0]
+        self.cmdFullStateMsg.pose.orientation.y = q[1]
+        self.cmdFullStateMsg.pose.orientation.z = q[2]
+        self.cmdFullStateMsg.pose.orientation.w = q[3]
         self.cmdFullStateMsg.twist.angular.x    = omega[0]
         self.cmdFullStateMsg.twist.angular.y    = omega[1]
         self.cmdFullStateMsg.twist.angular.z    = omega[2]
