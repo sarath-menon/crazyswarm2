@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">ROS 2 Tutorials</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How To</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#tracking-non-robotic-objects">Tracking Non-Robotic Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -109,6 +110,16 @@ the position of an obstacle. In that case, a “virtual” robot can be defined 
 </div>
 <p>Here, the position of the obstacle will be tracked using the motion_capture_tracking ROS package. The resulting pose will be
 available via TF (named “obstacle”) and send to the firmware of the actual robots with id 255.</p>
+</section>
+<section id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this heading"></a></h2>
+<p>If there is a crash (e.g., segmentation fault) in the crazyflie_server (C++ backend), you can find the stacktrace by using gdb.
+First, compile your code in debug mode, then run the launch file with the debug flag, which will open an xterm window.
+If you don’t have xterm installed, you can do so using <cite>sudo apt install xterm</cite>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--cmake-args<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Debug
+ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py<span class="w"> </span>debug:<span class="o">=</span>True
+</pre></div>
+</div>
 </section>
 </section>
 
