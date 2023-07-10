@@ -69,6 +69,34 @@ robot_types:
 
 # global settings for all robots
 all:
+  # firmware parameters for all drones (use robot_types/type_name to set per type, or
+  # robots/drone_name to set per drone)
+  firmware_params:
+    commander:
+      enHighLevel: 1
+    stabilizer:
+      estimator: 2 # 1: complementary, 2: kalman
+      controller: 6 # 1: PID, 2: mellinger 4: sjc 6: Lee 7: lee payload
+    ctrlLee:
+      Kpos_Px: 9.0 # def: 10.0
+      Kpos_Py: 9.0 # def: 10.0
+      Kpos_Pz: 9.0 # def: 10.0
+      Kpos_Dx: 7.0  # def: 8.0
+      Kpos_Dy: 7.0  # def: 8.0 
+      Kpos_Dz: 7.0  # def: 8.0  
+      Kpos_Ix: 5.0
+      Kpos_Iy: 5.0
+      Kpos_Iz: 8.0
+      KR_x: 0.0055 #0.0055   # def: 0.005  
+      KR_y: 0.0055 #0.0055  # def: 0.005
+      KR_z: 0.01  #0.008   # def: 0.005
+      Kw_x: 0.0013 #0.0013 # def: 0.0009
+      Kw_y: 0.0013 #0.0013  # def: 0.0009
+      Kw_z: 0.002  # def: 0.0012
+      KI_x: 0.012 #0.009 #0.015
+      KI_y: 0.018 #0.009 #0.015
+      KI_z: 0.015 #0.009 #0.015
+      mass: 0.0333    
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
   firmware_logging:
@@ -84,14 +112,6 @@ all:
     #  topic_name2:
     #    frequency: 1 # Hz
     #    vars: ["stabilizer.roll", "stabilizer.pitch", "stabilizer.yaw"]
-  # firmware parameters for all drones (use robot_types/type_name to set per type, or
-  # robots/drone_name to set per drone)
-  firmware_params:
-    commander:
-      enHighLevel: 1
-    stabilizer:
-      estimator: 2 # 1: complementary, 2: kalman
-      controller: 2 # 1: PID, 2: mellinger
     # ring:
     #   effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
     #   solidBlue: 255 # if set to solid color
