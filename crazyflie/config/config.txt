@@ -33,15 +33,15 @@ ctrlLee.thrustSi
 ctrlLee.torquex
 ctrlLee.torquey
 ctrlLee.torquez
-ctrlLee.Kpos_Px
-ctrlLee.Kpos_Py
-ctrlLee.Kpos_Pz
-ctrlLee.Kpos_Dx
-ctrlLee.Kpos_Dy
-ctrlLee.Kpos_Dz
-ctrlLee.KR_x
-ctrlLee.KR_y
-ctrlLee.KR_z
-ctrlLee.Kw_x
-ctrlLee.Kw_y
-ctrlLee.Kw_z
+# ctrlLee.Kpos_Px
+# ctrlLee.Kpos_Py
+# ctrlLee.Kpos_Pz
+# ctrlLee.Kpos_Dx
+# ctrlLee.Kpos_Dy
+# ctrlLee.Kpos_Dz
+# ctrlLee.KR_x
+# ctrlLee.KR_y
+# ctrlLee.KR_z
+# ctrlLee.Kw_x
+# ctrlLee.Kw_y
+# ctrlLee.Kw_z
