@@ -132,9 +132,9 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     # load the plot settings
-    settings_file = "plot_settings.yaml"
+    settings_file = "settings.yaml"
     with open(settings_file, 'r') as f:
-        settings = yaml.load(f)
+        settings = yaml.load(f, Loader=yaml.FullLoader)
 
     # decode binary log data
     path = os.path.join(settings["data_dir"], settings["data_file"])
