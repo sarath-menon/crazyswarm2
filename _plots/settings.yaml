@@ -1,0 +1,214 @@
+---
+# general settings
+data_dir: logs
+data_file: log29
+event_name: fixedFrequency
+start_time:
+end_time:
+output_dir: reports
+figures_max:
+skip_data:
+- timestamp
+
+# figure settings
+figures:
+- title: Positions
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.x: actual
+          ctrltargetZ.x: desired
+        label: "$x$ [m]"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.y: actual
+          ctrltargetZ.y: desired
+        label: "$y$ [m]"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.z: actual
+          ctrltargetZ.z: desired
+        label: "$z$ [m]"
+- title: Translation Velocities
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.vx: actual
+          ctrltargetZ.vx: desired
+        label: "$\\dot x$ [m/s]"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.vy: actual
+          ctrltargetZ.vy: desired
+        label: "$\\dot y$ [m/s]"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimateZ.vz: actual
+          ctrltargetZ.vz: desired
+        label: "$\\dot z$ [m/s]"
+- title: Angles
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.rpyx: actual
+          ctrlLee.rpydx: desired
+        label: "$\\phi$ [rad]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.rpyy: actual
+          ctrlLee.rpydy: desired
+        label: "$\\theta$ [rad]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.rpyz: actual
+          ctrlLee.rpydz: desired
+        label: "$\\psi$ [rad]"
+- title: Angular Velocities
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.omegax: actual
+          ctrlLee.omegarx: desired
+        label: "$\\dot \\phi$ [rad/s]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.omegay: actual
+          ctrlLee.omegary: desired
+        label: "$\\dot \\theta$ [rad/s]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.omegaz: actual
+          ctrlLee.omegarz: desired
+        label: "$\\dot \\psi$ [rad/s]"
+- title: Thrust
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.thrustSi: actual
+        label: "$T$ [N]"
+- title: Torques (xyz)
+  type: 2d
+  xlabel: "$t$ [s]"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.torquex: actual
+        label: "$\\tau_x$ [Nm]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.torquey: actual
+        label: "$\\tau_y$ [Nm]"
+  - timestamp:
+      y_info:
+        data:
+          ctrlLee.torquez: actual
+        label: "$\\tau_z$ [Nm]"
+- title: Trajectories
+  type: 3d
+  xlabel: x [m]
+  ylabel: y [m]
+  zlabel: z [m]
+  structure:
+  - - stateEstimateZ.x
+    - stateEstimateZ.y
+    - stateEstimateZ.z
+    - actual
+  - - ctrltargetZ.x
+    - ctrltargetZ.y
+    - ctrltargetZ.z
+    - desired
+
+# title settings
+title_settings:
+- data_dir
+- data_file
+- start_time
+- end_time
+title_params:
+  Kpos_Px: 9
+  Kpos_Py: 9
+  Kpos_Pz: 9
+  Kpos_Dx: 7
+  Kpos_Dy: 7
+  Kpos_Dz: 7
+  Kpos_Ix: 5
+  Kpos_Iy: 5
+  Kpos_Iz: 8
+  KR_x: 0.0055
+  KR_y: 0.0055
+  KR_z: 0.01
+  Kw_x: 0.0013
+  Kw_y: 0.0013
+  Kw_z: 0.002
+  KI_x: 0.012
+  KI_y: 0.018
+  KI_z: 0.015
+  mass: 0.0333
+convert_units:
+  stateEstimateZ.x: 0.001
+  stateEstimateZ.y: 0.001
+  stateEstimateZ.z: 0.001
+  stateEstimateZ.vx: 0.001
+  stateEstimateZ.vy: 0.001
+  stateEstimateZ.vz: 0.001
+  ctrltargetZ.x: 0.001
+  ctrltargetZ.y: 0.001
+  ctrltargetZ.z: 0.001
+  ctrltargetZ.vx: 0.001
+  ctrltargetZ.vy: 0.001
+  ctrltargetZ.vz: 0.001
+units:
+  timestamp: s
+  stateEstimateZ.x: m
+  stateEstimateZ.y: m
+  stateEstimateZ.z: m
+  stateEstimateZ.vx: m/s
+  stateEstimateZ.vy: m/s
+  stateEstimateZ.vz: m/s
+  ctrltargetZ.x: m
+  ctrltargetZ.y: m
+  ctrltargetZ.z: m
+  ctrltargetZ.vx: m/s
+  ctrltargetZ.vy: m/s
+  ctrltargetZ.vz: m/s
+  ctrlLee.rpyx: rad
+  ctrlLee.rpyy: rad
+  ctrlLee.rpyz: rad
+  ctrlLee.rpydx: rad
+  ctrlLee.rpydy: rad
+  ctrlLee.rpydz: rad
+  ctrlLee.omegax: rad/s
+  ctrlLee.omegay: rad/s
+  ctrlLee.omegaz: rad/s
+  ctrlLee.omegarx: rad/s
+  ctrlLee.omegary: rad/s
+  ctrlLee.omegarz: rad/s
+  ctrlLee.thrustSi: N
+  ctrlLee.torquex: Nm
+  ctrlLee.torquey: Nm
+  ctrlLee.torquez: Nm

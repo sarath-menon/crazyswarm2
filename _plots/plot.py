@@ -8,7 +8,7 @@ plotting a generic USD log
 import cfusdlog
 import matplotlib.pyplot as plt
 import os
-import json
+import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 
 def process_data(data, settings):
@@ -61,7 +61,7 @@ def create_figures(data_usd, settings):
     figure_count = 0
     for k, (event_name, data) in enumerate(data_usd.items()):
         if event_name in settings["event_name"]:
-            print(k, event_name)
+            print("processing event: {} ({})".format(event_name, k))
 
             # create a new figure for each value in the data dictionary
             for figure_info in settings["figures"]:
@@ -132,9 +132,9 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     # load the plot settings
-    settings_file = "plot_settings.json"
+    settings_file = "plot_settings.yaml"
     with open(settings_file, 'r') as f:
-        settings = json.load(f)
+        settings = yaml.load(f)
 
     # decode binary log data
     path = os.path.join(settings["data_dir"], settings["data_file"])
