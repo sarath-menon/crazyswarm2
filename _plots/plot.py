@@ -8,8 +8,27 @@ plotting a generic USD log
 import cfusdlog
 import matplotlib.pyplot as plt
 import os
+import sys
 import yaml
 from matplotlib.backends.backend_pdf import PdfPages
+
+
+def file_guard(pdf_path):
+    msg = None
+    if os.path.exists(pdf_path):
+        msg = input("file already exists, overwrite? [y/n]: ")
+        if msg == "n":
+            print("exiting...")
+            sys.exit(0)
+        elif msg == "y":
+            print("overwriting...")
+            os.remove(pdf_path)
+        else:
+            print("invalid msg...")
+            file_guard(pdf_path)
+
+    return
+
 
 def process_data(data, settings):
     # adjust time
@@ -39,6 +58,10 @@ def create_figures(data_usd, settings):
     # create a PDF to save the figures
     pdf_path =  os.path.join(settings["output_dir"], settings["data_file"]) + ".pdf"
     print("output path: {}".format(pdf_path))
+
+    # check if user wants to overwrite the report file
+    file_guard(pdf_path)
+
     pdf_pages = PdfPages(pdf_path)
 
     # create the title page
@@ -91,7 +114,7 @@ def create_figures(data_usd, settings):
                                     ax[i].plot(t, data_usd[event_name][signal_name], label=signal_legend, linewidth=0.5)
                                     ax[i].set_xlabel(x_label)
                                     ax[i].set_ylabel(y_label)
-                                    ax[i].legend(loc="upper left", fontsize=5)
+                                    ax[i].legend(loc="lower left", fontsize=5)
                                     ax[i].grid(True)
 
                 if figure_type == "3d":
@@ -110,7 +133,7 @@ def create_figures(data_usd, settings):
                     ax.set_xlabel(x_label)
                     ax.set_ylabel(y_label)
                     ax.set_zlabel(z_label)
-                    ax.legend(loc="upper left", fontsize=5)
+                    ax.legend(loc="lower left", fontsize=5)
                     ax.grid(True)
 
                 fig.suptitle(title, fontsize=16)
