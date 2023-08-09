@@ -4,3 +4,6 @@ crazyswarm2_sim_webots/
 *.o
 *~
 _plots/reports/
+crazyflie_examples/crazyflie_examples/install/
+crazyflie_examples/crazyflie_examples/log/
+crazyflie_examples/crazyflie_examples/build/
