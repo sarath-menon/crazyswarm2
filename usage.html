@@ -12,11 +12,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=036e6a88"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -94,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="usage">
-<span id="id1"></span><h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Do not forget to source your ROS 2 workspace in each terminal you would like to use it</p>
@@ -112,7 +112,7 @@ you can use</p>
 </div>
 </div>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p>All configuration files are in crazyflie/config.</p>
 <ul class="simple">
 <li><p>crazyflies.yaml : setting up everything related to the robots.</p></li>
@@ -121,7 +121,7 @@ you can use</p>
 <li><p>teleop.yaml : configs for remote controls.</p></li>
 </ul>
 <section id="crazyflies-yaml">
-<h3>crazyflies.yaml<a class="headerlink" href="#crazyflies-yaml" title="Permalink to this heading"></a></h3>
+<h3>crazyflies.yaml<a class="headerlink" href="#crazyflies-yaml" title="Link to this heading"></a></h3>
 <p>Each crazyflie should have an unique URI which can <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-clients-python/master/userguides/userguide_client/#firmware-configuration/">be changed in Bitcraze’s CFclient</a>.
 They can also be enabled in case you don’t want the server to connect with it.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">robots</span><span class="p">:</span>
@@ -193,7 +193,7 @@ The server node will upon initialization, first look at the params/logs from the
 </section>
 </section>
 <section id="simulation">
-<h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading"></a></h2>
+<h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading"></a></h2>
 <p>Any usage of the ROS API, including high-level Python scripts, can be visualized before execution. The initial position and number of robots is taken from the crazyflies.yaml configuration file.
 The simulation uses the firmware code as software-in-the-loop, and can optionally include the robot dynamics.
 The configuration of the simulation (physics simulator, controller, etc.) can be changed in server.yaml.</p>
@@ -204,9 +204,9 @@ ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span c
 </div>
 </section>
 <section id="physical-experiments">
-<h2>Physical Experiments<a class="headerlink" href="#physical-experiments" title="Permalink to this heading"></a></h2>
+<h2>Physical Experiments<a class="headerlink" href="#physical-experiments" title="Link to this heading"></a></h2>
 <section id="ros-2-terminal">
-<h3>ROS 2 terminal<a class="headerlink" href="#ros-2-terminal" title="Permalink to this heading"></a></h3>
+<h3>ROS 2 terminal<a class="headerlink" href="#ros-2-terminal" title="Link to this heading"></a></h3>
 <p>The following shows a simple take off and land example without any launch files or yaml files</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie<span class="w"> </span>reboot<span class="w"> </span>--uri<span class="w"> </span>radio://0/80/2M/E7E7E7E706<span class="w"> </span>--mode<span class="w"> </span>sysoff
 ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.commander.enHighLevel<span class="w"> </span><span class="m">1</span>
@@ -217,7 +217,7 @@ ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> 
 </div>
 </section>
 <section id="enabling-logblocks-at-runtime">
-<h3>Enabling Logblocks at runtime<a class="headerlink" href="#enabling-logblocks-at-runtime" title="Permalink to this heading"></a></h3>
+<h3>Enabling Logblocks at runtime<a class="headerlink" href="#enabling-logblocks-at-runtime" title="Link to this heading"></a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Runtime logblock enabling is currently only supported in the CFLIB backend of the server.</p>
@@ -241,14 +241,14 @@ ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> 
 </div>
 </section>
 <section id="teleoperation-controller">
-<h3>Teleoperation controller<a class="headerlink" href="#teleoperation-controller" title="Permalink to this heading"></a></h3>
+<h3>Teleoperation controller<a class="headerlink" href="#teleoperation-controller" title="Link to this heading"></a></h3>
 <p>We currently assume an XBox controller (the button mapping can be changed in teleop.yaml). It is possible to fly in different modes, including attitude-control and position-control (in which case any localization system can assist.)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py
 </pre></div>
 </div>
 </section>
 <section id="python-scripts">
-<h3>Python scripts<a class="headerlink" href="#python-scripts" title="Permalink to this heading"></a></h3>
+<h3>Python scripts<a class="headerlink" href="#python-scripts" title="Link to this heading"></a></h3>
 <p>In the first terminal, launch</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py
 </pre></div>
