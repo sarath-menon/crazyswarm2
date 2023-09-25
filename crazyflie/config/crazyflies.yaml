@@ -93,9 +93,9 @@ all:
       Kw_x: 0.001 #0.0013 # def: 0.0009
       Kw_y: 0.001 #0.0013  # def: 0.0009
       Kw_z: 0.002  # def: 0.0012
-      KI_y: 0.052 #0.009 #0.015
-      KI_z: 0.052 #0.009 #0.015
-      KI_x: 0.052 #0.009 #0.015
+      KI_y: 0.04 #0.009 #0.015
+      KI_z: 0.04 #0.009 #0.015
+      KI_x: 0.04 #0.009 #0.015
       mass: 0.0375
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
