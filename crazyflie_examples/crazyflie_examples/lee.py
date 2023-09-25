@@ -33,7 +33,7 @@ def main():
 
     TRAJ = 2
     TRIALS = 1
-    TIMESCALE = 1.0
+    TIMESCALE = 0.75 #1.0
     for i in range(TRIALS):
         for cf in allcfs.crazyflies:
             cf.uploadTrajectory(0, 0, trajectories[TRAJ])
