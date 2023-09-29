@@ -78,9 +78,9 @@ all:
       estimator: 2 # 1: complementary, 2: kalman
       controller: 5 # 1: PID, 2: mellinger 4: sjc 5: lee 7: lee payload
     ctrlLee:
-      Kpos_Px: 9.0 # def: 10.0
-      Kpos_Py: 9.0 # def: 10.0
-      Kpos_Pz: 15.0 # def: 10.0
+      Kpos_Px: 17.0 # def: 10.0
+      Kpos_Py: 17.0 # def: 10.0
+      Kpos_Pz: 17.0 # def: 10.0
       Kpos_Dx: 7.0  # def: 8.0
       Kpos_Dy: 7.0  # def: 8.0 
       Kpos_Dz: 7.0  # def: 8.0  
