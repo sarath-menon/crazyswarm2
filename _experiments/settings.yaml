@@ -1,7 +1,7 @@
 ---
 # general settings
 data_dir: logs
-data_file: log38
+data_file: log129
 event_name: fixedFrequency
 start_time:
 end_time:
@@ -17,24 +17,25 @@ title_settings:
 - start_time
 - end_time
 title_params:
-  Kpos_Px: 9.0 # def: 10.0
-  Kpos_Py: 9.0 # def: 10.0
-  Kpos_Pz: 9.0 # def: 10.0
+  trajectory: y-axis with timescale 0.75
+  Kpos_Px: 24.0 # def: 10.0
+  Kpos_Py: 24.0 # def: 10.0
+  Kpos_Pz: 24.0 # def: 10.0
   Kpos_Dx: 7.0  # def: 8.0
   Kpos_Dy: 7.0  # def: 8.0 
   Kpos_Dz: 7.0  # def: 8.0  
-  Kpos_Ix: 5.0
-  Kpos_Iy: 5.0
-  Kpos_Iz: 8.0
-  KR_x: 0.005 #0.0055   # def: 0.005  
-  KR_y: 0.005 #0.0055  # def: 0.005
-  KR_z: 0.008  #0.008   # def: 0.005
-  Kw_x: 0.0001 #0.0013 # def: 0.0009
-  Kw_y: 0.0001 #0.0013  # def: 0.0009
-  Kw_z: 0.002  # def: 0.0012
-  KI_x: 0.0001 #0.009 #0.015
-  KI_y: 0.0001 #0.009 #0.015
-  KI_z: 0.0001 #0.009 #0.015
+  Kpos_Ix: 0.0
+  Kpos_Iy: 0.0
+  Kpos_Iz: 10.0
+  KR_x: 0.01 #0.0055   # def: 0.005  
+  KR_y: 0.01 #0.0055  # def: 0.005
+  KR_z: 0.01  #0.008   # def: 0.005
+  Kw_x: 0.001125 #0.0013 # def: 0.0009
+  Kw_y: 0.001125 #0.0013  # def: 0.0009
+  Kw_z: 0.00225  # def: 0.0012
+  KI_x: 0.04 #0.009 #0.015
+  KI_y: 0.04 #0.009 #0.015
+  KI_z: 0.04 #0.009 #0.015
   mass: 0.0375
 
 # figure settings
@@ -92,19 +93,19 @@ figures:
         data:
           ctrlLee.rpyx: actual
           ctrlLee.rpydx: desired
-        label: "$\\phi$ [rad]"
+        label: "$\\phi$ [°]"
   - timestamp:
       y_info:
         data:
           ctrlLee.rpyy: actual
           ctrlLee.rpydy: desired
-        label: "$\\theta$ [rad]"
+        label: "$\\theta$ [°]"
   - timestamp:
       y_info:
         data:
           ctrlLee.rpyz: actual
           ctrlLee.rpydz: desired
-        label: "$\\psi$ [rad]"
+        label: "$\\psi$ [°]"
 - title: Angular Velocities
   type: 2d
   xlabel: "$t$ [s]"
@@ -114,19 +115,19 @@ figures:
         data:
           ctrlLee.omegax: actual
           ctrlLee.omegarx: desired
-        label: "$\\dot \\phi$ [rad/s]"
+        label: "$\\dot \\phi$ [°/s]"
   - timestamp:
       y_info:
         data:
           ctrlLee.omegay: actual
           ctrlLee.omegary: desired
-        label: "$\\dot \\theta$ [rad/s]"
+        label: "$\\dot \\theta$ [°/s]"
   - timestamp:
       y_info:
         data:
           ctrlLee.omegaz: actual
           ctrlLee.omegarz: desired
-        label: "$\\dot \\psi$ [rad/s]"
+        label: "$\\dot \\psi$ [°/s]"
 - title: Thrust
   type: 2d
   xlabel: "$t$ [s]"
@@ -184,6 +185,18 @@ convert_units:
   ctrltargetZ.vx: 0.001
   ctrltargetZ.vy: 0.001
   ctrltargetZ.vz: 0.001
+  ctrlLee.rpyx: 57.2957795131
+  ctrlLee.rpydx: 57.2957795131
+  ctrlLee.rpyy: 57.2957795131
+  ctrlLee.rpydy: 57.2957795131
+  ctrlLee.rpyz: 57.2957795131
+  ctrlLee.rpydz: 57.2957795131
+  ctrlLee.omegax: 57.2957795131
+  ctrlLee.omegarx: 57.2957795131
+  ctrlLee.omegay: 57.2957795131
+  ctrlLee.omegary: 57.2957795131
+  ctrlLee.omegaz: 57.2957795131
+  ctrlLee.omegarz: 57.2957795131
 units:
   timestamp: s
   stateEstimateZ.x: m
@@ -198,18 +211,18 @@ units:
   ctrltargetZ.vx: m/s
   ctrltargetZ.vy: m/s
   ctrltargetZ.vz: m/s
-  ctrlLee.rpyx: rad
-  ctrlLee.rpyy: rad
-  ctrlLee.rpyz: rad
-  ctrlLee.rpydx: rad
-  ctrlLee.rpydy: rad
-  ctrlLee.rpydz: rad
-  ctrlLee.omegax: rad/s
-  ctrlLee.omegay: rad/s
-  ctrlLee.omegaz: rad/s
-  ctrlLee.omegarx: rad/s
-  ctrlLee.omegary: rad/s
-  ctrlLee.omegarz: rad/s
+  ctrlLee.rpyx: °
+  ctrlLee.rpyy: °
+  ctrlLee.rpyz: °
+  ctrlLee.rpydx: °
+  ctrlLee.rpydy: °
+  ctrlLee.rpydz: °
+  ctrlLee.omegax: °/s
+  ctrlLee.omegay: °/s
+  ctrlLee.omegaz: °/s
+  ctrlLee.omegarx: °/s
+  ctrlLee.omegary: °/s
+  ctrlLee.omegarz: °/s
   ctrlLee.thrustSi: N
   ctrlLee.torquex: Nm
   ctrlLee.torquey: Nm
