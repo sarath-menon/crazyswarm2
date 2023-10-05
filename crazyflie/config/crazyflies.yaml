@@ -90,13 +90,16 @@ all:
       KR_x: 0.009 #0.0055   # def: 0.005  
       KR_y: 0.009 #0.0055  # def: 0.005
       KR_z: 0.008  #0.008   # def: 0.005
+      KI_x: 0.04 #0.009 #0.015
       KI_y: 0.04 #0.009 #0.015
       KI_z: 0.04 #0.009 #0.015
-      KI_x: 0.04 #0.009 #0.015
-      Kw_y: 0.001125 #0.0013  # def: 0.0009
-      Kw_x: 0.001125 #0.0013 # def: 0.0009
+      Kw_x: 0.001125 #0.0013  # def: 0.0009
+      Kw_y: 0.001125 #0.0013 # def: 0.0009
       Kw_z: 0.00225  # def: 0.0012
       mass: 0.0375
+    ctrlLeeInfo:
+      trajectory: translation_y.csv
+      timescale: 0.75
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
   firmware_logging:
