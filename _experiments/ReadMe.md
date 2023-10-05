@@ -10,8 +10,7 @@
 
 0. if not already there, create the three folders mentioned above in the directory ```_experiments```
 1. decide which experiment you want to do
-    - decide which timescale and trajectory you want to use: ```crazyflie_examples/crazyflie_examples/lee.py```
-    - decide which parameters of the lee controller you want to tune: ```crazyflie/config/crazyflies.yaml```
+    - decide which timescale, trajectory, and parameters of the lee controller you want to use: ```crazyflie/config/crazyflies.yaml```
 2. check that the sd card includes this config file which is specific to the plotting script later on: ```_experiments/config.txt```
 3. save your tuning parameters and experiment information in the folder ```_experiments/info``` by executing the following command in the terminal
 
