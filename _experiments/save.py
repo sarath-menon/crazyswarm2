@@ -18,6 +18,7 @@ if os.path.exists(info_file_path):
 
 # Dictionary to store extracted information
 info = {}
+info["experiment_number"] = experiment_number
 
 # Read information from crazyflies.yaml
 try:
@@ -36,7 +37,8 @@ except FileNotFoundError:
     exit(1)
 
 # Write the experiment info to the info file
-custom_key_order = ["trajectory",
+custom_key_order = ["experiment_number",
+                    "trajectory",
                     "timescale",
                     "Kpos_Px",
                     "Kpos_Py",
