@@ -37,8 +37,7 @@ except FileNotFoundError:
     exit(1)
 
 # Write the experiment info to the info file
-custom_key_order = ["experiment_number",
-                    "trajectory",
+custom_key_order = ["trajectory",
                     "timescale",
                     "Kpos_Px",
                     "Kpos_Py",

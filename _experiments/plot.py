@@ -52,11 +52,11 @@ def process_data(data, settings):
 
     return t, data_usd
 
-def create_figures(data_usd, settings):
+def create_figures(data_usd, settings, log_str):
     t, data_usd = process_data(data_usd, settings)
 
     # create a PDF to save the figures
-    pdf_path =  os.path.join(settings["output_dir"], settings["data_file"]) + ".pdf"
+    pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
     print("output path: {}".format(pdf_path))
 
     # check if user wants to overwrite the report file
@@ -69,8 +69,17 @@ def create_figures(data_usd, settings):
     for setting in settings["title_settings"]:
         title_text_settings += f"    {setting}: {settings[setting]}\n"
 
+    # read the parameters from the info file
+    info_file = f"info/{log_str.replace('log', 'info').split('_')[0]}.yaml" 
+    try:
+        with open(info_file, "r") as f:
+            info = yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"File not found: {info_file}")
+        exit(1)
+
     title_text_parameters = f"Parameters:\n"
-    for key, value in settings["title_params"].items():
+    for key, value in info.items():
         title_text_parameters += f"    {key}: {value}\n"
 
     text = f"%% Lee controller tuning %%\n"
@@ -159,11 +168,15 @@ if __name__ == "__main__":
     with open(settings_file, 'r') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
+    # get the log number from the user
+    log_num = input("Enter the logging number: ")
+    log_str = f"log{log_num}"
+
     # decode binary log data
-    path = os.path.join(settings["data_dir"], settings["data_file"])
+    path = os.path.join(settings["data_dir"], log_str)
     data_usd = cfusdlog.decode(path)
 
     # create the figures
     print("...creating figures")
-    create_figures(data_usd, settings)
+    create_figures(data_usd, settings, log_str)
     print("...done creating figures")
