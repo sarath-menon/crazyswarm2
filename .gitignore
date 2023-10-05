@@ -3,7 +3,7 @@ crazyswarm2_sim_webots/
 *.pyc
 *.o
 *~
-_plots/reports/
+_experiments/reports/
 crazyflie_examples/crazyflie_examples/install/
 crazyflie_examples/crazyflie_examples/log/
 crazyflie_examples/crazyflie_examples/build/
