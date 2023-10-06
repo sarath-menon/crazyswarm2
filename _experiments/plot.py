@@ -40,7 +40,7 @@ def process_data(data, settings):
         start_time = data[event]['timestamp'][0]
     else:
         start_time = min(start_time * 1000, data[event]['timestamp'][0])
-    print("start_time:", start_time)
+    # print("start_time:", start_time)
 
     # convert units
     if settings["convert_units"]:
@@ -53,6 +53,9 @@ def process_data(data, settings):
     return t, data_usd
 
 def create_figures(data_usd, settings, log_str):
+    log_path = os.path.join(settings["data_dir"], log_str)
+    print("log file: {}".format(log_path))
+
     t, data_usd = process_data(data_usd, settings)
 
     # create a PDF to save the figures
@@ -70,7 +73,9 @@ def create_figures(data_usd, settings, log_str):
         title_text_settings += f"    {setting}: {settings[setting]}\n"
 
     # read the parameters from the info file
-    info_file = f"info/{log_str.replace('log', 'info').split('_')[0]}.yaml" 
+    info_file = f"{settings['info_dir']}/{log_str.replace('log', 'info').split('_')[0]}.yaml" 
+    print("info file: {}".format(info_file))
+
     try:
         with open(info_file, "r") as f:
             info = yaml.safe_load(f)
@@ -195,6 +200,10 @@ if __name__ == "__main__":
                     non_processed_logs.append(filename)    
 
     # (2) plot them all
+    if len(non_processed_logs) == 0:
+        print("No logs to process")
+        sys.exit(0)
+
     print("====================================")
     print("...logs to process:")
     non_processed_logs.sort()
@@ -208,6 +217,7 @@ if __name__ == "__main__":
     print("...processing logs")
     print("====================================")
 
+    count = 0
     for log_str in non_processed_logs:
         # decode binary log data
         path = os.path.join(settings["data_dir"], log_str)
@@ -217,3 +227,8 @@ if __name__ == "__main__":
         print("...creating figures")
         create_figures(data_usd, settings, log_str)
         print("...done creating figures")
+
+        count += 1
+
+    print("====================================")
+    print(f"Processed {count} logs")
