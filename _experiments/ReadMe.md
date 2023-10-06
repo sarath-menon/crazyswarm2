@@ -10,7 +10,17 @@
 
 0. if not already there, create the three folders mentioned above in the directory ```_experiments```
 1. decide which experiment you want to do
-    - decide which timescale, trajectory, and parameters of the lee controller you want to use: ```crazyflie/config/crazyflies.yaml```
+    - decide which timescale, trajectory, motors, propellers and parameters of the lee controller you want to use: ```crazyflie/config/crazyflies.yaml```
+    - there are 3 different motors in the lab at the current moment:
+        1. standard motors (CF)
+        2. upgraded motors (CF)
+        3. upgraded motors (BETAFPV)
+    - there are 2 different propellers in the lab at the current moment:
+        1. standard propellers (CF)
+        2. upgraded propellers (QProp)
+
+> Note: The logs and reports up until number 145 were done with the upgraded CF motors (2) and QProp propellers (2). The logs and reports from number 146 onwards were done with the standard motors (1) and propellers (1).
+
 2. check that the sd card includes this config file which is specific to the plotting script later on: ```_experiments/config.txt```
 3. save your tuning parameters and experiment information in the folder ```_experiments/info``` by executing the following command in the terminal
 
