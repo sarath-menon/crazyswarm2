@@ -100,6 +100,8 @@ all:
     ctrlLeeInfo:
       trajectory: translation_y.csv
       timescale: 0.75
+      motors: upgraded motors (CF)
+      propellers: upgraded propellers (QProp)
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
   firmware_logging:
