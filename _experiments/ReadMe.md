@@ -8,7 +8,7 @@
 
 - The parameters and information of each experiment is stored in the folder ```info```
 
-> Note: The correponding info file would have the name ```info14.yaml```. Please note that there is no suffix because on configuration of parameters describes all duplicates of an experiment. It is called the *experiment number*. You have to enter the experiment number in the file ```crazyflie/config/crazyflies.yaml``` later on so that it will be saved. See the next sections for more information.
+> Note: The correponding info file would have the name ```info14.yaml```. Please note that there is no suffix because one configuration of parameters describes all duplicates of an experiment. It is called the *experiment number*. You have to enter the experiment number in the file ```crazyflie/config/crazyflies.yaml``` later on so that it will be saved. See the next sections for more information.
 
 - The finished reports combine the data and experiment information and are stored in the folder ```reports```
 
