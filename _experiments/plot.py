@@ -169,14 +169,51 @@ if __name__ == "__main__":
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
     # get the log number from the user
-    log_num = input("Enter the logging number: ")
-    log_str = f"log{log_num}"
+    # log_num = input("Enter the logging number: ")
+    # log_str = f"log{log_num}"
 
-    # decode binary log data
-    path = os.path.join(settings["data_dir"], log_str)
-    data_usd = cfusdlog.decode(path)
+    # automatically scan and process the logs
 
-    # create the figures
-    print("...creating figures")
-    create_figures(data_usd, settings, log_str)
-    print("...done creating figures")
+    # (1) do a scan of the directories logs, info, and reports to see what logs have not been plotted yet
+    logs_dir = settings["data_dir"]
+    info_dir = settings["info_dir"]
+    reports_dir = settings["output_dir"]
+
+    processed_logs = []
+    for root, _, files in os.walk(reports_dir):
+        for filename in files:
+            if filename.startswith("log") and filename.endswith(".pdf"):
+                # Extract the log number from the PDF filename
+                log_str = filename.strip(".pdf")
+                processed_logs.append(log_str)
+                
+    non_processed_logs = []
+    for root, _, files in os.walk(logs_dir):
+        for filename in files:
+            if filename.startswith("log"):
+                if filename not in processed_logs:
+                    non_processed_logs.append(filename)    
+
+    # (2) plot them all
+    print("====================================")
+    print("...logs to process:")
+    non_processed_logs.sort()
+    for log_str in non_processed_logs:
+        print(log_str)
+    print("====================================")
+    ans = input("Proceed? [y/n]: ")
+    if ans == "n":
+        print("Exiting...")
+        sys.exit(0)
+    print("...processing logs")
+    print("====================================")
+
+    for log_str in non_processed_logs:
+        # decode binary log data
+        path = os.path.join(settings["data_dir"], log_str)
+        data_usd = cfusdlog.decode(path)
+
+        # create the figures
+        print("...creating figures")
+        create_figures(data_usd, settings, log_str)
+        print("...done creating figures")
