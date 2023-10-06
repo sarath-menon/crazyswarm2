@@ -10,7 +10,7 @@
 
 0. if not already there, create the three folders mentioned above in the directory ```_experiments```
 1. decide which experiment you want to do
-    - decide which timescale, trajectory, motors, propellers and parameters of the lee controller you want to use: ```crazyflie/config/crazyflies.yaml```
+    - decide which timescale, trajectory, motors, propellers and parameters of the lee controller, and experiment number you want to use: ```crazyflie/config/crazyflies.yaml``` (field ```ctrlLeeInfo``` and ```ctrlLee```)
     - there are 3 different motors in the lab at the current moment:
         1. standard motors (CF)
         2. upgraded motors (CF)

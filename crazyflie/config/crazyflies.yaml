@@ -98,6 +98,7 @@ all:
       Kw_z: 0.00225  # def: 0.0012
       mass: 0.0375
     ctrlLeeInfo:
+      experiment: 999
       trajectory: translation_y.csv
       timescale: 0.75
       motors: upgraded motors (CF)
