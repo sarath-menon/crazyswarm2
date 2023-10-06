@@ -25,10 +25,11 @@ try:
     with open(crazyflies_config_path, "r") as config_file:
         config_data = yaml.safe_load(config_file)
         # extract the trajectory and timescale
-        info["trajectory"] = config_data["all"]["firmware_params"]["ctrlLeeInfo"]["trajectory"]
-        info["timescale"] = config_data["all"]["firmware_params"]["ctrlLeeInfo"]["timescale"]
-        # extract the ctrlLee parameters
         obj = config_data["all"]["firmware_params"]
+        if "ctrlLeeInfo" in obj:
+            for key, value in obj["ctrlLeeInfo"].items():
+                info[key] = value
+        # extract the ctrlLee parameters
         if "ctrlLee" in obj:
             for key, value in obj["ctrlLee"].items():
                 info[key] = value
@@ -39,6 +40,8 @@ except FileNotFoundError:
 # Write the experiment info to the info file
 custom_key_order = ["trajectory",
                     "timescale",
+                    "motors",
+                    "propellers",
                     "Kpos_Px",
                     "Kpos_Py",
                     "Kpos_Pz",
