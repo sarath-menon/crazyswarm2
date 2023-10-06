@@ -2,6 +2,7 @@
 # general settings
 data_dir: logs
 # data_file: log129
+info_dir: info
 event_name: fixedFrequency
 start_time:
 end_time:
