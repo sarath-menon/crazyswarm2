@@ -12,6 +12,8 @@
 
 - The finished reports combine the data and experiment information and are stored in the folder ```reports```
 
+> Note: The reports are not uploaded to this repository because they are too large. You can create them automatically and in one run by yourself, see the next section for more information.
+
 ## 2. code
 
 0. If not already there, create the three folders mentioned above in the directory ```_experiments```
