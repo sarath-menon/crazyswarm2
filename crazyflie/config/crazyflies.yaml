@@ -78,27 +78,27 @@ all:
       estimator: 2 # 1: complementary, 2: kalman
       controller: 5 # 1: PID, 2: mellinger 4: sjc 5: lee 7: lee payload
     ctrlLee:
-      Kpos_Px: 17.0 # def: 10.0
-      Kpos_Py: 17.0 # def: 10.0
-      Kpos_Pz: 17.0 # def: 10.0
-      Kpos_Ix: 28.0
-      Kpos_Iy: 28.0
-      Kpos_Iz: 40.0
-      Kpos_Dx: 7.0  # def: 8.0
-      Kpos_Dy: 7.0  # def: 8.0 
-      Kpos_Dz: 7.0  # def: 8.0  
-      KR_x: 0.009 #0.0055   # def: 0.005  
-      KR_y: 0.009 #0.0055  # def: 0.005
-      KR_z: 0.008  #0.008   # def: 0.005
-      KI_x: 0.04 #0.009 #0.015
-      KI_y: 0.04 #0.009 #0.015
-      KI_z: 0.04 #0.009 #0.015
-      Kw_x: 0.001125 #0.0013  # def: 0.0009
-      Kw_y: 0.001125 #0.0013 # def: 0.0009
-      Kw_z: 0.00225  # def: 0.0012
-      mass: 0.0375
+      Kpos_Px: 17.0          # def: 10.0
+      Kpos_Py: 17.0          # def: 10.0
+      Kpos_Pz: 17.0          # def: 10.0
+      Kpos_Ix: 1.0           # def: 8.0
+      Kpos_Iy: 1.0           # def: 8.0 
+      Kpos_Iz: 10.0          # def: 8.0 
+      Kpos_Dx: 7.0      
+      Kpos_Dy: 7.0      
+      Kpos_Dz: 7.0       
+      KR_x: 0.01             #0.0055   # def: 0.005  
+      KR_y: 0.01             #0.0055  # def: 0.005
+      KR_z: 0.01             #0.008   # def: 0.005
+      KI_x: 0.04             #0.0013  # def: 0.0009
+      KI_y: 0.04             #0.0013 # def: 0.0009
+      KI_z: 0.04             # def: 0.0012
+      Kw_x: 0.001125         #0.009 #0.015
+      Kw_y: 0.001125         #0.009 #0.015
+      Kw_z: 0.00225          #0.009 #0.015     
+      mass: 0.0375          
     ctrlLeeInfo:
-      experiment: 999
+      experiment: 130
       trajectory: translation_y.csv
       timescale: 0.75
       motors: upgraded motors (CF)
