@@ -85,7 +85,7 @@ def create_figures(data_usd, settings, log_str):
     text = f"%% Lee controller tuning %%\n"
     title_text = text + "\n" + title_text_settings + "\n" + title_text_parameters + "\n"
     fig = plt.figure(figsize=(5, 6))
-    fig.text(0.1, 0, title_text, size=12)
+    fig.text(0.1, 0, title_text, size=11)
     pdf_pages.savefig(fig)
 
     # create data plots
