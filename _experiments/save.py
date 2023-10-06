@@ -38,10 +38,16 @@ if os.path.exists(info_file_path):
         print("Exiting...")
         exit(1)
 
+print("========================================")
+
 try:
     with open(info_file_path, "w") as info_file:
+        print(f"Writing experiment info to {info_file_path}")
         for key in info:
+            print(f">>> {key}: {info[key]}")
             yaml.dump({key: info[key]}, info_file, default_flow_style=False, sort_keys=False)
     print(f"Experiment info written to {info_file_path}")
 except Exception as e:
     print(f"Error writing to {info_file_path}: {str(e)}")
+
+print("========================================")
