@@ -11,7 +11,66 @@ import os
 import sys
 import yaml
 from matplotlib.backends.backend_pdf import PdfPages
+import numpy as np
 
+
+def compute_tracking_error(data, settings):
+    # extract the data for the position
+    actual_x = data[settings["event_name"]]["stateEstimateZ.x"]
+    actual_y = data[settings["event_name"]]["stateEstimateZ.y"]
+    actual_z = data[settings["event_name"]]["stateEstimateZ.z"]
+    desired_x = data[settings["event_name"]]["ctrltargetZ.x"]
+    desired_y = data[settings["event_name"]]["ctrltargetZ.y"]
+    desired_z = data[settings["event_name"]]["ctrltargetZ.z"]
+        
+    # compute the L2 vector for the position
+    traj_actual = np.array([actual_x, actual_y, actual_z])
+    traj_desired = np.array([desired_x, desired_y, desired_z])
+    traj_delta = traj_actual - traj_desired
+    traj_sq = traj_delta.T@traj_delta
+    l2_vec_position = np.sqrt(np.diag(traj_sq))
+
+    # extract the data for the roll
+    actual_roll = data[settings["event_name"]]["ctrlLee.rpyx"]
+    desired_roll = data[settings["event_name"]]["ctrlLee.rpydx"]
+
+    # compute the L2 vector for the position
+    angle_actual = np.array([actual_roll])
+    print(angle_actual.shape)
+    angle_desired = np.array([desired_roll])
+    angle_delta = angle_actual - angle_desired
+    angle_sq = angle_delta.T@angle_delta
+    l2_vec_angle = np.sqrt(np.diag(angle_sq))
+
+    
+    e_dict = {}
+    for error in settings["errors"]:
+        e_dict[error] = -1
+
+        if error == "L2 integral error":
+            e_position = 0
+            e_angle = 0
+            for i in range(1, len(l2_vec_position)):
+                t_delta = data[settings["event_name"]]['timestamp'][i] - data[settings["event_name"]]['timestamp'][i-1]
+                l2_delta_position = l2_vec_position[i] - l2_vec_position[i-1]
+                l2_delta_angle = l2_vec_angle[i] - l2_vec_angle[i-1]
+                e_position += l2_delta_position*t_delta
+                e_angle += l2_delta_angle*t_delta
+
+            e_dict[error] = f"{np.round(e_position*1e3, 3)}mm; {np.round(e_angle, 3)}deg"
+                
+        elif error == "L2 mean":
+            e_dict[error] = f"{np.round(np.mean(l2_vec_position)*1e3, 3)}mm; {np.round(np.mean(l2_vec_angle), 3)}deg"
+        elif error == "L2 std":
+            e_dict[error] = f"{np.round(np.std(l2_vec_position)*1e3, 3)}mm; {np.round(np.std(l2_vec_angle), 3)}deg"
+        elif error == "L2 max":
+            timepoint = (data[settings["event_name"]]['timestamp'][np.argmax(l2_vec_position)] - data[settings["event_name"]]['timestamp'][0]) / 1000
+            e_dict[error] = f"{np.round(np.max(l2_vec_position)*1e3)}mm@{np.round(timepoint, 3)}s"
+
+            timepoint = (data[settings["event_name"]]['timestamp'][np.argmax(l2_vec_angle)] - data[settings["event_name"]]['timestamp'][0]) / 1000
+            e_dict[error] += f"; {np.round(np.max(l2_vec_angle))}deg@{np.round(timepoint, 3)}s"
+
+    return e_dict
 
 def file_guard(pdf_path):
     msg = None
@@ -87,10 +146,16 @@ def create_figures(data_usd, settings, log_str):
     for key, value in info.items():
         title_text_parameters += f"    {key}: {value}\n"
 
+    # create the results section
+    title_text_results = f"Results:\n"
+    e_dict = compute_tracking_error(data_usd, settings)
+    for error in settings["errors"]:
+        title_text_results += f"    {error}: {e_dict[error]}\n"
+
     text = f"%% Lee controller tuning %%\n"
-    title_text = text + "\n" + title_text_settings + "\n" + title_text_parameters + "\n"
-    fig = plt.figure(figsize=(5, 6))
-    fig.text(0.1, 0, title_text, size=11)
+    title_text = text + "\n" + title_text_settings + "\n" + title_text_parameters + "\n" + title_text_results
+    fig = plt.figure(figsize=(5, 8))
+    fig.text(0.1, 0.1, title_text, size=11)
     pdf_pages.savefig(fig)
 
     # create data plots
@@ -134,6 +199,7 @@ def create_figures(data_usd, settings, log_str):
                 if figure_type == "3d":
                     fig = plt.figure()
                     ax = fig.add_subplot(projection='3d')
+
                     y_label = figure_info["ylabel"]
                     
                     # iterate over every subplot
@@ -144,6 +210,13 @@ def create_figures(data_usd, settings, log_str):
                                 label=obj[3], 
                                 linewidth=0.5)
                         
+                        ax.set_xlim(min(data_usd[event_name][obj[0]])-0.1*min(data_usd[event_name][obj[0]]), 
+                                    max(data_usd[event_name][obj[0]])+0.1*max(data_usd[event_name][obj[0]]))
+                        ax.set_ylim(min(data_usd[event_name][obj[1]])-0.1*min(data_usd[event_name][obj[1]]),
+                                    max(data_usd[event_name][obj[1]])+0.1*max(data_usd[event_name][obj[1]]))
+                        ax.set_zlim(min(data_usd[event_name][obj[2]])-0.1*min(data_usd[event_name][obj[2]]),
+                                    max(data_usd[event_name][obj[2]])+0.1*max(data_usd[event_name][obj[2]]))
+
                     ax.set_xlabel(x_label)
                     ax.set_ylabel(y_label)
                     ax.set_zlabel(z_label)
@@ -173,52 +246,13 @@ if __name__ == "__main__":
     with open(settings_file, 'r') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
-    # get the log number from the user
-    # log_num = input("Enter the logging number: ")
-    # log_str = f"log{log_num}"
+    mode = "auto"
 
-    # automatically scan and process the logs
+    if mode == "manual":
+        # get the log number from the user
+        log_num = input("Enter the logging number: ")
+        log_str = f"log{log_num}"
 
-    # (1) do a scan of the directories logs, info, and reports to see what logs have not been plotted yet
-    logs_dir = settings["data_dir"]
-    info_dir = settings["info_dir"]
-    reports_dir = settings["output_dir"]
-
-    processed_logs = []
-    for root, _, files in os.walk(reports_dir):
-        for filename in files:
-            if filename.startswith("log") and filename.endswith(".pdf"):
-                # Extract the log number from the PDF filename
-                log_str = filename.strip(".pdf")
-                processed_logs.append(log_str)
-                
-    non_processed_logs = []
-    for root, _, files in os.walk(logs_dir):
-        for filename in files:
-            if filename.startswith("log"):
-                if filename not in processed_logs:
-                    non_processed_logs.append(filename)    
-
-    # (2) plot them all
-    if len(non_processed_logs) == 0:
-        print("No logs to process")
-        sys.exit(0)
-
-    print("====================================")
-    print("...logs to process:")
-    non_processed_logs.sort()
-    for log_str in non_processed_logs:
-        print(log_str)
-    print("====================================")
-    ans = input("Proceed? [y/n]: ")
-    if ans == "n":
-        print("Exiting...")
-        sys.exit(0)
-    print("...processing logs")
-    print("====================================")
-
-    count = 0
-    for log_str in non_processed_logs:
         # decode binary log data
         path = os.path.join(settings["data_dir"], log_str)
         data_usd = cfusdlog.decode(path)
@@ -228,7 +262,58 @@ if __name__ == "__main__":
         create_figures(data_usd, settings, log_str)
         print("...done creating figures")
 
-        count += 1
+    elif mode == "auto":
+        # automatically scan and process the logs
+        # (1) do a scan of the directories logs, info, and reports to see what logs have not been plotted yet
+        logs_dir = settings["data_dir"]
+        info_dir = settings["info_dir"]
+        reports_dir = settings["output_dir"]
 
-    print("====================================")
-    print(f"Processed {count} logs")
+        processed_logs = []
+        for root, _, files in os.walk(reports_dir):
+            for filename in files:
+                if filename.startswith("log") and filename.endswith(".pdf"):
+                    # Extract the log number from the PDF filename
+                    log_str = filename.strip(".pdf")
+                    processed_logs.append(log_str)
+                    
+        non_processed_logs = []
+        for root, _, files in os.walk(logs_dir):
+            for filename in files:
+                if filename.startswith("log"):
+                    if filename not in processed_logs:
+                        non_processed_logs.append(filename)    
+
+        # (2) plot them all
+        if len(non_processed_logs) == 0:
+            print("No logs to process")
+            sys.exit(0)
+
+        print("====================================")
+        print("...logs to process:")
+        non_processed_logs.sort()
+        for log_str in non_processed_logs:
+            print(log_str)
+        print("====================================")
+        ans = input("Proceed? [y/n]: ")
+        if ans == "n":
+            print("Exiting...")
+            sys.exit(0)
+        print("...processing logs")
+        print("====================================")
+
+        count = 0
+        for log_str in non_processed_logs:
+            # decode binary log data
+            path = os.path.join(settings["data_dir"], log_str)
+            data_usd = cfusdlog.decode(path)
+
+            # create the figures
+            print("...creating figures")
+            create_figures(data_usd, settings, log_str)
+            print("...done creating figures")
+
+            count += 1
+
+        print("====================================")
+        print(f"Processed {count} logs")
