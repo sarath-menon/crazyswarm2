@@ -45,7 +45,7 @@ def main():
     # trajectories.append(traj3)
 
     TRAJ = Trajectory()
-    TRAJ.loadcsv(Path(__file__).parent / traj_string)
+    TRAJ.loadcsv(Path(__file__).parent / f"data/{traj_string}")
 
     TIMESCALE = float(timescale_string)
 
