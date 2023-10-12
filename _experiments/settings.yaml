@@ -18,6 +18,13 @@ title_settings:
 - start_time
 - end_time
 
+# results settings
+errors: 
+- "L2 integral error"
+- "L2 mean"
+- "L2 std"
+- "L2 max"
+
 # figure settings
 figures:
 - title: Positions
