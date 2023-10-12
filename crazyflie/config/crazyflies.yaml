@@ -81,8 +81,8 @@ all:
       Kpos_Px: 17.0          # def: 10.0
       Kpos_Py: 17.0          # def: 10.0
       Kpos_Pz: 17.0          # def: 10.0
-      Kpos_Ix: 1.0           # def: 8.0
-      Kpos_Iy: 1.0           # def: 8.0 
+      Kpos_Ix: 0.0           # def: 8.0
+      Kpos_Iy: 0.0           # def: 8.0 
       Kpos_Iz: 10.0          # def: 8.0 
       Kpos_Dx: 7.0      
       Kpos_Dy: 7.0      
@@ -96,13 +96,13 @@ all:
       Kw_x: 0.001125         #0.009 #0.015
       Kw_y: 0.001125         #0.009 #0.015
       Kw_z: 0.00225          #0.009 #0.015     
-      mass: 0.0375          
+      mass: 0.033          
     ctrlLeeInfo:
-      experiment: 130
+      experiment: 146
       trajectory: translation_y.csv
       timescale: 0.75
-      motors: upgraded motors (CF)
-      propellers: upgraded propellers (QProp)
+      motors: standard motors (CF)
+      propellers: standard propellers (CF)
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
   firmware_logging:
