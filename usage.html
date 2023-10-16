@@ -230,7 +230,7 @@ This section will show how to do that by using services</p>
 </div>
 <p>In another terminal after sourcing the right setup.bash files, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;topic_test&#39;, frequency: 10, vars: [&#39;stateEstimate.x&#39;,&#39;stateEstimate.y&#39;,&#39;stateEstimate.z&#39;]}&quot;</span>
-ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}</span>
+ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}&quot;</span>
 </pre></div>
 </div>
 <p>With ROS 2’s rqt you can look at the topics, or with ‘ROS 2 topics echo /cf2/pose’</p>
