@@ -172,12 +172,13 @@ def create_figures(data_usd, settings, log_str):
 
                 title = figure_info["title"]
                 figure_type = figure_info["type"]
-                x_label = figure_info["xlabel"]
-                z_label = figure_info.get("zlabel", None)
+                x_label = figure_info.get("x_label", None)
+                y_label = figure_info.get("y_label", None)
+                z_label = figure_info.get("z_label", None)
                 structure = figure_info["structure"]
                 structure_length = len(structure)
                 
-                if figure_type == "2d":
+                if figure_type == "2d subplots":
                     fig, ax = plt.subplots(structure_length, 1)
 
                     if structure_length == 1:
@@ -191,16 +192,32 @@ def create_figures(data_usd, settings, log_str):
                             for signal_name, signal_legend in y_data.items():
                                 if x == "timestamp":
                                     ax[i].plot(t, data_usd[event_name][signal_name], label=signal_legend, linewidth=0.5)
-                                    ax[i].set_xlabel(x_label)
-                                    ax[i].set_ylabel(y_label)
-                                    ax[i].legend(loc="lower left", fontsize=5)
-                                    ax[i].grid(True)
+                                else:
+                                    ax[i].plot(data_usd[event_name][x], data_usd[event_name][signal_name], label=signal_legend, linewidth=0.5)
+                                ax[i].set_xlabel(x_label)
+                                ax[i].set_ylabel(y_label)
+                                ax[i].legend(loc="lower left", fontsize=5)
+                                ax[i].grid(True)
+
+                if figure_type == "2d single":
+                    fig, ax = plt.subplots()
+                    
+                    # iterate over every subplot
+                    for obj in structure:
+                        ax.plot(data_usd[event_name][obj["x_axis"]], 
+                            data_usd[event_name][obj["y_axis"]], 
+                            label=obj["legend"], 
+                            linewidth=0.5)
+                        ax.set_xlabel(obj["x_label"])
+                        ax.set_ylabel(obj["y_label"])
+                        ax.legend(loc="lower left", fontsize=5)
+                        ax.grid(True)
 
                 if figure_type == "3d":
                     fig = plt.figure()
                     ax = fig.add_subplot(projection='3d')
 
-                    y_label = figure_info["ylabel"]
+                    y_label = figure_info["y_label"]
                     
                     # iterate over every subplot
                     for i, obj in enumerate(structure):
@@ -247,6 +264,7 @@ if __name__ == "__main__":
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
     mode = "auto"
+    # mode = "manual"
 
     if mode == "manual":
         # get the log number from the user
