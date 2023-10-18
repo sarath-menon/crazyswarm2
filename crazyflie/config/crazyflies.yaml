@@ -90,17 +90,17 @@ all:
       KR_x: 0.009             #0.0055   # def: 0.005  
       KR_y: 0.009             #0.0055  # def: 0.005
       KR_z: 0.009             #0.008   # def: 0.005
-      KI_x: 0.04             #0.0013  # def: 0.0009
-      KI_y: 0.04             #0.0013 # def: 0.0009
-      KI_z: 0.04             # def: 0.0012
-      Kw_x: 0.00125         #0.009 #0.015
+      KI_x: 0.05             #0.0013  # def: 0.0009
+      KI_y: 0.05             #0.0013 # def: 0.0009
+      KI_z: 0.05             # def: 0.0012
+      Kw_x: 0.00125        #0.009 #0.015
       Kw_y: 0.00125         #0.009 #0.015
-      Kw_z: 0.0025          #0.009 #0.015     
-      mass: 0.033
+      Kw_z: 0.0025         #0.009 #0.015     
+      mass: 0.032
     ctrlLeeInfo:
-      experiment: 154
-      trajectory: translation_y.csv
-      timescale: 0.75
+      experiment: 163
+      trajectory: translation_y.csv # yaw0.csv # #figure8.csv # 
+      timescale: 0.75 #1.0 #0.34 
       motors: standard motors (CF)
       propellers: standard propellers (CF)
   # firmware logging for all drones (use robot_types/type_name to set per type, or
