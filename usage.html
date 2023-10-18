@@ -56,8 +56,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#physical-experiments">Physical Experiments</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#ros-2-terminal">ROS 2 terminal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#enabling-logblocks-at-runtime">Enabling Logblocks at runtime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#teleoperation-controller">Teleoperation controller</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-scripts">Python scripts</a></li>
 </ul>
@@ -198,48 +196,13 @@ The server node will upon initialization, first look at the params/logs from the
 The simulation uses the firmware code as software-in-the-loop, and can optionally include the robot dynamics.
 The configuration of the simulation (physics simulator, controller, etc.) can be changed in server.yaml.</p>
 <p>Example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py<span class="w"> </span>backend:<span class="o">=</span>sim
-ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world<span class="w"> </span>--ros-args<span class="w"> </span>-p<span class="w"> </span>use_sim_time:<span class="o">=</span>True
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal1<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py<span class="w"> </span>backend:<span class="o">=</span>sim
+<span class="o">[</span>terminal2<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world<span class="w"> </span>--ros-args<span class="w"> </span>-p<span class="w"> </span>use_sim_time:<span class="o">=</span>True
 </pre></div>
 </div>
 </section>
 <section id="physical-experiments">
 <h2>Physical Experiments<a class="headerlink" href="#physical-experiments" title="Link to this heading"></a></h2>
-<section id="ros-2-terminal">
-<h3>ROS 2 terminal<a class="headerlink" href="#ros-2-terminal" title="Link to this heading"></a></h3>
-<p>The following shows a simple take off and land example without any launch files or yaml files</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie<span class="w"> </span>reboot<span class="w"> </span>--uri<span class="w"> </span>radio://0/80/2M/E7E7E7E706<span class="w"> </span>--mode<span class="w"> </span>sysoff
-ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.commander.enHighLevel<span class="w"> </span><span class="m">1</span>
-ros2<span class="w"> </span>param<span class="w"> </span><span class="nb">set</span><span class="w"> </span>crazyflie_server<span class="w"> </span>cf1.params.stabilizer.estimator<span class="w"> </span><span class="m">2</span>
-ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>cf1/takeoff<span class="w"> </span>crazyflie_interfaces/srv/Takeoff<span class="w"> </span><span class="s2">&quot;{height: 0.5, duration: {sec: 2}}&quot;</span>
-ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>cf1/land<span class="w"> </span>crazyflie_interfaces/srv/Land<span class="w"> </span><span class="s2">&quot;{height: 0.0, duration: {sec: 2}}&quot;</span>
-</pre></div>
-</div>
-</section>
-<section id="enabling-logblocks-at-runtime">
-<h3>Enabling Logblocks at runtime<a class="headerlink" href="#enabling-logblocks-at-runtime" title="Link to this heading"></a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Runtime logblock enabling is currently only supported in the CFLIB backend of the server.</p>
-</div>
-<p>Above we explained how to enable log blocks at startup, but what if you would like to enable or disable logging blocks in runtime?
-This section will show how to do that by using services</p>
-<p>In one terminal run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py<span class="w"> </span>backend:<span class="o">=</span>cflib
-</pre></div>
-</div>
-<p>In another terminal after sourcing the right setup.bash files, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;topic_test&#39;, frequency: 10, vars: [&#39;stateEstimate.x&#39;,&#39;stateEstimate.y&#39;,&#39;stateEstimate.z&#39;]}&quot;</span>
-ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/add_logging<span class="w"> </span>crazyflie_interfaces/srv/AddLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;, frequency: 10}&quot;</span>
-</pre></div>
-</div>
-<p>With ROS 2’s rqt you can look at the topics, or with ‘ROS 2 topics echo /cf2/pose’</p>
-<p>To close the logblocks again, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/remove_logging<span class="w"> </span>crazyflie_interfaces/srv/RemoveLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;topic_test&#39;}&quot;</span>
-ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/remove_logging<span class="w"> </span>crazyflie_interfaces/srv/RemoveLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;}&quot;</span>
-</pre></div>
-</div>
-</section>
 <section id="teleoperation-controller">
 <h3>Teleoperation controller<a class="headerlink" href="#teleoperation-controller" title="Link to this heading"></a></h3>
 <p>We currently assume an XBox controller (the button mapping can be changed in teleop.yaml). It is possible to fly in different modes, including attitude-control and position-control (in which case any localization system can assist.)</p>
@@ -249,12 +212,10 @@ ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> 
 </section>
 <section id="python-scripts">
 <h3>Python scripts<a class="headerlink" href="#python-scripts" title="Link to this heading"></a></h3>
-<p>In the first terminal, launch</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py
-</pre></div>
-</div>
-<p>In the second terminal</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world
+<p>In the first terminal run the server, in the second the desired script.
+You may run the script multiple times or different scripts while leaving the server running.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal1<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py
+<span class="o">[</span>terminal2<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world
 </pre></div>
 </div>
 </section>

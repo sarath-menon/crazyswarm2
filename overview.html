@@ -49,7 +49,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#explanation-per-node">Explanation per node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#explanation-per-package">Explanation per package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#crazyflie-server">Crazyflie server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#support-functionality-with-backends">Support functionality with backends</a></li>
@@ -89,23 +89,25 @@
 <span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
 <p>This page will explain the overview of the crazyflie ROS 2 nodes:</p>
 <img alt="_images/overview_nodes.jpg" src="_images/overview_nodes.jpg" />
-<section id="explanation-per-node">
-<h2>Explanation per node<a class="headerlink" href="#explanation-per-node" title="Link to this heading"></a></h2>
+<section id="explanation-per-package">
+<h2>Explanation per package<a class="headerlink" href="#explanation-per-package" title="Link to this heading"></a></h2>
 <p>In the <a class="reference external" href="https://github.com/IMRCLab/crazyswarm2">source code of the Crazyswarm2 (Crazyflie ROS 2) project</a>, there are several packages that we will explain here:</p>
 <ul class="simple">
 <li><p><strong>crazyflie/</strong>: The package that contains the crazyflie server nodes and the crazyflies.yaml.</p></li>
 <li><p><strong>crazyflie_py/</strong>: The package that contains the python library that wraps around the ROS 2 services and topics that connects with the crazyflie server nodes.</p></li>
 <li><p><strong>crazyflie_examples/</strong>:  The package that contains examples of using the crazyflie ROS 2 package. See <a class="reference internal" href="tutorials.html#tutorials"><span class="std std-ref">ROS 2 Tutorials</span></a>.</p></li>
-<li><p><strong>crazyflie_interfaces/</strong>: The package that contain all msgs and srvs for the crazyflie ROS 2 project.</p></li>
+<li><p><strong>crazyflie_interfaces/</strong>: The package that contains all msgs and srvs for the crazyflie ROS 2 project.</p></li>
+<li><p><strong>crazyflie_sim/</strong>: The package that contains our simulator.</p></li>
 </ul>
 </section>
 <section id="crazyflie-server">
 <h2>Crazyflie server<a class="headerlink" href="#crazyflie-server" title="Link to this heading"></a></h2>
 <p>The crazyflie server node connects multiple <a class="reference external" href="https://www.bitcraze.io/products/crazyflie-2-1/">Crazyflies</a> with on or more <a class="reference external" href="https://www.bitcraze.io/products/crazyradio-pa/">Crazyradio PA dongles</a>.</p>
-<p>It has two backends that you can choose from:</p>
+<p>It has three backends that you can choose from:</p>
 <ul class="simple">
 <li><p><strong>cpp</strong>: This is based on the <a class="reference external" href="https://github.com/bitcraze/crazyflie-link-cpp">crazyflie-link-cpp</a> on the lowest layer.</p></li>
 <li><p><strong>cflib</strong>: This is based on the <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/">crazyflie-lib-python</a> up until the logging, parameter, and command sending handling.</p></li>
+<li><p><strong>sim</strong>: Our simulator behaves like a regular backend, offering ROS 2 topics and services, see below for more details on the simulation.</p></li>
 </ul>
 <p>It handles several low level communication aspects with the Crazyflies:</p>
 <ul class="simple">
@@ -124,7 +126,7 @@
 <section id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading"></a></h2>
 <p>The simulator uses the Crazyflie firmware as a software-in-the-loop (SIL). It provides the same ROS interface as the server and therefore can be used with C++ or Python user code.</p>
-<p>Currently, the desired setpoint is visualized in rviz (see <a class="reference internal" href="usage.html#usage"><span class="std std-ref">Usage</span></a>). However, the code is prepared to support physics-based simulation in the future as well.</p>
+<p>Currently, the desired setpoint is visualized in rviz (see <a class="reference internal" href="usage.html#usage"><span class="std std-ref">Usage</span></a>) or a simple physics-based simulator can be used.</p>
 </section>
 <section id="support-functionality-with-backends">
 <h2>Support functionality with backends<a class="headerlink" href="#support-functionality-with-backends" title="Link to this heading"></a></h2>
