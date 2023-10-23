@@ -107,7 +107,7 @@
 <p>We have an example of the telop_twist_keyboard package working together with the crazyflie</p>
 <p>First, make sure that the crazyflies.yaml has the right URI and if you are using the <a class="reference external" href="https://www.bitcraze.io/products/flow-deck-v2/">Flow deck</a> or <a class="reference external" href="https://www.bitcraze.io/documentation/system/positioning//">any other position system available</a> to the crazyflie.
 set the controller to 1 (PID)</p>
-<p>And if you  have not already, install the teleop package for the keyboard. (replace DISTRO with humble or galactic):</p>
+<p>And if you  have not already, install the teleop package for the keyboard. (replace DISTRO with humble or iron):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-DISTRO-teleop-twist-keyboard
 </pre></div>
 </div>
@@ -166,7 +166,7 @@ With a <a class="reference external" href="https://www.bitcraze.io/products/flow
 <section id="preperation">
 <h3>Preperation<a class="headerlink" href="#preperation" title="Link to this heading"></a></h3>
 <p>Assuming you have installed ROS 2 and Crazyswarm2 according to the instructions and went through the guides on Usage, now install the slam toolbox:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-galactic-slam-toolbox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-DISTRO-slam-toolbox
 </pre></div>
 </div>
 <p>Go to crazyflie/config/crazyflie.yaml, change the URI of the crazyflie to the one yours has and put the crazyflies you don’t use on ‘enabled: false’:</p>
@@ -270,7 +270,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie_examples<spa
 </div>
 <p>If anything is off, check if the crazyflie.yaml has been configured correctly!</p>
 <p>Now, open up a  rviv2 window in a seperate terminal with :</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/galactic/setup.bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/DISTRO/setup.bash
 rviz2
 </pre></div>
 </div>
@@ -287,7 +287,7 @@ rviz2
 <section id="flying-and-mapping">
 <h3>Flying and mapping<a class="headerlink" href="#flying-and-mapping" title="Link to this heading"></a></h3>
 <p>While still connected to the crazyflie with the server, open another terminal and type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/galactic/setup.bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/opt/ros/DISTRO/setup.bash
 ros2<span class="w"> </span>run<span class="w"> </span>teleop_twist_keyboard<span class="w"> </span>teleop_twist_keyboard
 </pre></div>
 </div>
@@ -314,7 +314,7 @@ ros2<span class="w"> </span>run<span class="w"> </span>teleop_twist_keyboard<spa
 <p>Find the all the files that were created by the RVIZ2 slam toolbox plugin, which should be in format *.yaml, *.posegraph, *.data and *.pgm, and copy them in the /crazyflie_examples/data/ folder.
 Either you can replace those that are there already (‘map.*’), or call them different and just change the name in the launch file, which will be explain now.</p>
 <p>Next, install the Navigation2 Bringup package:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-galactic-nav2-bringup
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ros-DISTRO-nav2-bringup
 </pre></div>
 </div>
 </section>
