@@ -56,6 +56,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usage-from-the-command-line">Usage from the command line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#enabling-logblocks-at-runtime">Enabling Logblocks at runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-tests-locally">Run Tests Locally</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -158,6 +159,14 @@ ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> 
 ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/cf2/remove_logging<span class="w"> </span>crazyflie_interfaces/srv/RemoveLogging<span class="w"> </span><span class="s2">&quot;{topic_name: &#39;pose&#39;}&quot;</span>
 </pre></div>
 </div>
+</section>
+<section id="run-tests-locally">
+<h2>Run Tests Locally<a class="headerlink" href="#run-tests-locally" title="Link to this heading"></a></h2>
+<p>This requires some updated pip packages for testing, see <a class="reference external" href="https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html">https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html</a>, otherwise the reported failures will be inconsistent with CI.</p>
+<p>Then execute:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">colcon</span> <span class="pre">test</span> <span class="pre">--event-handlers=console_cohesion+</span> <span class="pre">--return-code-on-test-failure</span> <span class="pre">--packages-select</span> <span class="pre">crazyflie_py</span>
+<span class="pre">`</span></code></p>
 </section>
 </section>
 
