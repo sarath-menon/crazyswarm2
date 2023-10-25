@@ -76,7 +76,7 @@ all:
       enHighLevel: 1
     stabilizer:
       estimator: 2 # 1: complementary, 2: kalman
-      controller: 5 # 1: PID, 2: mellinger 4: sjc 5: lee 7: lee payload
+      controller: 6 # 1: PID, 2: mellinger 4: sjc 5: lee (upstream-lee) 6: lee (unify-firmware) 7: lee payload
     ctrlLee:
       Kpos_Px: 17.0          # def: 10.0
       Kpos_Py: 17.0          # def: 10.0
@@ -98,9 +98,9 @@ all:
       Kw_z: 0.0025         #0.009 #0.015     
       mass: 0.032
     ctrlLeeInfo:
-      experiment: 163
-      trajectory: translation_y.csv # yaw0.csv # #figure8.csv # 
-      timescale: 0.75 #1.0 #0.34 
+      experiment: 183
+      trajectory: figure8.csv #translation_y.csv  # yaw0.csv # # # 
+      timescale: 2.0 # 0.75 # #0.34 
       motors: standard motors (CF)
       propellers: standard propellers (CF)
   # firmware logging for all drones (use robot_types/type_name to set per type, or

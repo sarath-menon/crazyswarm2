@@ -61,7 +61,7 @@ def main():
             cf.uploadTrajectory(0, 0, TRAJ)
 
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
-        timeHelper.sleep(1.0)
+        timeHelper.sleep(5.0)
 
         for cf in allcfs.crazyflies:
             pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
