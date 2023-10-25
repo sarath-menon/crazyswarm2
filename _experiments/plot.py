@@ -263,10 +263,11 @@ if __name__ == "__main__":
     with open(settings_file, 'r') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
-    mode = "auto"
-    # mode = "manual"
+    mode = "manual single"
+    # mode = "manual range"
+    # mode = "auto"
 
-    if mode == "manual":
+    if mode == "manual single":
         # get the log number from the user
         log_num = input("Enter the logging number: ")
         log_str = f"log{log_num}"
@@ -279,6 +280,24 @@ if __name__ == "__main__":
         print("...creating figures")
         create_figures(data_usd, settings, log_str)
         print("...done creating figures")
+
+    # TODO: manual range not tested (problems with the name of the logging file may arise bc of suffix "_2" for example)
+    if mode == "manual range":
+        # get the log number from the user
+        log_num_first = input("Enter the first logging number: ")
+        log_num_last = input("Enter the last logging number: ")
+
+        for log_num in range(int(log_num_first), int(log_num_last) + 1):
+            log_str = f"log{log_num}"
+
+            # decode binary log data
+            path = os.path.join(settings["data_dir"], log_str)
+            data_usd = cfusdlog.decode(path)
+
+            # create the figures
+            print("...creating figures")
+            create_figures(data_usd, settings, log_str)
+            print("...done creating figures")
 
     elif mode == "auto":
         # automatically scan and process the logs
