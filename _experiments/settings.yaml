@@ -27,29 +27,32 @@ errors:
 
 # figure settings
 figures:
-- title: Positions
+- title: UAV Positions 
   type: 2d subplots
   x_label: "$t [s]$"
   structure:
   - timestamp:
       y_info:
         data:
-          stateEstimateZ.x: actual
+          locSrv.x: mocap
+          stateEstimateZ.x: estimated
           ctrltargetZ.x: desired
         label: "$x [m]$"
   - timestamp:
       y_info:
         data:
-          stateEstimateZ.y: actual
+          locSrv.y: mocap
+          stateEstimateZ.y: estimated
           ctrltargetZ.y: desired
         label: "$y [m]$"
   - timestamp:
       y_info:
         data:
-          stateEstimateZ.z: actual
+          locSrv.z: mocap
+          stateEstimateZ.z: estimated
           ctrltargetZ.z: desired
         label: "$z [m]$"
-- title: Translational Velocities
+- title: UAV Translational Velocities
   type: 2d subplots
   x_label: "$t [s]$"
   structure:
@@ -71,7 +74,7 @@ figures:
           stateEstimateZ.vz: actual
           ctrltargetZ.vz: desired
         label: "$\\dot z [m/s]$"
-- title: Translational Accelerations
+- title: UAV Translational Accelerations
   type: 2d subplots
   x_label: "$t [s]$"
   structure:
@@ -79,18 +82,18 @@ figures:
       y_info:
         data:
           acc.x: actual
-        label: "$\\dot x [m/s^2]$"
+        label: "$\\ddot x [m/s^2]$"
   - timestamp:
       y_info:
         data:
           acc.y: actual
-        label: "$\\dot\\dot y [m/s^2]$"
+        label: "$\\ddot y [m/s^2]$"
   - timestamp:
       y_info:
         data:
           acc.z: actual
-        label: "$\\dot\\dot z [m/s^2]$"
-- title: Angles (rpy)
+        label: "$\\ddot z [m/s^2]$"
+- title: UAV Angles (rpy)
   type: 2d subplots
   x_label: "$t [s]$"
   structure:
@@ -112,7 +115,7 @@ figures:
           ctrlLee.rpyz: actual
           ctrlLee.rpydz: desired
         label: "$\\psi [°]$"
-- title: Angular Velocities (rpy)
+- title: UAV Angular Velocities (rpy)
   type: 2d subplots
   x_label: "$t [s]$"
   structure:
@@ -134,6 +137,63 @@ figures:
           ctrlLee.omegaz: actual
           ctrlLee.omegarz: desired
         label: "$\\dot \\psi [°/s]$"
+- title: Payload Positions
+  type: 2d subplots
+  x_label: "$t [s]$"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.px: actual
+        label: "$x [m]$"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.py: actual
+        label: "$y [m]$"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.pz: actual
+        label: "$z [m]$"
+- title: Payload Translational Velocities
+  type: 2d subplots
+  x_label: "$t [s]$"
+  structure:
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.pvx: actual
+        label: "$\\dot x [m/s]$"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.pvy: actual
+        label: "$\\dot y [m/s]$"
+  - timestamp:
+      y_info:
+        data:
+          stateEstimate.pvz: actual
+        label: "$\\dot z [m/s]$"
+# - title: Payload Translational Accelerations
+#   type: 2d subplots
+#   x_label: "$t [s]$"
+#   structure:
+#   - timestamp:
+#       y_info:
+#         data:
+#           acc.x: actual
+#         label: "$\\ddot x [m/s^2]$"
+#   - timestamp:
+#       y_info:
+#         data:
+#           acc.y: actual
+#         label: "$\\ddot y [m/s^2]$"
+#   - timestamp:
+#       y_info:
+#         data:
+#           acc.z: actual
+#         label: "$\\ddot z [m/s^2]$"
 - title: Thrust
   type: 2d subplots
   x_label: "$t$ [s]"
