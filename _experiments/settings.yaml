@@ -144,17 +144,17 @@ figures:
   - timestamp:
       y_info:
         data:
-          stateEstimate.px: actual
+          stateEstimateZ.px: actual
         label: "$x [m]$"
   - timestamp:
       y_info:
         data:
-          stateEstimate.py: actual
+          stateEstimateZ.py: actual
         label: "$y [m]$"
   - timestamp:
       y_info:
         data:
-          stateEstimate.pz: actual
+          stateEstimateZ.pz: actual
         label: "$z [m]$"
 - title: Payload Translational Velocities
   type: 2d subplots
@@ -163,17 +163,17 @@ figures:
   - timestamp:
       y_info:
         data:
-          stateEstimate.pvx: actual
+          stateEstimateZ.pvx: actual
         label: "$\\dot x [m/s]$"
   - timestamp:
       y_info:
         data:
-          stateEstimate.pvy: actual
+          stateEstimateZ.pvy: actual
         label: "$\\dot y [m/s]$"
   - timestamp:
       y_info:
         data:
-          stateEstimate.pvz: actual
+          stateEstimateZ.pvz: actual
         label: "$\\dot z [m/s]$"
 # - title: Payload Translational Accelerations
 #   type: 2d subplots
@@ -279,12 +279,12 @@ convert_units:
   acc.x: 1.0
   acc.y: 1.0
   acc.z: 1.0
-  stateEstimate.px: 1.0
-  stateEstimate.py: 1.0
-  stateEstimate.pz: 1.0
-  stateEstimate.pvx: 1.0
-  stateEstimate.pvy: 1.0
-  stateEstimate.pvz: 1.0
+  stateEstimateZ.px: 1.0
+  stateEstimateZ.py: 1.0
+  stateEstimateZ.pz: 1.0
+  stateEstimateZ.pvx: 1.0
+  stateEstimateZ.pvy: 1.0
+  stateEstimateZ.pvz: 1.0
   locSrv.x: 1.0
   locSrv.y: 1.0
   locSrv.z: 1.0
