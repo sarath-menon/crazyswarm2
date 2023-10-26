@@ -98,12 +98,12 @@ ctrlLee.torquez
 # ctrlLee.Kw_x
 # ctrlLee.Kw_y
 # ctrlLee.Kw_z
-stateEstimate.px 
-stateEstimate.py
-stateEstimate.pz
-stateEstimate.pvx
-stateEstimate.pvy
-stateEstimate.pvz
+stateEstimateZ.px 
+stateEstimateZ.py
+stateEstimateZ.pz
+stateEstimateZ.pvx
+stateEstimateZ.pvy
+stateEstimateZ.pvz
 locSrv.x
 locSrv.y
 locSrv.z
