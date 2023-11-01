@@ -1,3 +1,11 @@
+# I just want to plot the data of an experiment. What should I do?
+
+1. Check if you have the folder ```_experiments/reports```. If not, create it.
+2. Execute the script ```plot.py``` in ```_experiments```. Currently, the script is in the mode ```manual single``` which is why it will ask you which log you want to plot. The current one I am using is ```182```. 
+3. Wait for all plots to be generated. This may take a while.
+4. Check the folder ```_experiments/reports``` for the report. It should have the name ```log182.pdf```.
+5. If you wonder how to add additional data that is not included in the logs but computed on the basis of it, for example by fitting a cubic spline, check out the function ```add_data()``` in ```plot.py``` as well as the script ```model.py```. The file ```settings.yaml``` defines the requirements for the computation of additional data. There are two methods currently, using a single polynomial or cubic splines.
+
 # How can I reuse the data and code from the tuning experiments?
 
 ## 1. data
@@ -12,7 +20,7 @@
 
 - The finished reports combine the data and experiment information and are stored in the folder ```reports```
 
-> Note: The reports are not uploaded to this repository because they are too large. You can create them automatically and in one run by yourself, see the next section for more information.
+> Note: The reports are not uploaded to this repository because they are too large. You can create them automatically in one run by yourself, see the next section for more information.
 
 ## 2. code
 
