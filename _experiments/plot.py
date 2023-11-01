@@ -14,6 +14,9 @@ from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 
 
+import model
+
+
 def compute_tracking_error(data, settings):
     # extract the data for the position
     actual_x = data[settings["event_name"]]["stateEstimateZ.x"]
@@ -36,13 +39,12 @@ def compute_tracking_error(data, settings):
 
     # compute the L2 vector for the position
     angle_actual = np.array([actual_roll])
-    print(angle_actual.shape)
+    # print(angle_actual.shape)
     angle_desired = np.array([desired_roll])
     angle_delta = angle_actual - angle_desired
     angle_sq = angle_delta.T@angle_delta
     l2_vec_angle = np.sqrt(np.diag(angle_sq))
 
-    
     e_dict = {}
     for error in settings["errors"]:
         e_dict[error] = -1
@@ -90,26 +92,47 @@ def file_guard(pdf_path):
 
 
 def process_data(data, settings):
+    print("...processing data")
+
     # adjust time
     start_time = settings["start_time"]
     end_time = settings["end_time"]
     event = settings["event_name"]
-
-    if start_time is None:
-        start_time = data[event]['timestamp'][0]
-    else:
-        start_time = min(start_time * 1000, data[event]['timestamp'][0])
-    # print("start_time:", start_time)
 
     # convert units
     if settings["convert_units"]:
         for key, value in settings["convert_units"].items():
             data[event][key] = data[event][key] * value
 
+    # add additional data to the data dictionary)
+    add_data(data, settings)
+
+    if start_time is None:
+        start_time = data[event]['timestamp'][0]
+    else:
+        start_time = min(start_time, data[event]['timestamp'][0])
+
     # define time vector
-    t = (data[event]['timestamp'] - start_time) / 1000
+    t = (data[event]['timestamp'] - start_time)
+
+    # print(data[event].keys())
+    # print(data[event].items())
 
     return t, data_usd
+
+
+def add_data(data, settings):
+    event = settings["event_name"]
+    print("...adding data")
+    
+    for info in settings["additional_data"]:
+        # print(f"found target: {info['target']}")
+        name, data_new = model.DataHelper.generate_data(data, event, info)
+        data[event][name] = data_new
+        print(f">>> added data: {name}")
+
+    print("...done adding data")
+
 
 def create_figures(data_usd, settings, log_str):
     log_path = os.path.join(settings["data_dir"], log_str)
