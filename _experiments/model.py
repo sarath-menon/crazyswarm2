@@ -9,33 +9,49 @@ class DataHelper:
         pass
     
     @staticmethod
-    def generate_data(data: dict[str, np.ndarray], event: str, info: dict[str, str | int]) -> tuple[str, np.ndarray]:
-        x_data = data[event]["timestamp"]
-        y_data = data[event][info["source"]]
+    def generate_data(data: dict[str, np.ndarray], 
+                      event: str, 
+                      info: dict[str, str | int | float]) -> tuple[str, np.ndarray]:
+        source = data[event][info["source"]]
+        t = data[event]["timestamp"]
+        t_fit = data[event].get("fitTimestamp", None)
         
-        if info["derivative"] < 0:
+        if info.get("derivative", 0) < 0:
             raise ValueError("Derivative must be greater than or equal to 0")
-        
-        if info["type"] == "poly":
-            data = DataHelper.generate_data_poly(x_data, y_data, info["degree"], info["derivative"])
+
+        if info["type"] == "linspace":
+            data = DataHelper.generate_data_linspace(source, info["step"])
+        elif info["type"] == "poly":
+            data = DataHelper.generate_data_poly(t, source, info["degree"], info["derivative"], t_fit)
         elif info["type"] == "cs":
-            data = DataHelper.generate_data_cs(x_data, y_data, info["derivative"])
+            data = DataHelper.generate_data_cs(t, source, info["derivative"], t_fit)
+        
         else:
             raise NotImplementedError
 
         return info["target"], data
 
     @staticmethod
-    def generate_data_poly(x: np.ndarray, y: np.ndarray, d: int, derivative: int) -> np.ndarray:
+    def generate_data_linspace(x: np.ndarray, step: int) -> np.ndarray:
+        return np.arange(x[0], x[-1], step)
+
+    @staticmethod
+    def generate_data_poly(x: np.ndarray, y: np.ndarray, d: int, derivative: int, x_fit: np.ndarray) -> np.ndarray:
         p = P.Polynomial.fit(x, y, d)
         p = p.deriv(derivative)
+
+        if x_fit is not None:
+            return p(x_fit)
 
         return p(x)
     
     @staticmethod
-    def generate_data_cs(x: np.ndarray, y: np.ndarray, derivative: int) -> np.ndarray:
+    def generate_data_cs(x: np.ndarray, y: np.ndarray, derivative: int, x_fit: np.ndarray) -> np.ndarray:
         cs = CubicSpline(x, y)
 
+        if x_fit is not None:
+            return cs(x_fit, derivative)
+        
         return cs(x, derivative)
     
 
