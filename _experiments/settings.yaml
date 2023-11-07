@@ -29,207 +29,212 @@ errors:
 figures:
 - title: UAV Positions 
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          locSrv.x: mocap
-          stateEstimateZ.x: estimated
-          ctrltargetZ.x: desired
-        label: "$x [m]$"
-  - timestamp:
-      y_info:
-        data:
-          locSrv.y: mocap
-          stateEstimateZ.y: estimated
-          ctrltargetZ.y: desired
-        label: "$y [m]$"
-  - timestamp:
-      y_info:
-        data:
-          locSrv.z: mocap
-          stateEstimateZ.z: estimated
-          ctrltargetZ.z: desired
-        label: "$z [m]$"
+  - x_axis: [timestamp, timestamp, timestamp]
+    y_axis: [locSrv.x, stateEstimateZ.x, ctrltargetZ.x]
+    legend: [mocap, ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$x [m]$"
+  - x_axis: [timestamp, timestamp, timestamp]
+    y_axis: [locSrv.y, stateEstimateZ.y, ctrltargetZ.y]
+    legend: [mocap, ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$y [m]$"
+  - x_axis: [timestamp, timestamp, timestamp]
+    y_axis: [locSrv.z, stateEstimateZ.z, ctrltargetZ.z]
+    legend: [mocap, ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$z [m]$"
 - title: UAV Translational Velocities
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          stateEstimateZ.vx: actual
-          ctrltargetZ.vx: desired
-        label: "$\\dot x [m/s]$"
-  - timestamp:
-      y_info:
-        data:
-          stateEstimateZ.vy: actual
-          ctrltargetZ.vy: desired
-        label: "$\\dot y [m/s]$"
-  - timestamp:
-      y_info:
-        data:
-          stateEstimateZ.vz: actual
-          ctrltargetZ.vz: desired
-        label: "$\\dot z [m/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [stateEstimateZ.vx, ctrltargetZ.vx]
+    legend: [ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot x [m/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [stateEstimateZ.vy, ctrltargetZ.vy]
+    legend: [ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot y [m/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [stateEstimateZ.vz, ctrltargetZ.vz]
+    legend: [ekf, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot z [m/s]$"
 - title: UAV Translational Accelerations
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          acc.x: actual
-        label: "$\\ddot x [m/s^2]$"
-  - timestamp:
-      y_info:
-        data:
-          acc.y: actual
-        label: "$\\ddot y [m/s^2]$"
-  - timestamp:
-      y_info:
-        data:
-          acc.z: actual
-        label: "$\\ddot z [m/s^2]$"
+  - x_axis: [timestamp]
+    y_axis: [acc.x]
+    legend: [ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot x [m/s^2]$"
+  - x_axis: [timestamp]
+    y_axis: [acc.y]
+    legend: [ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot y [m/s^2]$"
+  - x_axis: [timestamp]
+    y_axis: [acc.z]
+    legend: [ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot z [m/s^2]$"
 - title: UAV Angles (rpy)
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.rpyx: actual
-          ctrlLee.rpydx: desired
-        label: "$\\phi [°]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.rpyy: actual
-          ctrlLee.rpydy: desired
-        label: "$\\theta [°]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.rpyz: actual
-          ctrlLee.rpydz: desired
-        label: "$\\psi [°]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.rpyx, ctrlLee.rpydx]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\phi [°]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.rpyy, ctrlLee.rpydy]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\theta [°]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.rpyz, ctrlLee.rpydz]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\psi [°]$"
 - title: UAV Angular Velocities (rpy)
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.omegax: actual
-          ctrlLee.omegarx: desired
-        label: "$\\dot \\phi [°/s]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.omegay: actual
-          ctrlLee.omegary: desired
-        label: "$\\dot \\theta [°/s]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.omegaz: actual
-          ctrlLee.omegarz: desired
-        label: "$\\dot \\psi [°/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.omegax, ctrlLee.omegarx]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot \\phi [°/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.omegay, ctrlLee.omegary]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot \\theta [°/s]$"
+  - x_axis: [timestamp, timestamp]
+    y_axis: [ctrlLee.omegaz, ctrlLee.omegarz]
+    legend: [actual, desired]
+    x_label: "$t [s]$"
+    y_label: "$\\dot \\psi [°/s]$"
 - title: Payload Positions
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: scatter
+  marker_kwargs:
+    marker: .
+    s: 0.1
   structure:
-  - timestamp:
-      y_info:
-        data:
-          fitZ.px: fitted
-          stateEstimateZ.px: actual
-        label: "$x [m]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.py: fitted
-          stateEstimateZ.py: actual
-        label: "$y [m]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pz: fitted
-          stateEstimateZ.pz: actual
-        label: "$z [m]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.px, stateEstimateZ.px]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$x [m]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.py, stateEstimateZ.py]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$y [m]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.pz, stateEstimateZ.pz]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$z [m]$"
 - title: Payload Translational Velocities
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: scatter
+  marker_kwargs:
+    marker: .
+    s: 0.1
   structure:
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pvx: fitted
-          stateEstimateZ.pvx: actual
-        label: "$\\dot x [m/s]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pvy: fitted
-          stateEstimateZ.pvy: actual
-        label: "$\\dot y [m/s]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pvz: fitted
-          stateEstimateZ.pvz: actual
-        label: "$\\dot z [m/s]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.pvx, stateEstimateZ.pvx]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\dot x [m/s]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.pvy, stateEstimateZ.pvy]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\dot y [m/s]$"
+  - x_axis: [fitTimestamp, timestamp]
+    y_axis: [fitZ.pvz, stateEstimateZ.pvz]
+    legend: [fitted, ekf]
+    x_label: "$t [s]$"
+    y_label: "$\\dot z [m/s]$"
 - title: Payload Translational Accelerations
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: scatter
+  marker_kwargs:
+    marker: .
+    s: 0.1
   structure:
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pax: fitted
-        label: "$\\ddot x [m/s^2]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.pay: fitted
-        label: "$\\ddot y [m/s^2]$"
-  - timestamp:
-      y_info:
-        data:
-          fitZ.paz: fitted
-        label: "$\\ddot z [m/s^2]$"
+  - x_axis: [fitTimestamp]
+    y_axis: [fitZ.pax]
+    legend: [fitted]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot x [m/s^2]$"
+  - x_axis: [fitTimestamp]
+    y_axis: [fitZ.pay]
+    legend: [fitted]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot y [m/s^2]$"
+  - x_axis: [fitTimestamp]
+    y_axis: [fitZ.paz]
+    legend: [fitted]
+    x_label: "$t [s]$"
+    y_label: "$\\ddot z [m/s^2]$"
 - title: Thrust
   type: 2d subplots
-  x_label: "$t$ [s]"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.thrustSI: actual
-        label: "$T [N]$"
+  - x_axis: [timestamp]
+    y_axis: [ctrlLee.thrustSI]
+    legend: [actual]
+    x_label: "$t [s]$"
+    y_label: "$T [N]$"
 - title: Torques (xyz)
   type: 2d subplots
-  x_label: "$t [s]$"
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.torquex: actual
-        label: "$\\tau_x [Nm]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.torquey: actual
-        label: "$\\tau_y [Nm]$"
-  - timestamp:
-      y_info:
-        data:
-          ctrlLee.torquez: actual
-        label: "$\\tau_z [Nm]$"
+  - x_axis: [timestamp]
+    y_axis: [ctrlLee.torquex]
+    legend: [actual]
+    x_label: "$t [s]$"
+    y_label: "$\\tau_x [Nm]$"
+  - x_axis: [timestamp]
+    y_axis: [ctrlLee.torquey]
+    legend: [actual]
+    x_label: "$t [s]$"
+    y_label: "$\\tau_y [Nm]$"
+  - x_axis: [timestamp]
+    y_axis: [ctrlLee.torquez]
+    legend: [actual]
+    x_label: "$t [s]$"
+    y_label: "$\\tau_z [Nm]$"
 - title: Trajectory
   type: 3d
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   x_label: $x [m]$
   y_label: $y [m]$
   z_label: $z [m]$
@@ -237,22 +242,20 @@ figures:
   - - stateEstimateZ.x
     - stateEstimateZ.y
     - stateEstimateZ.z
-    - actual
+    - ekf
   - - ctrltargetZ.x
     - ctrltargetZ.y
     - ctrltargetZ.z
     - desired
 - title: Trajectory
-  type: 2d single
+  type: 2d subplots
+  marker: line
+  marker_kwargs:
+    linewidth: 0.5
   structure:
-  - x_axis: stateEstimateZ.x
-    y_axis: stateEstimateZ.y
-    legend: actual
-    x_label: "$x [m]$"
-    y_label: "$y [m]$"
-  - x_axis: ctrltargetZ.x
-    y_axis: ctrltargetZ.y
-    legend: desired
+  - x_axis: [stateEstimateZ.x, ctrltargetZ.x]
+    y_axis: [stateEstimateZ.y, ctrltargetZ.y]
+    legend: [ekf, desired]
     x_label: "$x [m]$"
     y_label: "$y [m]$"
 
@@ -349,7 +352,12 @@ convert_units:
 # info for adding additional data
 # (1) type: poly -> takes data and returns data of fitted polynomial, or its derivative (needs degree)
 # (2) type: cs   -> takes data and returns data of cubic spline, or its derivative
+# (3) type: linspace -> takes data and returns data with more points in between (needs step)
 additional_data:
+  - source: timestamp
+    target: fitTimestamp
+    type: linspace
+    step: 0.001
   - source: stateEstimateZ.px
     target: fitZ.px
     type: cs

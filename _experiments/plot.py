@@ -96,7 +96,7 @@ def process_data(data, settings):
 
     # adjust time
     start_time = settings["start_time"]
-    end_time = settings["end_time"]
+    # end_time = settings["end_time"]
     event = settings["event_name"]
 
     # convert units
@@ -104,21 +104,21 @@ def process_data(data, settings):
         for key, value in settings["convert_units"].items():
             data[event][key] = data[event][key] * value
 
-    # add additional data to the data dictionary)
-    add_data(data, settings)
-
+    # shift timestamp data
     if start_time is None:
         start_time = data[event]['timestamp'][0]
     else:
         start_time = min(start_time, data[event]['timestamp'][0])
 
-    # define time vector
-    t = (data[event]['timestamp'] - start_time)
+    data[event]["timestamp"] = (data[event]["timestamp"] - start_time)
+
+    # add additional data to the data dictionary)
+    add_data(data, settings)
 
     # print(data[event].keys())
     # print(data[event].items())
 
-    return t, data_usd
+    return data
 
 
 def add_data(data, settings):
@@ -130,15 +130,19 @@ def add_data(data, settings):
         name, data_new = model.DataHelper.generate_data(data, event, info)
         data[event][name] = data_new
         print(f">>> added data: {name}")
+        # print(f">>> data shape: {data_new.shape}")
 
     print("...done adding data")
 
 
 def create_figures(data_usd, settings, log_str):
+    debug = True
+    debug_figure_number = 7
+
     log_path = os.path.join(settings["data_dir"], log_str)
     print("log file: {}".format(log_path))
 
-    t, data_usd = process_data(data_usd, settings)
+    data_processed = process_data(data_usd, settings)
 
     # create a PDF to save the figures
     pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
@@ -171,7 +175,7 @@ def create_figures(data_usd, settings, log_str):
 
     # create the results section
     title_text_results = f"Results:\n"
-    e_dict = compute_tracking_error(data_usd, settings)
+    e_dict = compute_tracking_error(data_processed, settings)
     for error in settings["errors"]:
         title_text_results += f"    {error}: {e_dict[error]}\n"
 
@@ -184,9 +188,9 @@ def create_figures(data_usd, settings, log_str):
     # create data plots
     figures_max = settings.get("figures_max", None)  # set to None to plot all figures
     figure_count = 0
-    for k, (event_name, data) in enumerate(data_usd.items()):
-        if event_name in settings["event_name"]:
-            print("processing event: {} ({})".format(event_name, k))
+    for k, (event, data) in enumerate(data_processed.items()):
+        if event in settings["event_name"]:
+            print("processing event: {} ({})".format(event, k))
 
             # create a new figure for each value in the data dictionary
             for figure_info in settings["figures"]:
@@ -207,34 +211,46 @@ def create_figures(data_usd, settings, log_str):
                     if structure_length == 1:
                         ax = [ax]
                     
-                    # iterate over every subplot
+                    # iterate over every subplot in the figure
                     for i, obj in enumerate(structure):
-                        for x, y_dict in obj.items():
-                            y_data = y_dict["y_info"]["data"]
-                            y_label = y_dict["y_info"]["label"]
-                            for signal_name, signal_legend in y_data.items():
-                                if x == "timestamp":
-                                    ax[i].plot(t, data_usd[event_name][signal_name], label=signal_legend, linewidth=0.5)
-                                else:
-                                    ax[i].plot(data_usd[event_name][x], data_usd[event_name][signal_name], label=signal_legend, linewidth=0.5)
-                                ax[i].set_xlabel(x_label)
-                                ax[i].set_ylabel(y_label)
-                                ax[i].legend(loc="lower left", fontsize=5)
-                                ax[i].grid(True)
+                        n_x = len(obj["x_axis"])
+                        n_y = len(obj["y_axis"])
+                        n_leg = len(obj["legend"])
 
-                if figure_type == "2d single":
-                    fig, ax = plt.subplots()
+                        if n_x != n_y != n_leg:
+                            raise ValueError("Please specify the same number of x and y signals and legends")
+                        
+                        # iterate over every plot in the respective subplot
+                        for j in range(n_x):
+                            x = obj["x_axis"][j]
+                            y = obj["y_axis"][j]
+
+                            if figure_info["marker"] == "line":
+                                ax[i].plot(data[x], data[y], label=obj["legend"][j], **figure_info["marker_kwargs"])
+                            elif figure_info["marker"] == "scatter":
+                                ax[i].scatter(data[x], data[y], label=obj["legend"][j], **figure_info["marker_kwargs"])
+                            else:
+                                raise ValueError("Invalid marker")
+
+                            ax[i].set_xlabel(obj["x_label"])
+                            ax[i].set_ylabel(obj["y_label"])
+                            ax[i].legend(loc="lower left", fontsize=5)
+                            ax[i].grid(True)
+
+                # DEPRECATED
+                # if figure_type == "2d single":
+                #     fig, ax = plt.subplots()
                     
-                    # iterate over every subplot
-                    for obj in structure:
-                        ax.plot(data_usd[event_name][obj["x_axis"]], 
-                            data_usd[event_name][obj["y_axis"]], 
-                            label=obj["legend"], 
-                            linewidth=0.5)
-                        ax.set_xlabel(obj["x_label"])
-                        ax.set_ylabel(obj["y_label"])
-                        ax.legend(loc="lower left", fontsize=5)
-                        ax.grid(True)
+                #     # iterate over every subplot
+                #     for obj in structure:
+                #         ax.plot(data[obj["x_axis"]], 
+                #             data[obj["y_axis"]], 
+                #             label=obj["legend"], 
+                #             linewidth=0.5)
+                #         ax.set_xlabel(obj["x_label"])
+                #         ax.set_ylabel(obj["y_label"])
+                #         ax.legend(loc="lower left", fontsize=5)
+                #         ax.grid(True)
 
                 if figure_type == "3d":
                     fig = plt.figure()
@@ -244,24 +260,28 @@ def create_figures(data_usd, settings, log_str):
                     
                     # iterate over every subplot
                     for i, obj in enumerate(structure):
-                        ax.plot(data_usd[event_name][obj[0]],
-                                data_usd[event_name][obj[1]],
-                                data_usd[event_name][obj[2]], 
+                        ax.plot(data[obj[0]],
+                                data[obj[1]],
+                                data[obj[2]], 
                                 label=obj[3], 
                                 linewidth=0.5)
                         
-                        ax.set_xlim(min(data_usd[event_name][obj[0]])-0.1*min(data_usd[event_name][obj[0]]), 
-                                    max(data_usd[event_name][obj[0]])+0.1*max(data_usd[event_name][obj[0]]))
-                        ax.set_ylim(min(data_usd[event_name][obj[1]])-0.1*min(data_usd[event_name][obj[1]]),
-                                    max(data_usd[event_name][obj[1]])+0.1*max(data_usd[event_name][obj[1]]))
-                        ax.set_zlim(min(data_usd[event_name][obj[2]])-0.1*min(data_usd[event_name][obj[2]]),
-                                    max(data_usd[event_name][obj[2]])+0.1*max(data_usd[event_name][obj[2]]))
+                        ax.set_xlim(min(data[obj[0]])-0.1*min(data[obj[0]]), 
+                                    max(data[obj[0]])+0.1*max(data[obj[0]]))
+                        ax.set_ylim(min(data[obj[1]])-0.1*min(data[obj[1]]),
+                                    max(data[obj[1]])+0.1*max(data[obj[1]]))
+                        ax.set_zlim(min(data[obj[2]])-0.1*min(data[obj[2]]),
+                                    max(data[obj[2]])+0.1*max(data[obj[2]]))
 
                     ax.set_xlabel(x_label)
                     ax.set_ylabel(y_label)
                     ax.set_zlabel(z_label)
                     ax.legend(loc="lower left", fontsize=5)
                     ax.grid(True)
+
+                # show plot for debugging
+                if debug and figure_count == debug_figure_number-1:
+                    plt.show()
 
                 fig.suptitle(title, fontsize=16)
                 plt.tight_layout()
