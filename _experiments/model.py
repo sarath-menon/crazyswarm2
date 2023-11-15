@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Tool for manipulating and adding data to the automatically generated reports.
+"""
 import numpy as np
 from numpy.polynomial import polynomial as P
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, BSpline, splrep
 import matplotlib.pyplot as plt
 
 
@@ -22,10 +26,11 @@ class DataHelper:
         if info["type"] == "linspace":
             data = DataHelper.generate_data_linspace(source, info["step"])
         elif info["type"] == "poly":
-            data = DataHelper.generate_data_poly(t, source, info["degree"], info["derivative"], t_fit)
+            data = DataHelper.generate_data_poly(t, source, t_fit, info["derivative"], info["degree"])
         elif info["type"] == "cs":
-            data = DataHelper.generate_data_cs(t, source, info["derivative"], t_fit)
-        
+            data = DataHelper.generate_data_cs(t, source, t_fit, info["derivative"])
+        elif info["type"] == "bs":
+            data = DataHelper.generate_data_bs(t, source, t_fit, info["derivative"], info["smoothing"])
         else:
             raise NotImplementedError
 
@@ -36,8 +41,8 @@ class DataHelper:
         return np.arange(x[0], x[-1], step)
 
     @staticmethod
-    def generate_data_poly(x: np.ndarray, y: np.ndarray, d: int, derivative: int, x_fit: np.ndarray) -> np.ndarray:
-        p = P.Polynomial.fit(x, y, d)
+    def generate_data_poly(x: np.ndarray, y: np.ndarray, x_fit: np.ndarray, derivative: int, degree: int) -> np.ndarray:
+        p = P.Polynomial.fit(x, y, degree)
         p = p.deriv(derivative)
 
         if x_fit is not None:
@@ -46,13 +51,24 @@ class DataHelper:
         return p(x)
     
     @staticmethod
-    def generate_data_cs(x: np.ndarray, y: np.ndarray, derivative: int, x_fit: np.ndarray) -> np.ndarray:
+    def generate_data_cs(x: np.ndarray, y: np.ndarray, x_fit: np.ndarray, derivative: int) -> np.ndarray:
         cs = CubicSpline(x, y)
 
         if x_fit is not None:
             return cs(x_fit, derivative)
         
         return cs(x, derivative)
+    
+    @staticmethod
+    def generate_data_bs(x: np.ndarray, y: np.ndarray, x_fit: np.ndarray, derivative: int, smoothing: float) -> np.ndarray:
+        tck = splrep(x, y, s=smoothing)
+        bs = BSpline(*tck)
+        bs = bs.derivative(derivative)
+
+        if x_fit is not None:
+            return bs(x_fit)
+        
+        return bs(x)
     
 
 if __name__ == "__main__":

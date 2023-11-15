@@ -134,10 +134,11 @@ figures:
     y_label: "$\\dot \\psi [°/s]$"
 - title: Payload Positions
   type: 2d subplots
-  marker: scatter
+  marker: line
   marker_kwargs:
-    marker: .
-    s: 0.1
+    marker: o
+    ms: 0.7
+    linewidth: 0.5
   structure:
   - x_axis: [fitTimestamp, timestamp]
     y_axis: [fitZ.px, stateEstimateZ.px]
@@ -156,10 +157,11 @@ figures:
     y_label: "$z [m]$"
 - title: Payload Translational Velocities
   type: 2d subplots
-  marker: scatter
+  marker: line
   marker_kwargs:
-    marker: .
-    s: 0.1
+    # marker: o
+    # ms: 0.7
+    linewidth: 0.5
   structure:
   - x_axis: [fitTimestamp, timestamp]
     y_axis: [fitZ.pvx, stateEstimateZ.pvx]
@@ -178,10 +180,11 @@ figures:
     y_label: "$\\dot z [m/s]$"
 - title: Payload Translational Accelerations
   type: 2d subplots
-  marker: scatter
+  marker: line
   marker_kwargs:
-    marker: .
-    s: 0.1
+    # marker: o
+    # ms: 0.7
+    linewidth: 0.5
   structure:
   - x_axis: [fitTimestamp]
     y_axis: [fitZ.pax]
@@ -349,59 +352,69 @@ convert_units:
 #   locSrv.qz: 
 #   locSrv.qw: 
 
-# info for adding additional data
-# (1) type: poly -> takes data and returns data of fitted polynomial, or its derivative (needs degree)
-# (2) type: cs   -> takes data and returns data of cubic spline, or its derivative
-# (3) type: linspace -> takes data and returns data with more points in between (needs step)
+# info for adding additional data (fmi: model.py)
+# (1) type: linspace  -> takes data and returns data with more points in between (needs step)
+# (2) type: poly      -> takes data and returns data of a fitted polynomial, or its derivative (needs derivative, degree)
+# (3) type: cs        -> takes data and returns data of a cubic spline, or its derivative (needs derivative)
+# (4) type: bs        -> takes data and returns data of a b-spline, or its derivative (needs derivative, smoothing)
 additional_data:
   - source: timestamp
     target: fitTimestamp
     type: linspace
-    step: 0.001
+    step: 0.0001
   - source: stateEstimateZ.px
     target: fitZ.px
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 0
   - source: stateEstimateZ.py
     target: fitZ.py
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 0
   - source: stateEstimateZ.pz
     target: fitZ.pz
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 0
   - source: stateEstimateZ.px
     target: fitZ.pvx
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 1
   - source: stateEstimateZ.py
     target: fitZ.pvy
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 1
   - source: stateEstimateZ.pz
     target: fitZ.pvz
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 1
   - source: stateEstimateZ.px
     target: fitZ.pax
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 2
   - source: stateEstimateZ.py
     target: fitZ.pay
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 2
   - source: stateEstimateZ.pz
     target: fitZ.paz
-    type: cs
-    degree:
+    type: bs
+    smoothing: 0
+    # degree:
     derivative: 2
   
   

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-plotting a generic USD log
+Tool for yaml-based automatic report generation from logged data of the crazyflie.
 """
 
 # attidtue best: 22
@@ -137,7 +137,7 @@ def add_data(data, settings):
 
 def create_figures(data_usd, settings, log_str):
     debug = True
-    debug_figure_number = 7
+    debug_figure_number = 6 # figure 6: "Payload Positions"
 
     log_path = os.path.join(settings["data_dir"], log_str)
     print("log file: {}".format(log_path))

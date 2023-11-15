@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Tool for saving parameters from the crazyflie.yaml before every experiment.
+"""
 import os
 import yaml
 
