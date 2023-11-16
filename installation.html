@@ -146,6 +146,15 @@ colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install
 </div>
 </div></blockquote>
 </li>
+<li><p>Set up Crazyradio</p>
+<p>For the crazyradio, you need to setup usb rules in order to communicate with the Crazyflie. Find the instructions for that here <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/">in Bitcraze’s USB permission guide for Linux</a>.</p>
+<p>You will also need to update the crazyradio firmware to the latest development branch to be able to use all features. For Crazyradio PA (1), <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyradio-firmware/master/building/building_flashing/">follow these instructions</a>. For Crazyradio 2, follow <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyradio-firmware/master/building/building_flashing/">these instuctions to build the firmware</a> and <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyradio2-firmware/main/building-and-flashing/flash//">these instuctions to flash it</a>.</p>
+</li>
+<li><p>Update the crazyflies</p>
+<p>If this is the first time handling crazyflies it is always good to start with <a class="reference external" href="https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/">Bitcraze’s getting started guide</a>.</p>
+<p>You can update each crazyflie firmware to the latest release via <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-clients-python/master/userguides/userguide_client/#firmware-upgrade">these instructions of the Bitcraze Crazyflie client</a> .</p>
+<p>While you are at it, make sure that each crazyflie have an unique radio address which you can change in <a class="reference external" href="https://www.bitcraze.io/documentation/repository/crazyflie-clients-python/master/userguides/userguide_client/#firmware-configuration">the client via these instructions</a> .</p>
+</li>
 <li><p>Set up software-in-the-loop simulation (optional)</p>
 <blockquote>
 <div><p>This currently requires cloning the Crazyflie firmware and building the Python bindings manually. In a separate folder (not part of your ROS 2 workspace!),</p>
