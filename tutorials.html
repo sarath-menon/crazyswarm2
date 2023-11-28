@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ROS 2 Tutorials &mdash; Crazyswarm2 1.0a1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=a5c4661c" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -53,6 +55,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ROS 2 Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#teleoperation-keyboard">Teleoperation keyboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vizualization-with-rviz2">Vizualization with RVIZ2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-with-simple-mapper">Mapping with simple mapper</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mapping-with-the-slam-toolbox">Mapping with the SLAM toolbox</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#preperation">Preperation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#connecting-with-the-crazyflie">Connecting with the Crazyflie</a></li>
@@ -155,6 +158,36 @@ The crazyflie names should appear with their estimated position.</p>
 <div style="position: relative; padding-bottom: 56.25%; margin-bottom: 20pt; height: 0; overflow: hidden; max-width: 100%; height: auto;">
     <iframe src="https://www.youtube.com/embed/w99hLldcSp4" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 </div></section>
+<section id="mapping-with-simple-mapper">
+<h2>Mapping with simple mapper<a class="headerlink" href="#mapping-with-simple-mapper" title="Link to this heading"></a></h2>
+<p>If you have a crazyflie with a multiranger and flowdeck, you can try out some simple mapping.</p>
+<p>Make sure that the scan and odometry logging is enabled in crazyflies.yaml:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>firmware_logging:
+<span class="w">  </span>enabled:<span class="w"> </span><span class="nb">true</span>
+<span class="w">  </span>default_topics:
+<span class="w">    </span>odom:
+<span class="w">      </span>frequency:<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="c1"># Hz</span>
+<span class="w">    </span>scan:
+<span class="w">      </span>frequency:<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="c1"># Hz</span>
+</pre></div>
+</div>
+<p>and make sure that the pid controller and kalman filter is enabled:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>firmware_params:
+<span class="w">  </span>stabilizer:
+<span class="w">    </span>estimator:<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="c1"># 1: complementary, 2: kalman</span>
+<span class="w">    </span>controller:<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1"># 1: PID, 2: mellinger</span>
+</pre></div>
+</div>
+<p>If you are using a different name for your crazyflie, make sure to change the following in the example launch file (multiranger_simple_mapper_launch.py):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">crazyflie_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/cf231&#39;</span>
+</pre></div>
+</div>
+<p>Then start the simple mapper example launch file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie_examples<span class="w"> </span>multiranger_simple_mapper_launch.py
+</pre></div>
+</div>
+<p>And watch the mapping happening in rviz2 while controlling the crazyflie with the teleop node (see the sections above).</p>
+</section>
 <section id="mapping-with-the-slam-toolbox">
 <h2>Mapping with the SLAM toolbox<a class="headerlink" href="#mapping-with-the-slam-toolbox" title="Link to this heading"></a></h2>
 <p>You can connect the Crazyflie through ROS 2 with existing packages like the <a class="reference external" href="https://github.com/SteveMacenski/slam_toolbox/">SLAM toolbox</a>.
