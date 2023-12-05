@@ -126,6 +126,7 @@ public:
     , name_(name)
     , node_(node)
     , tf_broadcaster_(node)
+    , last_on_latency_(std::chrono::steady_clock::now())
   {
     auto sub_opt_cf_cmd = rclcpp::SubscriptionOptions();
     sub_opt_cf_cmd.callback_group = callback_group_cf_cmd;
@@ -148,8 +149,24 @@ public:
     subscription_cmd_position_ = node->create_subscription<crazyflie_interfaces::msg::Position>(name + "/cmd_position", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieROS::cmd_position_changed, this, _1), sub_opt_cf_cmd);
 
     // spinning timer
-    spin_timer_ = node->create_wall_timer(std::chrono::milliseconds(100), std::bind(&CrazyflieROS::spin_once, this), callback_group_cf_srv);
+    // used to process all incoming radio messages
+    spin_timer_ =
+      node->create_wall_timer(
+      std::chrono::milliseconds(1),
+      std::bind(&CrazyflieROS::spin_once, this), callback_group_cf_srv);
 
+    // link statistics
+    warning_freq_ = node->get_parameter("warnings.frequency").get_parameter_value().get<float>();
+    max_latency_ = node->get_parameter("warnings.communication.max_unicast_latency").get_parameter_value().get<float>();
+
+    if (warning_freq_ >= 0.0) {
+      cf_.setLatencyCallback(std::bind(&CrazyflieROS::on_latency, this, std::placeholders::_1));
+      link_statistics_timer_ =
+        node->create_wall_timer(
+        std::chrono::milliseconds((int)(1000.0/warning_freq_)),
+        std::bind(&CrazyflieROS::on_link_statistics_timer, this), callback_group_cf_srv);
+
+    }
 
     auto start = std::chrono::system_clock::now();
 
@@ -181,34 +198,64 @@ public:
     };
 
     if (enable_parameters) {
+      bool query_all_values_on_connect = node->get_parameter("firmware_params.query_all_values_on_connect").get_parameter_value().get<bool>();
+
       int numParams = 0;
       RCLCPP_INFO(logger_, "Requesting parameters...");
-      cf_.requestParamToc(/*forceNoCache*/);
+      cf_.requestParamToc(/*forceNoCache*/false, /*requestValues*/query_all_values_on_connect);
       for (auto iter = cf_.paramsBegin(); iter != cf_.paramsEnd(); ++iter) {
         auto entry = *iter;
         std::string paramName = name + ".params." + entry.group + "." + entry.name;
         switch (entry.type)
         {
         case Crazyflie::ParamTypeUint8:
-          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint8_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<uint8_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeInt8:
-          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int8_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<int8_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeUint16:
-          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint16_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<uint16_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeInt16:
-          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int16_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<int16_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeUint32:
-          node->declare_parameter<int64_t>(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<uint32_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter<int64_t>(paramName, cf_.getParam<uint32_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeInt32:
-          node->declare_parameter(paramName, (int)0);//rclcpp::PARAMETER_INTEGER);//cf_.getParam<int32_t>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<int32_t>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_INTEGER);
+          }
           break;
         case Crazyflie::ParamTypeFloat:
-          node->declare_parameter(paramName, 0.0f);//rclcpp::PARAMETER_DOUBLE);//cf_.getParam<float>(entry.id));
+          if (query_all_values_on_connect) {
+            node->declare_parameter(paramName, cf_.getParam<float>(entry.id));
+          } else {
+            node->declare_parameter(paramName, rclcpp::PARAMETER_DOUBLE);
+          }
           break;
         default:
           RCLCPP_WARN(logger_, "Unknown param type for %s/%s", entry.group.c_str(), entry.name.c_str());
@@ -352,8 +399,8 @@ public:
 
   void spin_once()
   {
-    cf_.spin_once();
-    // cf_.sendPing();
+    // process all packets from the receive queue
+    cf_.processAllPackets();
   }
 
   std::string broadcastUri() const
@@ -665,6 +712,25 @@ private:
     (*pub)->publish(msg);
   }
 
+  void on_link_statistics_timer()
+  {
+    cf_.triggerLatencyMeasurement();
+
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed = now - last_on_latency_;
+    if (elapsed.count() > 1.0 / warning_freq_) {
+      RCLCPP_WARN(logger_, "last latency update: %f s", elapsed.count());
+    }
+  }
+
+  void on_latency(uint64_t latency_in_us)
+  {
+    if (latency_in_us / 1000.0 > max_latency_) {
+      RCLCPP_WARN(logger_, "Latency: %f ms", latency_in_us / 1000.0);
+    }
+    last_on_latency_ = std::chrono::steady_clock::now();
+  }
+
 private:
   rclcpp::Logger logger_;
   CrazyflieLogger cf_logger_;
@@ -701,10 +767,12 @@ private:
   // multithreading
   rclcpp::CallbackGroup::SharedPtr callback_group_cf_;
   rclcpp::TimerBase::SharedPtr spin_timer_;
-  
-  // connection stats
-  bitcraze::crazyflieLinkCpp::Connection::Statistics stats_previous_;
-  rclcpp::TimerBase::SharedPtr timer_connection_stats_;
+
+  // link statistics
+  rclcpp::TimerBase::SharedPtr link_statistics_timer_;
+  std::chrono::time_point<std::chrono::steady_clock> last_on_latency_;
+  float warning_freq_;
+  float max_latency_;
 
 };
 
@@ -740,6 +808,7 @@ public:
     subscription_cmd_des_cable_angles_ = this->create_subscription<crazyflie_interfaces::msg::DesCableAngles>("all/cmd_des_cable_angles", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_des_cable_angles_changed, this, _1), sub_opt_all_cmd);
     subscription_cmd_des_cable_states_ = this->create_subscription<crazyflie_interfaces::msg::DesCableStates>("all/cmd_des_cable_states", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_des_cable_states_changed, this, _1), sub_opt_all_cmd);
 
+
     // services for "all"
     auto service_qos = rmw_qos_profile_services_default;
 
@@ -750,12 +819,27 @@ public:
     service_go_to_ = this->create_service<GoTo>("all/go_to", std::bind(&CrazyflieServer::go_to, this, _1, _2), service_qos, callback_group_all_srv_);
     service_notify_setpoints_stop_ = this->create_service<NotifySetpointsStop>("all/notify_setpoints_stop", std::bind(&CrazyflieServer::notify_setpoints_stop, this, _1, _2), service_qos, callback_group_all_srv_);
 
-       // declare global commands
+    // declare global params
     this->declare_parameter("all.broadcasts.num_repeats", 15);
     this->declare_parameter("all.broadcasts.delay_between_repeats_ms", 1);
+    this->declare_parameter("firmware_params.query_all_values_on_connect", false);
 
     broadcasts_num_repeats_ = this->get_parameter("all.broadcasts.num_repeats").get_parameter_value().get<int>();
     broadcasts_delay_between_repeats_ms_ = this->get_parameter("all.broadcasts.delay_between_repeats_ms").get_parameter_value().get<int>();
+    mocap_enabled_ = false;
+
+    // Warnings
+    this->declare_parameter("warnings.frequency", 1.0);
+    float freq = this->get_parameter("warnings.frequency").get_parameter_value().get<float>();
+    if (freq >= 0.0) {
+      watchdog_timer_ = this->create_wall_timer(std::chrono::milliseconds((int)(1000.0/freq)), std::bind(&CrazyflieServer::on_watchdog_timer, this), callback_group_all_srv_);
+    }
+    this->declare_parameter("warnings.motion_capture.warning_if_rate_outside", std::vector<double>({80.0, 120.0}));
+    auto rate_range = this->get_parameter("warnings.motion_capture.warning_if_rate_outside").get_parameter_value().get<std::vector<double>>();
+    mocap_min_rate_ = rate_range[0];
+    mocap_max_rate_ = rate_range[1];
+
+    this->declare_parameter("warnings.communication.max_unicast_latency", 10.0);
 
     // load crazyflies from params
     auto node_parameters_iface = this->get_node_parameters_interface();
@@ -773,6 +857,13 @@ public:
         std::string constr = "crazyflie";
         if (con != parameter_overrides.end()) {
           constr = con->second.get<std::string>();
+        }
+        // Find the mocap setting
+        const auto mocap_en = parameter_overrides.find("robot_types." + cf_type + ".motion_capture.enabled");
+        if (mocap_en != parameter_overrides.end()) {
+          if (mocap_en->second.get<bool>()) {
+            mocap_enabled_ = true;
+          }
         }
 
         // if it is a Crazyflie, try to connect
@@ -804,13 +895,14 @@ public:
       }
     }
 
+    this->declare_parameter("poses_qos_deadline", 100.0f);
+    double poses_qos_deadline = this->get_parameter("poses_qos_deadline").get_parameter_value().get<double>();
+
     rclcpp::SensorDataQoS sensor_data_qos;
     sensor_data_qos.keep_last(1);
-    sensor_data_qos.deadline(rclcpp::Duration(0/*s*/, 1e9/100 /*ns*/));
+    sensor_data_qos.deadline(rclcpp::Duration(0/*s*/, 1e9/poses_qos_deadline /*ns*/));
     sub_poses_ = this->create_subscription<NamedPoseArray>(
         "poses", sensor_data_qos, std::bind(&CrazyflieServer::posesChanged, this, _1), sub_opt_mocap);
-
-    
 
     // support for all.params
 
@@ -830,14 +922,6 @@ public:
       }
     });
 
-  }
-
-  // void spin_some()
-  // {
-  //   for (auto& cf : crazyflies_) {
-  //     cf.second->spin_some();
-  //   }
-  // }
 
 private:
   void emergency(const std::shared_ptr<Empty::Request> request,
@@ -998,14 +1082,7 @@ private:
 
   void posesChanged(const NamedPoseArray::SharedPtr msg)
   {
-    auto now = std::chrono::steady_clock::now();
-    std::chrono::duration<double> diff = now - poses_last_time_point_;
-    double rate = 1.0 / diff.count();
-    poses_last_time_point_ = now;
-
-    if (fabs(rate - 100.0) > 10) {
-      RCLCPP_WARN(logger_, "Motion capture rate off (Is: %f)", rate);
-    }
+    mocap_data_received_timepoints_.emplace_back(std::chrono::steady_clock::now());
 
     // Here, we send all the poses to all CFs
     // In Crazyswarm1, we only sent the poses of the same group (i.e. channel)
@@ -1118,11 +1195,31 @@ private:
   void on_watchdog_timer()
   {
     auto now = std::chrono::steady_clock::now();
-    std::chrono::duration<double> diff = now - poses_last_time_point_;
 
-    if (diff.count() > 1.0/90.0) {
-      RCLCPP_WARN(logger_, "Motion capture did not receive data for %f s", diff.count());
+    // motion capture
+    // a) check if the rate was within specified bounds
+    if (mocap_data_received_timepoints_.size() >= 2) {
+      double mean_rate = 0;
+      int num_rates_wrong = 0;
+      for (size_t i = 0; i < mocap_data_received_timepoints_.size() - 1; ++i) {
+        std::chrono::duration<double> diff = mocap_data_received_timepoints_[i+1] - mocap_data_received_timepoints_[i];
+        double rate = 1.0 / diff.count();
+        mean_rate += rate;
+        if (rate <= mocap_min_rate_ || rate >= mocap_max_rate_) {
+          num_rates_wrong++;
+        }
+      }
+      mean_rate /= (mocap_data_received_timepoints_.size() - 1);
+
+      if (num_rates_wrong > 0) {
+        RCLCPP_WARN(logger_, "Motion capture rate off (#: %d, Avg: %f)", num_rates_wrong, mean_rate);
+      }
+    } else if (mocap_enabled_) {
+      // b) warn if no data was received
+      RCLCPP_WARN(logger_, "Motion capture did not receive data!");
     }
+
+    mocap_data_received_timepoints_.clear();
   }
 
   template<class T>
@@ -1185,7 +1282,10 @@ private:
 
     // sanity checks
     rclcpp::TimerBase::SharedPtr watchdog_timer_;
-    std::chrono::time_point<std::chrono::steady_clock> poses_last_time_point_;
+    bool mocap_enabled_;
+    float mocap_min_rate_;
+    float mocap_max_rate_;
+    std::vector<std::chrono::time_point<std::chrono::steady_clock>> mocap_data_received_timepoints_;
 
     // multithreading
     rclcpp::CallbackGroup::SharedPtr callback_group_mocap_;
@@ -1193,25 +1293,12 @@ private:
     rclcpp::CallbackGroup::SharedPtr callback_group_all_srv_;
     rclcpp::CallbackGroup::SharedPtr callback_group_cf_cmd_;
     rclcpp::CallbackGroup::SharedPtr callback_group_cf_srv_;
-
-    // connection stats
-    bitcraze::crazyflieLinkCpp::Connection::Statistics stats_previous_;
-    rclcpp::TimerBase::SharedPtr timer_connection_stats_;
   };
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
 
-  // // rclcpp::spin(std::make_shared<CrazyflieServer>());
-  // auto node = std::make_shared<CrazyflieServer>();
-  // while (true)
-  // {
-  //   node->spin_some();
-  //   rclcpp::spin_some(node);
-    
-  //   std::this_thread::yield();
-  // }
 
   auto node = std::make_shared<CrazyflieServer>();
 

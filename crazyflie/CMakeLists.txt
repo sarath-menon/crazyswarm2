@@ -85,6 +85,7 @@ ament_target_dependencies(crazyflie_server
 # Install C++ executables
 install(TARGETS
   # crazyflie_tools
+  comCheck
   scan
   listParams
   listLogVariables
@@ -95,6 +96,7 @@ install(TARGETS
   console
   log
   setParam
+  downloadUSDLogfile
   #
   teleop
   crazyflie_server
@@ -105,6 +107,8 @@ install(PROGRAMS
   scripts/crazyflie_server.py
   scripts/chooser.py
   scripts/vel_mux.py
+  scripts/cfmult.py
+  scripts/simple_mapper_multiranger.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

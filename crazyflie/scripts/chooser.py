@@ -52,8 +52,8 @@ if __name__ == '__main__':
 				node["enabled"] = True
 			else:
 				node["enabled"] = False
-		# with open(args.configpath, 'w') as outfile:
-		# 	yaml.dump(cfg, outfile)
+		with open(args.configpath, 'w') as outfile:
+			yaml.dump(cfg, outfile)
 
 	yaml = YAML()
 	cfg = yaml.load(pathlib.Path(args.configpath))
