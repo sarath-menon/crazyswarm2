@@ -193,6 +193,8 @@ class Crazyflie:
 
 
         self.cmdDesCableAnglesPublisher = node.create_publisher(DesCableAngles, prefix + "/cmd_des_cable_angles", 1)
+        self.cmdDesCableStatesPublisher = node.create_publisher(DesCableStates, prefix + "/cmd_des_cable_states", 1)
+
 
         # self.cmdStopPublisher = rospy.Publisher(prefix + "/cmd_stop", std_msgs.msg.Empty, queue_size=1)
 
@@ -1018,3 +1020,24 @@ class CrazyflieServer(rclpy.node.Node):
             item.el = entry[2]
             msg.cables.append(item)
         self.cmdDesCableAnglesPublisher.publish(msg)
+
+    def cmdDesCableStates(self, data):
+        """
+        data should be a list of tuples, e.g.
+        [(id0, [mu_ref.x, mu_ref.y, mu_ref.z], [qid_ref.x, qid_ref.y, qid_ref.z]), ...]
+        """
+
+        msg = DesCableStates()
+        msg.header.frame_id = "/world"
+        msg.header.stamp = self.get_clock().now().to_msg()
+        for entry in data:
+            item = DesCableStatesItem()
+            item.id = entry[0]
+            item.mu_ref.x = entry[1][0]
+            item.mu_ref.y = entry[1][1]
+            item.mu_ref.z = entry[1][2]
+            item.qid_ref.x = entry[2][0]
+            item.qid_ref.y = entry[2][1]
+            item.qid_ref.z = entry[2][2]
+            msg.cables.append(item)
+        self.cmdDesCableStatesPublisher.publish(msg)

@@ -22,6 +22,8 @@
 #include "crazyflie_interfaces/msg/full_state.hpp"
 #include "crazyflie_interfaces/msg/des_cable_angles.hpp"
 #include "crazyflie_interfaces/msg/des_cable_angles_item.hpp"
+#include "crazyflie_interfaces/msg/des_cable_states.hpp"
+#include "crazyflie_interfaces/msg/des_cable_states_item.hpp"
 #include "crazyflie_interfaces/msg/position.hpp"
 #include "crazyflie_interfaces/msg/log_data_generic.hpp"
 
@@ -736,6 +738,7 @@ public:
     // topics for "all"
     subscription_cmd_full_state_ = this->create_subscription<crazyflie_interfaces::msg::FullState>("all/cmd_full_state", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_full_state_changed, this, _1), sub_opt_all_cmd);
     subscription_cmd_des_cable_angles_ = this->create_subscription<crazyflie_interfaces::msg::DesCableAngles>("all/cmd_des_cable_angles", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_des_cable_angles_changed, this, _1), sub_opt_all_cmd);
+    subscription_cmd_des_cable_states_ = this->create_subscription<crazyflie_interfaces::msg::DesCableStates>("all/cmd_des_cable_states", rclcpp::SystemDefaultsQoS(), std::bind(&CrazyflieServer::cmd_des_cable_states_changed, this, _1), sub_opt_all_cmd);
 
     // services for "all"
     auto service_qos = rmw_qos_profile_services_default;
@@ -981,6 +984,18 @@ private:
     }
   }
 
+  void cmd_des_cable_states_changed(const crazyflie_interfaces::msg::DesCableStates::SharedPtr msg)
+  { 
+    std::vector<CrazyflieBroadcaster::desCableStates> data;
+    for (const auto& cable : msg->cables) {
+      data.push_back({cable.id, cable.mu_ref.x, cable.mu_ref.y, cable.mu_ref.z, cable.qid_ref.x, cable.qid_ref.y, cable.qid_ref.z});
+    }
+    for (auto &bc : broadcaster_) {
+        auto &cfbc = bc.second;
+        cfbc->sendDesCableStatesSetpoint(data);
+    }
+  }
+
   void posesChanged(const NamedPoseArray::SharedPtr msg)
   {
     auto now = std::chrono::steady_clock::now();
@@ -1141,6 +1156,7 @@ private:
     // subscribers
     rclcpp::Subscription<crazyflie_interfaces::msg::FullState>::SharedPtr subscription_cmd_full_state_;
     rclcpp::Subscription<crazyflie_interfaces::msg::DesCableAngles>::SharedPtr subscription_cmd_des_cable_angles_;
+    rclcpp::Subscription<crazyflie_interfaces::msg::DesCableStates>::SharedPtr subscription_cmd_des_cable_states_;
     rclcpp::Subscription<NamedPoseArray>::SharedPtr sub_poses_;
 
     // services
