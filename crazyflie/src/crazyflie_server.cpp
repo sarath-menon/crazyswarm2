@@ -1,7 +1,6 @@
 #include <memory>
 #include <vector>
 #include <regex>
-#include <chrono>
 
 #include <crazyflie_cpp/Crazyflie.h>
 
@@ -40,8 +39,6 @@ using std_srvs::srv::Empty;
 
 using motion_capture_tracking_interfaces::msg::NamedPoseArray;
 using crazyflie_interfaces::msg::FullState;
-
-using namespace std::chrono_literals;
 
 // Helper class to convert crazyflie_cpp logging messages to ROS logging messages
 class CrazyflieLogger : public Logger
@@ -385,16 +382,8 @@ public:
       }
     }
 
-    // Needed for trajectory upload
     RCLCPP_INFO(logger_, "Requesting memories...");
     cf_.requestMemoryToc();
-    RCLCPP_INFO(logger_, "ctor done");
-    // connection stats
-    timer_connection_stats_ = node_->create_wall_timer(1s, [this]() {
-        const auto& stats = cf_.connectionStats();
-        RCLCPP_INFO(logger_, "connection ping: %lu, enq: %lu", stats.sent_ping_count - stats_previous_.sent_ping_count, (size_t)stats.enqueued_count);
-        stats_previous_ = stats;
-    });
   }
 
   void spin_once()
@@ -910,17 +899,7 @@ public:
     param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
     cb_handle_ = param_subscriber_->add_parameter_event_callback(std::bind(&CrazyflieServer::on_parameter_event, this, _1));
 
-    watchdog_timer_ = this->create_wall_timer(std::chrono::milliseconds(1000), std::bind(&CrazyflieServer::on_watchdog_timer, this), callback_group_all_srv_);
-
-    // connection stats
-    timer_connection_stats_ = this->create_wall_timer(1s, [this]() {
-      for (auto &bc : broadcaster_) {
-        auto &cfbc = bc.second;
-        const auto& stats = cfbc->connectionStats();
-        RCLCPP_INFO(logger_, "connection sent: %lu, enq: %lu", stats.sent_count - stats_previous_.sent_count, (size_t)stats.enqueued_count);
-        stats_previous_ = stats;
-      }
-    });
+  }
 
 
 private:
