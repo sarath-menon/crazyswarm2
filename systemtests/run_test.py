@@ -116,4 +116,24 @@ if __name__ == "__main__":
     translate_and_plot("figure8", bagfolder)
     translate_and_plot("multi_trajectory", bagfolder)
 
+
+    ###really not ready to test
+    #now we download and plot the info from the SD card
+    uri = "radio://0/80/2M/E7E7E7E70B"  #Dennis' crazyflie URI
+    command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri}"
+    try:
+        downloadSD= Popen(command, shell=True, stderr=True, stdout=True, text=True,
+                            cwd= bagfolder,start_new_session=True, executable="/bin/bash") 
+        #atexit.register(clean_process, downloadSD)
+        downloadSD.wait(timeout=60) #wait 60 sec for download to finish and raise TimeoutExpired not finished
+    # except TimeoutExpired:
+    #     clean_process(downloadSD)
+    #     print("Downloading SD card data was killed for taking too long")
+    
+    command = "python3 plot.py"
+    plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+                        start_new_session=True, executable="/bin/bash") 
+    ####have to think about how I'm gonna deal with saving in the correct bagfolder with datetime and shit
+    
+
     exit(0)
