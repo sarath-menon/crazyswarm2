@@ -14,7 +14,7 @@ from collections import defaultdict
 # from .visualizer import visNull
 
 
-from crazyflie_interfaces.msg import FullState, Position, TrajectoryPolynomialPiece
+from crazyflie_interfaces.msg import FullState, Position, TrajectoryPolynomialPiece, DesCableAngles, DesCableAnglesItem, DesCableStates, DesCableStatesItem
 from crazyflie_interfaces.srv import GoTo, Land,\
     NotifySetpointsStop, StartTrajectory, Takeoff, UploadTrajectory
 from geometry_msgs.msg import Point
