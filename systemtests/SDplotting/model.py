@@ -7,7 +7,6 @@ from numpy.polynomial import polynomial as P
 from scipy.interpolate import CubicSpline, BSpline, splrep
 import matplotlib.pyplot as plt
 
-import uav
 
 
 class DataHelper:

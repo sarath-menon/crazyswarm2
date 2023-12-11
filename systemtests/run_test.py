@@ -100,7 +100,7 @@ if __name__ == "__main__":
     path = Path(__file__)           #Path(__file__) in this case "/home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/src/crazyswarm2/systemtests/newsub.py" ; path.parents[0]=.../systemstests
     
     #delete results, logs and bags of previous experiments if they exist
-    if(Path(path.parents[3].joinpath("bagfiles")).exists()):
+    if(Path(path.parents[3].joinpath("bagfiles")).exists()):    #/home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/bagfiles
         shutil.rmtree(path.parents[3].joinpath("bagfiles"))
     if(Path(path.parents[3].joinpath("results")).exists()):
         shutil.rmtree(path.parents[3].joinpath("results"))  
@@ -112,42 +112,56 @@ if __name__ == "__main__":
     bagfolder = str((path.parents[3].joinpath(f"bagfiles/bag_" + now)))  # /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/bagfiles/bag_d_m_Y-H_M_S
     os.makedirs(bagfolder) 
     os.makedirs(path.parents[3].joinpath("results"))  # /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/results
-    
+     
+
+    ### just for testing
+    bagfiles = str((path.parents[3].joinpath("bagfiles")))  ###also used in Popen downloadUSD
+    shutil.copy(path.parent / "SDplotting/logs/log182", bagfiles)
+    ####
    
     src = "source " + str(path.parents[3].joinpath("install/setup.bash"))  # -> "source /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/install/setup.bash"
     command = f"{src} && ros2 launch crazyflie launch.py"
-    launch_crazyswarm = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                              start_new_session=True, executable="/bin/bash") 
-    atexit.register(clean_process, launch_crazyswarm)  #atexit helps us to make sure processes are cleaned even if script exits unexpectedly
+    # launch_crazyswarm = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+                            #   start_new_session=True, executable="/bin/bash") 
+    # atexit.register(clean_process, launch_crazyswarm)  #atexit helps us to make sure processes are cleaned even if script exits unexpectedly
      
     time.sleep(1)
-    record_start_and_clean("figure8", 20, bagfolder)
-    record_start_and_clean("multi_trajectory", 80, bagfolder)
+    # record_start_and_clean("figure8", 20, bagfolder)
+    # record_start_and_clean("multi_trajectory", 80, bagfolder)
 
-    clean_process(launch_crazyswarm)   #kill crazyswarm and all of its child processes
+    # clean_process(launch_crazyswarm)   #kill crazyswarm and all of its child processes
 
 
     #test done, now we create the results pdf 
-    translate_and_plot("figure8", bagfolder)
-    translate_and_plot("multi_trajectory", bagfolder)
+    # translate_and_plot("figure8", bagfolder)
+    # translate_and_plot("multi_trajectory", bagfolder)
 
     ###really not ready to test
     #now we download and plot the info from the SD card
+    print("start")
     uri = "radio://0/80/2M/E7E7E7E70B"  #Dennis' crazyflie URI
     command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri}"
     try:
-        downloadSD= Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                            cwd= bagfolder,start_new_session=True, executable="/bin/bash") 
+        downloadSD= Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,         #save the log file in ....../ros2_ws/bagfiles/bag_xxxxxx/
+                            cwd= bagfiles ,start_new_session=True, executable="/bin/bash") 
         atexit.register(clean_process, downloadSD)
+        print("waiting")
         downloadSD.wait(timeout=60) #wait 60 sec for download to finish and raise TimeoutExpired if not finished
     except TimeoutExpired:
         clean_process(downloadSD)
         print("Downloading SD card data was killed for taking too long")
     
+
+    if downloadSD.stderr != None:
+        print(" download err : ", downloadSD.stderr.readlines())
+    if downloadSD.stdout != None:
+        print(" download out : ", downloadSD.stdout.readlines())
+
     #first we plot the log182 file
+    print(str(path.parent) + "/SDplotting")
     command = "python3 plot.py"
     plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                        start_new_session=True, executable="/bin/bash") 
+                        cwd=str(path.parent)+"/SDplotting", start_new_session=True, executable="/bin/bash") 
     ####have to think about how I'm gonna deal with saving in the correct bagfolder with datetime and stuff
 
     exit(0)
