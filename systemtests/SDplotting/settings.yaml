@@ -6,7 +6,7 @@ info_dir: info
 event_name: fixedFrequency
 start_time: # s
 end_time: # s (not in use currently)
-output_dir: reports
+output_dir: ../results   ###should change that
 figures_max:
 skip_data:
 - timestamp
@@ -417,50 +417,50 @@ additional_data:
     smoothing: 1
     # degree:
     derivative: 2
-  - target: residuals_payload
-    type: residuals_payload
-  - source: stateEstimateZ.px
-    target: fitZOriginalLength.px
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 0
-    original_length: True
-  - source: stateEstimateZ.py
-    target: fitZOriginalLength.py
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 0
-    original_length: True
-  - source: stateEstimateZ.pz
-    target: fitZOriginalLength.pz
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 0
-    original_length: True
-  - source: stateEstimateZ.px
-    target: fitZOriginalLength.pvx
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 1
-    original_length: True
-  - source: stateEstimateZ.py
-    target: fitZOriginalLength.pvy
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 1
-    original_length: True
-  - source: stateEstimateZ.pz
-    target: fitZOriginalLength.pvz
-    type: bs
-    smoothing: 1
-    # degree:
-    derivative: 1
-    original_length: True
+  # - target: residuals_payload
+  #   type: residuals_payload
+  # - source: stateEstimateZ.px
+  #   target: fitZOriginalLength.px
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 0
+  #   original_length: True
+  # - source: stateEstimateZ.py
+  #   target: fitZOriginalLength.py
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 0
+  #   original_length: True
+  # - source: stateEstimateZ.pz
+  #   target: fitZOriginalLength.pz
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 0
+  #   original_length: True
+  # - source: stateEstimateZ.px
+  #   target: fitZOriginalLength.pvx
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 1
+  #   original_length: True
+  # - source: stateEstimateZ.py
+  #   target: fitZOriginalLength.pvy
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 1
+  #   original_length: True
+  # - source: stateEstimateZ.pz
+  #   target: fitZOriginalLength.pvz
+  #   type: bs
+  #   smoothing: 1
+  #   # degree:
+  #   derivative: 1
+  #   original_length: True
   
   
 

@@ -315,7 +315,8 @@ if __name__ == "__main__":
 
     if mode == "manual single":
         # get the log number from the user
-        log_num = input("Enter the logging number: ")
+        log_num = 182
+        #log_num = input("Enter the logging number: ")  #J
         log_str = f"log{log_num}"
 
         # decode binary log data
