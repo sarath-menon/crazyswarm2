@@ -121,15 +121,19 @@ if __name__ == "__main__":
    
     src = "source " + str(path.parents[3].joinpath("install/setup.bash"))  # -> "source /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/install/setup.bash"
     command = f"{src} && ros2 launch crazyflie launch.py"
-    # launch_crazyswarm = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                            #   start_new_session=True, executable="/bin/bash") 
+    launch_crazyswarm = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+                              start_new_session=True, executable="/bin/bash") 
     # atexit.register(clean_process, launch_crazyswarm)  #atexit helps us to make sure processes are cleaned even if script exits unexpectedly
      
     time.sleep(1)
+    from crazyflie_examples import set_param
+    set_param.set_param_allcfs("usd.logging", 1)
+    time.sleep(1)
+    set_param.set_param_allcfs("usd.logging", 0)
     # record_start_and_clean("figure8", 20, bagfolder)
     # record_start_and_clean("multi_trajectory", 80, bagfolder)
 
-    # clean_process(launch_crazyswarm)   #kill crazyswarm and all of its child processes
+    clean_process(launch_crazyswarm)   #kill crazyswarm and all of its child processes
 
 
     #test done, now we create the results pdf 
@@ -158,11 +162,11 @@ if __name__ == "__main__":
     if downloadSD.stdout != None:
         print(" download out : ", downloadSD.stdout.readlines())
 
-    #first we plot the log182 file
-    print(str(path.parent) + "/SDplotting")
-    command = "python3 plot.py"
-    plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                        cwd=str(path.parent)+"/SDplotting", start_new_session=True, executable="/bin/bash") 
+    # #first we plot the log182 file
+    # print(str(path.parent) + "/SDplotting")
+    # command = "python3 plot.py"
+    # plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+    #                     cwd=str(path.parent)+"/SDplotting", start_new_session=True, executable="/bin/bash") 
     ####have to think about how I'm gonna deal with saving in the correct bagfolder with datetime and stuff
 
     exit(0)

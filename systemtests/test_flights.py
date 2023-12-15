@@ -52,7 +52,8 @@ class TestFlights(unittest.TestCase):
         super().__init__(methodName)
         self.test_file = None
         self.launch_crazyswarm : Popen = None 
-        self.ros2_ws = Path(__file__).parents[3] #/home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws
+        self.ros2_ws = Path(__file__).parents[3] # path to ros2 workspace (in this case /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws )
+        self.src = f"source {str(self.ros2_ws)}/install/setup.bash"   # command line to source crazyflie custom commands for crazyflie
 
     def idFolderName(self):
         return self.id().split(".")[-1] #returns the name of the test_function currently being run, for example "test_figure8"
@@ -65,11 +66,12 @@ class TestFlights(unittest.TestCase):
         self.test_file = None
 
         # launch server
-        src = "source " + str(Path(__file__).parents[3] / "install/setup.bash")  # -> "source /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/install/setup.bash"
-        command = f"{src} && ros2 launch crazyflie launch.py"
+        command = f"{self.src} && ros2 launch crazyflie launch.py"
         self.launch_crazyswarm = Popen(command, shell=True, stderr=True, stdout=PIPE, text=True,
                                 start_new_session=True, executable="/bin/bash")
         atexit.register(clean_process, self.launch_crazyswarm)  #atexit helps us to make sure processes are cleaned even if script exits unexpectedly
+
+        #### need to set logging to 1
         time.sleep(1)
 
 
@@ -77,9 +79,45 @@ class TestFlights(unittest.TestCase):
     def tearDown(self) -> None:
         clean_process(self.launch_crazyswarm)   #kill crazyswarm_server and all of its child processes
 
+        ###### need to set logging to 0
+
         # copy .ros/log files to results folder
         if Path(Path.home() / ".ros/log").exists():
             shutil.copytree(Path.home() / ".ros/log", Path(__file__).parents[3] / f"results/{self.idFolderName()}/roslogs")
+        
+
+
+        ###### does this work ? normally the download should work but haven't tested if it saves in the folder correctly yet
+        command = f"{self.src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile" #if CF doesn't use default URI, add --uri custom_uri (e.g --uri radio://0/80/2M/E7E7E7E70B)
+        try:
+            downloadSD= Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,         #download the log file in ....../ros2_ws/results/test_xxxxxxx/
+                                cwd= self.ros2_ws / f"/{self.idFolderName()}" ,start_new_session=True, executable="/bin/bash") 
+            atexit.register(clean_process, downloadSD)
+            ####testing purposes
+            print("waiting")
+            time_start = time.time()
+            #######
+            downloadSD.wait(timeout=600) #wait 10min for download to finish and raise TimeoutExpired if not finished
+        except TimeoutExpired:
+            clean_process(downloadSD)
+            print("Downloading SD card data was killed for taking too long")
+
+        print(f"Download finished after {time.time()-time_start}s")
+
+        ####testing purposes
+        if downloadSD.stderr != None:
+            print(" download stderr : ", downloadSD.stderr.readlines())
+        if downloadSD.stdout != None:
+            print(" download stdout : ", downloadSD.stdout.readlines())
+
+        #first we plot the log182 file
+        print("path to plotSD: ",str(self.ros2_ws / "src/sytemtests/SDplotting"))
+        command = "python3 plot.py"
+        plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+                            cwd=self.ros2_ws / "src/sytemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
+        ####try to plot the SD log
+        ### apparently I lost what I did on plot.py ?
+
 
         return super().tearDown()
 
@@ -87,17 +125,16 @@ class TestFlights(unittest.TestCase):
 
     def record_start_and_clean(self, testname:str, max_wait:int):
         '''Starts recording the /tf topic in a rosbag, starts the test, waits, closes the rosbag and terminate all processes. max_wait is the max amount of time you want to wait 
-            before forcefully terminating the test flight script (in case it never finishes correctly).
+            before killing the test flight script (in case it never terminate correctly).
             NB the testname must be the name of the crayzflie_examples executable (ie the CLI grammar "ros2 run crazyflie_examples testname" must be valid)'''
         
-        src = f"source {str(self.ros2_ws)}/install/setup.bash"
         try:
-            command = f"{src} && ros2 bag record -s mcap -o test_{testname} /tf"
+            command = f"{self.src} && ros2 bag record -s mcap -o test_{testname} /tf"
             record_bag =  Popen(command, shell=True, stderr=PIPE, stdout=True, text=True,
                                 cwd= self.ros2_ws / "results/", start_new_session=True, executable="/bin/bash") 
             atexit.register(clean_process, record_bag)
 
-            command = f"{src} && ros2 run crazyflie_examples {testname}"
+            command = f"{self.src} && ros2 run crazyflie_examples {testname}"
             start_flight_test = Popen(command, shell=True, stderr=True, stdout=True, 
                                     start_new_session=True, text=True, executable="/bin/bash")
             atexit.register(clean_process, start_flight_test)
