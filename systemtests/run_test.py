@@ -139,8 +139,9 @@ if __name__ == "__main__":
     ###really not ready to test
     #now we download and plot the info from the SD card
     print("start")
-    uri = "radio://0/80/2M/E7E7E7E70B"  #Dennis' crazyflie URI
-    command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri}"
+    # uri = "radio://0/80/2M/E7E7E7E70B"  #Dennis' crazyflie URI
+    # command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri}"
+    command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile" #if CF doesn't use default URI, add --uri custom_uri (e.g --uri radio://0/80/2M/E7E7E7E70B)
     try:
         downloadSD= Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,         #save the log file in ....../ros2_ws/bagfiles/bag_xxxxxx/
                             cwd= bagfiles ,start_new_session=True, executable="/bin/bash") 
