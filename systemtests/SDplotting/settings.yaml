@@ -1,12 +1,12 @@
 ---
 # general settings
-data_dir: ../../../../bagfiles    ###look in ....../ros2_ws/bagfiles
+data_dir: logs
 # data_file: log129
 info_dir: info
 event_name: fixedFrequency
 start_time: # s
 end_time: # s (not in use currently)
-output_dir: ../../../../results   ###save in ....../ros2_ws/results
+output_dir: reports
 figures_max:
 skip_data:
 - timestamp

@@ -135,7 +135,7 @@ def add_data(data, settings):
     print("...done adding data")
 
 
-def create_figures(data_usd, settings, log_str):
+def create_figures(data_usd, settings, log_str, outputPDF = None, CLImode=False):
     debug_all = False
     debug = False
     debug_figure_number = 6 # payload positions
@@ -143,12 +143,16 @@ def create_figures(data_usd, settings, log_str):
 
 
     log_path = os.path.join(settings["data_dir"], log_str)
+    if CLImode:
+        log_path = log_str
     print("log file: {}".format(log_path))
 
     data_processed = process_data(data_usd, settings)
 
     # create a PDF to save the figures
     pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
+    if CLImode :                    
+        pdf_path = outputPDF
     print("output path: {}".format(pdf_path))
 
     # check if user wants to overwrite the report file
@@ -162,7 +166,10 @@ def create_figures(data_usd, settings, log_str):
         title_text_settings += f"    {setting}: {settings[setting]}\n"
 
     # read the parameters from the info file
+
     info_file = f"{settings['info_dir']}/{log_str.replace('log', 'info').split('_')[0]}.yaml" 
+    if CLImode:
+        info_file = "/home/jthevenoz/ros2_ws/src/crazyswarm2/systemtests/SDplotting/info/info182.yaml"
     print("info file: {}".format(info_file))
 
     try:
@@ -301,6 +308,14 @@ def create_figures(data_usd, settings, log_str):
 
 
 if __name__ == "__main__":
+    from argparse import ArgumentParser, Namespace
+    parser = ArgumentParser(description="Plot the SD data of an experiment")
+    parser.add_argument("--CLImode", action="store_true", help="Enable giving logfile and outputfile from the CLI")
+    parser.add_argument("--logfile", type=str, help="Full path of the SD log file to plot")
+    parser.add_argument("--output", type=str, help="Full path of the results PDF you want to create/overwrite")
+    args : Namespace = parser.parse_args()
+
+
     # change the current working directory to the directory of this file
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -309,9 +324,22 @@ if __name__ == "__main__":
     with open(settings_file, 'r') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
-    mode = "manual single"
     # mode = "manual range"
     # mode = "auto"
+    mode = "manual single"
+    if args.CLImode :
+        mode = "CLImode"
+
+    if mode == "CLImode":
+        log_str = args.logfile
+
+        # decode binary log data
+        data_usd = cfusdlog.decode(log_str)
+
+        # create the figures
+        print("...creating figures")
+        create_figures(data_usd, settings, log_str, outputPDF=args.output, CLImode=True)
+        print("...done creating figures")
 
     if mode == "manual single":
         # get the log number from the user
