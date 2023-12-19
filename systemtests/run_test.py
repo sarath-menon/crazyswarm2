@@ -93,6 +93,12 @@ def translate_and_plot(testname:str, bagfolder:str):
     plotter = Plotter()
     plotter.create_figures(test_file, rosbag_csv, output_pdf) #plot the data
 
+def print_PIPE(process : Popen, process_name : str):
+    if process.stderr != None:
+        print(f" {process_name}.stderr : ", process.stderr.readlines())
+    if process.stdout != None:
+        print(f" {process_name}.stdout : ", process.stdout.readlines())
+
 
 
 if __name__ == "__main__":
@@ -116,7 +122,7 @@ if __name__ == "__main__":
 
     ### just for testing
     bagfiles = str((path.parents[3].joinpath("bagfiles")))  ###also used in Popen downloadUSD
-    shutil.copy(path.parent / "SDplotting/logs/log182", bagfiles)
+    shutil.copy(path.parent / "SDplotting/logs/log182", bagfolder)
     ####
    
     src = "source " + str(path.parents[3].joinpath("install/setup.bash"))  # -> "source /home/github/actions-runner/_work/crazyswarm2/crazyswarm2/ros2_ws/install/setup.bash"
@@ -140,28 +146,35 @@ if __name__ == "__main__":
     #now we download and plot the info from the SD card
     print("start")
     uri = "radio://0/80/2M/E7E7E7E70B"  #Dennis' crazyflie URI
-    command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri}"
+    command = f"{src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile --uri {uri} -v"
     try:
         downloadSD= Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,         #save the log file in ....../ros2_ws/bagfiles/bag_xxxxxx/
-                            cwd= bagfiles ,start_new_session=True, executable="/bin/bash") 
+                            cwd= bagfolder ,start_new_session=True, executable="/bin/bash") 
         atexit.register(clean_process, downloadSD)
         print("waiting")
-        downloadSD.wait(timeout=60) #wait 60 sec for download to finish and raise TimeoutExpired if not finished
+        start_time = time.time()
+        downloadSD.wait(timeout=None) #wait 60 sec for download to finish and raise TimeoutExpired if not finished
     except TimeoutExpired:
         clean_process(downloadSD)
         print("Downloading SD card data was killed for taking too long")
     
-
-    if downloadSD.stderr != None:
-        print(" download err : ", downloadSD.stderr.readlines())
-    if downloadSD.stdout != None:
-        print(" download out : ", downloadSD.stdout.readlines())
-
-    #first we plot the log182 file
+    print_PIPE(downloadSD, "downloadSD")
+    #test : first we plot the log182 file
     print(str(path.parent) + "/SDplotting")
-    command = "python3 plot.py"
-    plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                        cwd=str(path.parent)+"/SDplotting", start_new_session=True, executable="/bin/bash") 
+    results_folder = path.parents[3].joinpath("results")
+
+    command = f"python3 ../src/crazyswarm2/systemtests/SDplotting/plot.py --logfile {bagfolder}/log182"
+    plot_log182 = Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,          #save the log182 results PDF in ros2_ws/results/
+                        cwd=results_folder, start_new_session=True, executable="/bin/bash") 
+    print_PIPE(plot_log182, "plot_log182")
+    command = f"python3 plot.py --logfile {bagfolder}/SDlogfile --output_dir {results_folder}"
+    plot_SD = Popen(command, shell=True, stderr=PIPE, stdout=PIPE, text=True,          #save the SD results PDF in ros2_ws/results/
+                        cwd=path.parent / "SDplotting", start_new_session=True, executable="/bin/bash") 
+    print_PIPE(plot_SD, "plot_SD")
+
+
     ####have to think about how I'm gonna deal with saving in the correct bagfolder with datetime and stuff
+
+    ### next step is trying to use plot.py on SDlogfile
 
     exit(0)

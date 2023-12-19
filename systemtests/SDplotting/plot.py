@@ -135,20 +135,25 @@ def add_data(data, settings):
     print("...done adding data")
 
 
-def create_figures(data_usd, settings, log_str):
+def create_figures(data_usd, settings, log_str, args):
     debug_all = False
     debug = False
     debug_figure_number = 6 # payload positions
     # debug_figure_number = 7 # payload velocities
 
-
-    log_path = os.path.join(settings["data_dir"], log_str)
+    if args.logfile is not None :  #if argument given in command line
+        log_str = args.logfile
+    else:       
+        log_path = os.path.join(settings["data_dir"], log_str)  #else take what's written in settings
     print("log file: {}".format(log_path))
 
     data_processed = process_data(data_usd, settings)
 
     # create a PDF to save the figures
-    pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
+    if args.output_dir is not None:
+        pdf_path = args.output_dir
+    else:
+        pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
     print("output path: {}".format(pdf_path))
 
     # check if user wants to overwrite the report file
@@ -314,9 +319,15 @@ if __name__ == "__main__":
     # mode = "auto"
 
     if mode == "manual single":
-        # get the log number from the user
-        log_num = 182
-        #log_num = input("Enter the logging number: ")  #J
+
+        from argparse import ArgumentParser, Namespace
+        parser = ArgumentParser(description="Plot SD card log data")
+        parser.add_argument("--logfile", type=str, help="Log file to plot")
+        parser.add_argument("--output_dir", type=str, help="directory to store the resulting PDF")
+        args : Namespace = parser.parse_args()
+
+       
+        log_num = input("Enter the logging number: ")  #J
         log_str = f"log{log_num}"
 
         # decode binary log data
@@ -325,7 +336,7 @@ if __name__ == "__main__":
 
         # create the figures
         print("...creating figures")
-        create_figures(data_usd, settings, log_str)
+        create_figures(data_usd, settings, log_str, args)
         print("...done creating figures")
 
     # TODO: manual range not tested (problems with the name of the logging file may arise bc of suffix "_2" for example)
