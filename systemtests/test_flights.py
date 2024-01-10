@@ -105,12 +105,12 @@ class TestFlights(unittest.TestCase):
         
 
         #first we plot the log182 file$
-        log182 = str(self.ros2_ws / "src/crazyswarm2/systemtests/SDplotting/logs/log182")
-        log182pdf = str(self.ros2_ws / f"results/{self.idFolderName()}/log182report.pdf")
-        print("path to log182: ",log182, "path to log182pdg ", log182pdf)
-        command = f"python3 plot.py --CLImode --logfile {log182} --output {log182pdf}"
-        plot_log82 = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                            cwd=self.ros2_ws/"src/crazyswarm2/systemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
+        # log182 = str(self.ros2_ws / "src/crazyswarm2/systemtests/SDplotting/logs/log182")
+        # log182pdf = str(self.ros2_ws / f"results/{self.idFolderName()}/log182report.pdf")
+        # print("path to log182: ",log182, "path to log182pdg ", log182pdf)
+        # command = f"python3 plot.py --CLImode --logfile {log182} --output {log182pdf}"
+        # plot_log82 = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+        #                     cwd=self.ros2_ws/"src/crazyswarm2/systemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
         
         print("2 ", str(self.ros2_ws) + f"/results/{self.idFolderName()}")
         ###### does this work ? normally the download should work but haven't tested if it saves in the folder correctly yet
@@ -123,7 +123,7 @@ class TestFlights(unittest.TestCase):
             print("waiting")
             time_start = time.time()
             #######
-            downloadSD.wait(timeout=800) #wait 10min for download to finish and raise TimeoutExpired if not finished
+            downloadSD.wait(timeout=180) #wait 10min for download to finish and raise TimeoutExpired if not finished
         except TimeoutExpired:
             clean_process(downloadSD)
             print("Downloading SD card data was killed for taking too long")
@@ -136,7 +136,10 @@ class TestFlights(unittest.TestCase):
         if downloadSD.stdout != None:
             print(" download stdout : ", downloadSD.stdout.readlines())
 
+        ############
+        #from subprocess import Popen
         
+
         ####try to plot the SD log
         SDlogfile_path = str(self.ros2_ws / f"/{self.idFolderName()}/SDlogfile")
         command = f"python3 plot.py --CLImode --logfile {SDlogfile_path} --output {str(self.ros2_ws)}/results/{self.idFolderName()}/SDreport.pdf"
