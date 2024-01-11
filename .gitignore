@@ -3,3 +3,9 @@ crazyswarm2_sim_webots/
 *.pyc
 *.o
 *~
+.vscode/
+systemtests/experiments.py
+*.csv
+*.mcap
+wait.py
+*.pdf
