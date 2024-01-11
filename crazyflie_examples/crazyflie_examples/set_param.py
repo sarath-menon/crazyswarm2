@@ -20,5 +20,24 @@ def main():
     timeHelper.sleep(5.0)
 
 
+def set_param_allcfs(param, value):
+    '''Sets a parameter for all crazyflies connected'''
+    print("1")
+    swarm = Crazyswarm()
+    print("2")
+    timeHelper = swarm.timeHelper
+    print("3")
+    allcfs = swarm.allcfs
+    print("4")
+
+    allcfs.setParam('led.bitmask', 128)
+    allcfs.setParam(param, value)
+    timeHelper.sleep(1.0)
+    allcfs.setParam('led.bitmask', 0)
+
+    print(f"Parameter {param} set to {value} on all crazyflies")
+
 if __name__ == '__main__':
-    main()
+    # main()
+    print("hi")
+    set_param_allcfs("usd.logging", 1)
