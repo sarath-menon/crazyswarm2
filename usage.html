@@ -108,8 +108,12 @@
 controlling other robots. This is in particular true for simulation. In this case,
 you can use</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ROS_LOCALHOST_ONLY</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ROS_DOMAIN_ID</span><span class="o">=</span>&lt;unique<span class="w"> </span>number<span class="w"> </span>between<span class="w"> </span><span class="m">0</span><span class="w"> </span>and<span class="w"> </span><span class="m">101</span>&gt;
 </pre></div>
 </div>
+<p>The first environment variable restricts ROS to your local machine. The second is useful
+if you have multiple user accounts on the same machine (e.g., a shared workstation computer).
+In such case, each user should use a unique <a class="reference external" href="https://docs.ros.org/en/iron/Concepts/Intermediate/About-Domain-ID.html">domain ID</a>.</p>
 </div>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -235,7 +239,7 @@ You may run the script multiple times or different scripts while leaving the ser
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Wolfgang Hönig (IMRClab), Kimberly McGuire (Bitcraze AB) and contributors.</p>
+    <p>&#169; Copyright 2021-2024, Wolfgang Hönig (TU Berlin), Kimberly McGuire (Bitcraze AB), and contributors.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
