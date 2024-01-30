@@ -81,7 +81,7 @@ class Quadrotor:
 
         self.state = state
 
-    def step(self, action, dt):
+    def step(self, action, dt, f_a=np.zeros(3)):
 
         # convert RPM -> Force
         def rpm_to_force(rpm):
@@ -101,18 +101,20 @@ class Quadrotor:
         # dynamics
         # dot{p} = v
         pos_next = self.state.pos + self.state.vel * dt
-        # mv = mg + R f_u
+        # mv = mg + R f_u + f_a
         vel_next = self.state.vel + (
             np.array([0, 0, -self.g]) +
-            rowan.rotate(self.state.quat, f_u) / self.mass) * dt
+            (rowan.rotate(self.state.quat, f_u) + f_a) / self.mass) * dt
 
         # dot{R} = R S(w)
         # to integrate the dynamics, see
         # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/, and
         # https://arxiv.org/pdf/1604.08139.pdf
+        # Sec 4.5, https://arxiv.org/pdf/1711.02508.pdf
+        omega_global = rowan.rotate(self.state.quat, self.state.omega)
         q_next = rowan.normalize(
             rowan.calculus.integrate(
-                self.state.quat, self.state.omega, dt))
+                self.state.quat, omega_global, dt))
 
         # mJ = Jw x w + tau_u
         omega_next = self.state.omega + (
