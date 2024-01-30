@@ -10,6 +10,9 @@ import time
 import signal
 import atexit
 
+
+from SDplotting.plot_julien import SDplotter  #should rename the file 
+
 #############################
 
 def setUpModule():
@@ -123,7 +126,7 @@ class TestFlights(unittest.TestCase):
             print("waiting")
             time_start = time.time()
             #######
-            downloadSD.wait(timeout=180) #wait 10min for download to finish and raise TimeoutExpired if not finished
+            downloadSD.wait(timeout=300) #wait 5min for download to finish and raise TimeoutExpired if not finished
         except TimeoutExpired:
             clean_process(downloadSD)
             print("Downloading SD card data was killed for taking too long")
@@ -136,15 +139,18 @@ class TestFlights(unittest.TestCase):
         if downloadSD.stdout != None:
             print(" download stdout : ", downloadSD.stdout.readlines())
 
-        ############
-        #from subprocess import Popen
-        
+
 
         ####try to plot the SD log
         SDlogfile_path = str(self.ros2_ws / f"/{self.idFolderName()}/SDlogfile")
-        command = f"python3 plot.py --CLImode --logfile {SDlogfile_path} --output {str(self.ros2_ws)}/results/{self.idFolderName()}/SDreport.pdf"
-        plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
-                            cwd=self.ros2_ws/"src/crazyswarm2/systemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
+        pdf_path = str(self.ros2_ws / f"results/{self.idFolderName()}/SDreport.pdf")
+
+        sd_plotter = SDplotter()
+        sd_plotter.main(SDlogfile_path, pdf_path)
+
+        # command = f"python3 plot.py --CLImode --logfile {SDlogfile_path} --output {str(self.ros2_ws)}/results/{self.idFolderName()}/SDreport.pdf"
+        # plot_SD = Popen(command, shell=True, stderr=True, stdout=True, text=True,
+        #                     cwd=self.ros2_ws/"src/crazyswarm2/systemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
 
 
         return super().tearDown()
@@ -230,10 +236,14 @@ class TestFlights(unittest.TestCase):
 
 
 if __name__ == '__main__':
-   unittest.main()
-    # setUpModule()
-    # tester = TestFlights()
-    # tester.setUp()
-    # tester.test_figure8()
-    # tester.tearDown()
-    # tearDownModule()
+
+    from argparse import ArgumentParser
+    import sys
+    parser = ArgumentParser(description="Runs (real or simulated) flight tests with pytest framework")
+    parser.add_argument("--sim", action="store_true", help="Runs the test from the simulation backend")
+    args, other_args = parser.parse_known_args()
+    if args.sim :
+        TestFlights.SIM = True
+
+    #start pytest
+    unittest.main(argv=[sys.argv[0]] + other_args)

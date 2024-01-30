@@ -19,6 +19,8 @@ def main():
         traj.loadcsv(Path(__file__).parent / f'data/multi_trajectory/traj{i}.csv')
         trajs.append(traj)
 
+    #enable logging
+    allcfs.setParam("usd.logging", 1)
     TRIALS = 1
     TIMESCALE = 1.0
     for i in range(TRIALS):
@@ -37,6 +39,9 @@ def main():
 
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
+    
+    #disable logging
+    allcfs.setParam("usd.logging", 0)
 
 
 if __name__ == '__main__':

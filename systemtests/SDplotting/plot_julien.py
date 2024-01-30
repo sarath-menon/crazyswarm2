@@ -312,8 +312,16 @@ class SDplotter():
 
 
 if __name__ == "__main__":
-    pass
 
+    from argparse import ArgumentParser, Namespace
+    parser = ArgumentParser(description="Plot the SD data of an experiment")
+    # parser.add_argument("--CLImode", action="store_true", help="Enable giving logfile and outputfile from the CLI")
+    parser.add_argument("logfile", type=str, help="Full path of the SD log file to plot")
+    parser.add_argument("results_pdf", type=str, help="Full path of the results PDF you want to create/overwrite")
+    args : Namespace = parser.parse_args()
+
+    plotter = SDplotter()
+    plotter.main(args.logfile, args.results_pdf)
 
     # from argparse import ArgumentParser, Namespace
     # parser = ArgumentParser(description="Plot the SD data of an experiment")
