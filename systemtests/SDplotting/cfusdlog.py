@@ -43,6 +43,8 @@ def decode(filename):
     with open(filename, 'rb') as f:
         data = f.read()
 
+    print(type(data))
+    print(data)
     # check magic header
     if data[0] != 0xBC:
         print("Unsupported format!")

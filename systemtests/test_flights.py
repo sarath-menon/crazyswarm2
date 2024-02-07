@@ -115,7 +115,7 @@ class TestFlights(unittest.TestCase):
         # plot_log82 = Popen(command, shell=True, stderr=True, stdout=True, text=True,
         #                     cwd=self.ros2_ws/"src/crazyswarm2/systemtests/SDplotting", start_new_session=True, executable="/bin/bash") 
         
-        print("2 ", str(self.ros2_ws) + f"/results/{self.idFolderName()}")
+        print("2 ", str(self.ros2_ws / f"results/{self.idFolderName()}"))
         ###### does this work ? normally the download should work but haven't tested if it saves in the folder correctly yet
         command = f"{self.src} && ros2 run crazyflie downloadUSDLogfile --output SDlogfile" #if CF doesn't use default URI, add --uri custom_uri (e.g --uri radio://0/80/2M/E7E7E7E70B)
         try:
@@ -142,9 +142,9 @@ class TestFlights(unittest.TestCase):
 
 
         ####try to plot the SD log
-        SDlogfile_path = str(self.ros2_ws / f"/{self.idFolderName()}/SDlogfile")
+        SDlogfile_path = str(self.ros2_ws / f"results/{self.idFolderName()}/SDlogfile")
         pdf_path = str(self.ros2_ws / f"results/{self.idFolderName()}/SDreport.pdf")
-
+        print(f"SD logfile path {SDlogfile_path} and pdf path {pdf_path} and self id folder name {self.idFolderName()}")
         sd_plotter = SDplotter()
         sd_plotter.main(SDlogfile_path, pdf_path)
 
@@ -237,13 +237,23 @@ class TestFlights(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    from argparse import ArgumentParser
-    import sys
-    parser = ArgumentParser(description="Runs (real or simulated) flight tests with pytest framework")
-    parser.add_argument("--sim", action="store_true", help="Runs the test from the simulation backend")
-    args, other_args = parser.parse_known_args()
-    if args.sim :
-        TestFlights.SIM = True
+    # from argparse import ArgumentParser
+    # import sys
+    # parser = ArgumentParser(description="Runs (real or simulated) flight tests with pytest framework")
+    # parser.add_argument("--sim", action="store_true", help="Runs the test from the simulation backend")
+    # args, other_args = parser.parse_known_args()
+    # if args.sim :
+    #     TestFlights.SIM = True
 
-    #start pytest
-    unittest.main(argv=[sys.argv[0]] + other_args)
+    # # start pytest
+    # unittest.main(argv=[sys.argv[0]] + other_args)
+
+
+
+    #for debug mode
+    setUpModule()
+    testy = TestFlights()
+    testy.setUp()
+    testy.test_figure8()
+    testy.tearDown()
+    tearDownModule()

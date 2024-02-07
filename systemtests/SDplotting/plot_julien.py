@@ -5,7 +5,6 @@ Tool for yaml-based automatic report generation from logged data of the crazyfli
 
 # attidtue best: 22
 
-import cfusdlog
 import matplotlib.pyplot as plt
 import os
 import sys
@@ -13,11 +12,11 @@ import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 
-
-import model
+import SDplotting.cfusdlog as cfusdlog
+import SDplotting.model as model
 
 class SDplotter():
-    def __init__():
+    def __init__(self):
         pass
 
     def compute_tracking_error(self, data, settings):
@@ -302,6 +301,7 @@ class SDplotter():
 
 
         # decode binary log data
+        print(SDlogfile)
         data_usd = cfusdlog.decode(SDlogfile)
 
         # create the figures
