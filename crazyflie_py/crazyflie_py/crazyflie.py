@@ -167,10 +167,6 @@ class Crazyflie:
         self.cmdFullStateMsg = FullState()
         self.cmdFullStateMsg.header.frame_id = '/world'
 
-        self.cmdDesCableAnglesPublisher = node.create_publisher(DesCableAngles, prefix + '/cmd_des_cable_angles', 1)
-        self.cmdDesCableStatesPublisher = node.create_publisher(DesCableStates, prefix + '/cmd_des_cable_states', 1)
-
-
         # self.cmdStopPublisher = rospy.Publisher(
         #   prefix + '/cmd_stop', std_msgs.msg.Empty, queue_size=1)
 
@@ -742,6 +738,10 @@ class CrazyflieServer(rclpy.node.Node):
             FullState, 'all/cmd_full_state', 1)
         self.cmdFullStateMsg = FullState()
         self.cmdFullStateMsg.header.frame_id = '/world'
+
+        self.cmdDesCableAnglesPublisher = self.create_publisher(DesCableAngles, "all/cmd_des_cable_angles", 1)
+        self.cmdDesCableStatesPublisher = self.create_publisher(DesCableStates,  'all/cmd_des_cable_states', 1)
+
 
         cfnames = []
         for srv_name, srv_types in self.get_service_names_and_types():
