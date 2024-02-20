@@ -129,31 +129,23 @@ def add_data(data, settings):
         # print(f"found target: {info['target']}")
         name, data_new = model.DataHelper.generate_data(data, event, info)
         data[event][name] = data_new
-        print(f">>> added data: {name} ({info['type']})")
+        print(f">>> added data: {name}")
         # print(f">>> data shape: {data_new.shape}")
 
     print("...done adding data")
 
 
-def create_figures(data_usd, settings, log_str, args):
-    debug_all = False
-    debug = False
-    debug_figure_number = 6 # payload positions
-    # debug_figure_number = 7 # payload velocities
+def create_figures(data_usd, settings, log_str):
+    debug = True
+    debug_figure_number = 6 # figure 6: "Payload Positions"
 
-    if args.logfile is not None :  #if argument given in command line
-        log_str = args.logfile
-    else:       
-        log_path = os.path.join(settings["data_dir"], log_str)  #else take what's written in settings
+    log_path = os.path.join(settings["data_dir"], log_str)
     print("log file: {}".format(log_path))
 
     data_processed = process_data(data_usd, settings)
 
     # create a PDF to save the figures
-    if args.output_dir is not None:
-        pdf_path = args.output_dir
-    else:
-        pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
+    pdf_path =  os.path.join(settings["output_dir"], log_str) + ".pdf"
     print("output path: {}".format(pdf_path))
 
     # check if user wants to overwrite the report file
@@ -167,10 +159,7 @@ def create_figures(data_usd, settings, log_str, args):
         title_text_settings += f"    {setting}: {settings[setting]}\n"
 
     # read the parameters from the info file
-
     info_file = f"{settings['info_dir']}/{log_str.replace('log', 'info').split('_')[0]}.yaml" 
-    if CLImode:
-        info_file = "/home/jthevenoz/ros2_ws/src/crazyswarm2/systemtests/SDplotting/info/info182.yaml"
     print("info file: {}".format(info_file))
 
     try:
@@ -291,7 +280,7 @@ def create_figures(data_usd, settings, log_str, args):
                     ax.grid(True)
 
                 # show plot for debugging
-                if debug and figure_count == debug_figure_number-1 or debug_all:
+                if debug and figure_count == debug_figure_number-1:
                     plt.show()
 
                 fig.suptitle(title, fontsize=16)
@@ -309,14 +298,6 @@ def create_figures(data_usd, settings, log_str, args):
 
 
 if __name__ == "__main__":
-    from argparse import ArgumentParser, Namespace
-    parser = ArgumentParser(description="Plot the SD data of an experiment")
-    parser.add_argument("--CLImode", action="store_true", help="Enable giving logfile and outputfile from the CLI")
-    parser.add_argument("--logfile", type=str, help="Full path of the SD log file to plot")
-    parser.add_argument("--output", type=str, help="Full path of the results PDF you want to create/overwrite")
-    args : Namespace = parser.parse_args()
-
-
     # change the current working directory to the directory of this file
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -325,33 +306,13 @@ if __name__ == "__main__":
     with open(settings_file, 'r') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
+    mode = "manual single"
     # mode = "manual range"
     # mode = "auto"
-    mode = "manual single"
-    if args.CLImode :
-        mode = "CLImode"
-
-    if mode == "CLImode":
-        log_str = args.logfile
-
-        # decode binary log data
-        data_usd = cfusdlog.decode(log_str)
-
-        # create the figures
-        print("...creating figures")
-        create_figures(data_usd, settings, log_str, outputPDF=args.output, CLImode=True)
-        print("...done creating figures")
 
     if mode == "manual single":
-
-        from argparse import ArgumentParser, Namespace
-        parser = ArgumentParser(description="Plot SD card log data")
-        parser.add_argument("--logfile", type=str, help="Log file to plot")
-        parser.add_argument("--output_dir", type=str, help="directory to store the resulting PDF")
-        args : Namespace = parser.parse_args()
-
-       
-        log_num = input("Enter the logging number: ")  #J
+        # get the log number from the user
+        log_num = input("Enter the logging number: ")
         log_str = f"log{log_num}"
 
         # decode binary log data
@@ -360,7 +321,7 @@ if __name__ == "__main__":
 
         # create the figures
         print("...creating figures")
-        create_figures(data_usd, settings, log_str, args)
+        create_figures(data_usd, settings, log_str)
         print("...done creating figures")
 
     # TODO: manual range not tested (problems with the name of the logging file may arise bc of suffix "_2" for example)
