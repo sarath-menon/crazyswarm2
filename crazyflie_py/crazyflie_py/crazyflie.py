@@ -14,7 +14,7 @@ from collections import defaultdict
 # from .visualizer import visNull
 
 
-from crazyflie_interfaces.msg import FullState, Position, TrajectoryPolynomialPiece
+from crazyflie_interfaces.msg import FullState, Position, TrajectoryPolynomialPiece, Status
 from crazyflie_interfaces.srv import GoTo, Land,\
     NotifySetpointsStop, StartTrajectory, Takeoff, UploadTrajectory
 from geometry_msgs.msg import Point
@@ -136,6 +136,8 @@ class Crazyflie:
         self.setParamsService = node.create_client(
             SetParameters, '/crazyflie_server/set_parameters')
         self.setParamsService.wait_for_service()
+        self.statusSubscriber = node.create_subscription(Status, f'{self.prefix}/status', self.listener_callback, 10)
+        self.status = {}
 
         # Query some settings
         getParamsService = node.create_client(GetParameters, '/crazyflie_server/get_parameters')
@@ -698,6 +700,26 @@ class Crazyflie:
     #     self.setParam('ring/solidRed', int(r * 255))
     #     self.setParam('ring/solidGreen', int(g * 255))
     #     self.setParam('ring/solidBlue', int(b * 255))
+        
+    def listener_callback(self, msg):
+        """Callback method updating the status attribute every time 
+        a crazyflie_interfaces/msg/Status message is published on the topic /cfXXX/status """
+        
+        self.status = {'id' : msg.header.frame_id, 'timestamp_sec': msg.header.stamp.sec, 
+                  'timestamp_nsec' : msg.header.stamp.nanosec, 'supervisor' : msg.supervisor_info,
+                  'battery' : msg.battery_voltage, 'pm_state' : msg.pm_state, 'rssi' : msg.rssi, 
+                  'num_rx_broadcast':msg.num_rx_broadcast, 'num_tx_broadcast' : msg.num_tx_broadcast,
+                  'num_rx_unicast':msg.num_rx_unicast, 'num_tx_unicast' : msg.num_tx_unicast}
+        self.node.get_logger().info(f' Callbacl status')
+
+    
+    def get_status(self):
+        """Returns the status dictionary containing info about:   
+        frame id, timestamp, supervisor info, battery voltage, pm state, rssi, number of received or
+        transmitted broadcast or unicast messages. see crazyflie_interfaces/msg/Status for details"""
+
+        self.node.get_logger().info(f'get_status() was called {self.status}')
+        return self.status
 
 
 class CrazyflieServer(rclpy.node.Node):
