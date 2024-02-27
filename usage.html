@@ -203,6 +203,10 @@ The server node will upon initialization, first look at the params/logs from the
 The simulation uses the firmware code as software-in-the-loop, and can optionally include the robot dynamics.
 The configuration of the simulation (physics simulator, controller, etc.) can be changed in server.yaml.</p>
 <p>Example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie_examples<span class="w"> </span>launch.py<span class="w"> </span>script:<span class="o">=</span>hello_world<span class="w"> </span>backend:<span class="o">=</span>sim
+</pre></div>
+</div>
+<p>which is a short-hand for the following two commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal1<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py<span class="w"> </span>backend:<span class="o">=</span>sim
 <span class="o">[</span>terminal2<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world<span class="w"> </span>--ros-args<span class="w"> </span>-p<span class="w"> </span>use_sim_time:<span class="o">=</span>True
 </pre></div>
@@ -223,6 +227,10 @@ The configuration of the simulation (physics simulator, controller, etc.) can be
 You may run the script multiple times or different scripts while leaving the server running.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal1<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie<span class="w"> </span>launch.py
 <span class="o">[</span>terminal2<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>run<span class="w"> </span>crazyflie_examples<span class="w"> </span>hello_world
+</pre></div>
+</div>
+<p>If you only want to run a single script once, you can also use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>terminal<span class="o">]</span>$<span class="w"> </span>ros2<span class="w"> </span>launch<span class="w"> </span>crazyflie_examples<span class="w"> </span>launch.py<span class="w"> </span>script:<span class="o">=</span>hello_world
 </pre></div>
 </div>
 </section>
