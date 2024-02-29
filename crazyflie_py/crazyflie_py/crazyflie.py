@@ -136,7 +136,7 @@ class Crazyflie:
         self.setParamsService = node.create_client(
             SetParameters, '/crazyflie_server/set_parameters')
         self.setParamsService.wait_for_service()
-        self.statusSubscriber = node.create_subscription(Status, f'{self.prefix}/status', self.listener_callback, 10)
+        self.statusSubscriber = node.create_subscription(Status, f'{self.prefix}/status', self.status_topic_callback, 10)
         self.status = {}
 
         # Query some settings
@@ -701,7 +701,7 @@ class Crazyflie:
     #     self.setParam('ring/solidGreen', int(g * 255))
     #     self.setParam('ring/solidBlue', int(b * 255))
         
-    def listener_callback(self, msg):
+    def status_topic_callback(self, msg):
         """Callback method updating the status attribute every time 
         a crazyflie_interfaces/msg/Status message is published on the topic /cfXXX/status """
         
@@ -1001,7 +1001,7 @@ class CrazyflieServer(rclpy.node.Node):
     def get_statuses(self):
         '''
         Obtain a list containing the status of each crazyflie controlled by the Crazyserver
-        Each status is a dict, see listener_callback() for more details
+        Each status is a dict, see status_topic_callback() for more details
         '''
         
         # self.get_logger().info(f'Crazyserver.get_statuses() was called')
