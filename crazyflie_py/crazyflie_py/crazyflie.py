@@ -705,12 +705,11 @@ class Crazyflie:
         """Callback method updating the status attribute every time 
         a crazyflie_interfaces/msg/Status message is published on the topic /cfXXX/status """
         
-        self.status = {'id' : msg.header.frame_id, 'timestamp_sec': msg.header.stamp.sec, 
-                  'timestamp_nsec' : msg.header.stamp.nanosec, 'supervisor' : msg.supervisor_info,
-                  'battery' : msg.battery_voltage, 'pm_state' : msg.pm_state, 'rssi' : msg.rssi, 
-                  'num_rx_broadcast':msg.num_rx_broadcast, 'num_tx_broadcast' : msg.num_tx_broadcast,
-                  'num_rx_unicast':msg.num_rx_unicast, 'num_tx_unicast' : msg.num_tx_unicast}
-        self.node.get_logger().info(f' Callbacl status')
+        # self.status = {'id' : msg.header.frame_id, 'timestamp_sec': msg.header.stamp.sec, 
+        #           'timestamp_nsec' : msg.header.stamp.nanosec, 'supervisor' : msg.supervisor_info,
+        #           'battery' : msg.battery_voltage, 'pm_state' : msg.pm_state, 'rssi' : msg.rssi, 
+        #           'num_rx_broadcast':msg.num_rx_broadcast, 'num_tx_broadcast' : msg.num_tx_broadcast,
+        #           'num_rx_unicast':msg.num_rx_unicast, 'num_tx_unicast' : msg.num_tx_unicast}
 
     
     def get_status(self):
@@ -718,7 +717,7 @@ class Crazyflie:
         frame id, timestamp, supervisor info, battery voltage, pm state, rssi, number of received or
         transmitted broadcast or unicast messages. see crazyflie_interfaces/msg/Status for details"""
 
-        self.node.get_logger().info(f'get_status() was called {self.status}')
+        # self.node.get_logger().info(f'Crazyflie.get_status() was called {self.status}')
         return self.status
 
 
@@ -998,3 +997,16 @@ class CrazyflieServer(rclpy.node.Node):
         self.cmdFullStateMsg.twist.angular.y = omega[1]
         self.cmdFullStateMsg.twist.angular.z = omega[2]
         self.cmdFullStatePublisher.publish(self.cmdFullStateMsg)
+
+    def get_statuses(self):
+        '''
+        Obtain a list containing the status of each crazyflie controlled by the Crazyserver
+        Each status is a dict, see listener_callback() for more details
+        '''
+        
+        # self.get_logger().info(f'Crazyserver.get_statuses() was called')
+        statuses = []
+        for cf in self.crazyflies:
+            statuses.append(cf.get_status())
+            
+        return statuses
