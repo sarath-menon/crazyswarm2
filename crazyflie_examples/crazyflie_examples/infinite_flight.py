@@ -43,7 +43,7 @@ def main():
             allcfs.startTrajectory(0, timescale=TIMESCALE)
             timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
             status = allcfs.get_statuses()[0]
-            print(f'pm state : {status['pm_state']}, battery left : {status['battery']}')
+            print(f'pm state : {status["pm_state"]}, battery left : {status["battery"]}')
             timeHelper.sleep(1)
         
         
