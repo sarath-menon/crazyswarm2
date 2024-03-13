@@ -997,16 +997,3 @@ class CrazyflieServer(rclpy.node.Node):
         self.cmdFullStateMsg.twist.angular.y = omega[1]
         self.cmdFullStateMsg.twist.angular.z = omega[2]
         self.cmdFullStatePublisher.publish(self.cmdFullStateMsg)
-
-    def get_statuses(self):
-        '''
-        Obtain a list containing the status of each crazyflie controlled by the Crazyserver
-        Each status is a dict, see status_topic_callback() for more details
-        '''
-        
-        # self.get_logger().info(f'Crazyserver.get_statuses() was called')
-        statuses = []
-        for cf in self.crazyflies:
-            statuses.append(cf.get_status())
-            
-        return statuses
