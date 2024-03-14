@@ -704,20 +704,20 @@ class Crazyflie:
 
     def status_topic_callback(self, msg):
         """
-        Callback method updating the status attribute every time a 
+        Callback method updating the status attribute every time a
         crazyflie_interfaces/msg/Status message is published on the topic /cfXXX/status
-        
+
         """
-        self.status = {'id': msg.header.frame_id, 
-                       'timestamp_sec': msg.header.stamp.sec, 
-                       'timestamp_nsec': msg.header.stamp.nanosec, 
+        self.status = {'id': msg.header.frame_id,
+                       'timestamp_sec': msg.header.stamp.sec,
+                       'timestamp_nsec': msg.header.stamp.nanosec,
                        'supervisor': msg.supervisor_info,
-                       'battery': msg.battery_voltage, 
-                       'pm_state' : msg.pm_state, 
-                       'rssi': msg.rssi, 
-                       'num_rx_broadcast':msg.num_rx_broadcast, 
+                       'battery': msg.battery_voltage,
+                       'pm_state': msg.pm_state,
+                       'rssi': msg.rssi,
+                       'num_rx_broadcast': msg.num_rx_broadcast,
                        'num_tx_broadcast': msg.num_tx_broadcast,
-                       'num_rx_unicast':msg.num_rx_unicast, 
+                       'num_rx_unicast': msg.num_rx_unicast,
                        'num_tx_unicast': msg.num_tx_unicast}
 
     def get_status(self):
