@@ -35,14 +35,14 @@ def main():
 
         # fly figure8 until battery is low
         fig8_counter = 0
-        status = allcfs.crazyflies[0].status()# status = allcfs.get_statuses()[0]
+        status = allcfs.crazyflies[0].get_status()
         # while status['battery'] > 3.8:
         while status['pm_state'] == 0:
             fig8_counter += 1
             print(f'starting figure8 number {fig8_counter} of flight number {flight_counter}')
             allcfs.startTrajectory(0, timescale=TIMESCALE)
             timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
-            status = allcfs.crazyflies[0].status() # status = allcfs.get_statuses()[0]
+            status = allcfs.crazyflies[0].get_status()
             print(f'pm state : {status["pm_state"]}, battery left : {status["battery"]}')
             timeHelper.sleep(1)
         
@@ -61,7 +61,7 @@ def main():
         # now that battery is low, we try to land on the pad and see if it's charging
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(5)
-        status = allcfs.crazyflies[0].status() # status = allcfs.get_statuses()[0]
+        status = allcfs.crazyflies[0].get_status()
 
         # if not charging, take off and land back again until it charges
         while status['pm_state'] != 1:
@@ -74,20 +74,20 @@ def main():
             timeHelper.sleep(2.5)
             allcfs.land(targetHeight=0.06, duration=2.0)
             timeHelper.sleep(5)
-            status = allcfs.crazyflies[0].status() # status = allcfs.get_statuses()[0]
+            status = allcfs.crazyflies[0].get_status()
 
 
         # now we wait until the crazyflie is charged
         # while status['battery'] < 4.1:
         while status['pm_state'] != 2:
-            print(f'not charged yet, battery at {status['battery']}V')
+            print(f'Charging in progress, battery at {status["battery"]}V')
             timeHelper.sleep(60)
-            status = allcfs.crazyflies[0].status( )#status = allcfs.get_statuses()[0]
+            status = allcfs.crazyflies[0].get_status()
             #check if it's still charging ###not sure if this check is useful
             if status['pm_state'] != 1:
-                print(f'charging interrupted, pm state : {status['pm_state']}')
+                print(f'charging interrupted, pm state : {status["pm_state"]}')
 
-        print('charging finished, time to fly again')
+        print('Charging finished, time to fly again')
         flight_counter += 1
 
 
