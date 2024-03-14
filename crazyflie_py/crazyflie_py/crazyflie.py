@@ -703,9 +703,10 @@ class Crazyflie:
     #     self.setParam('ring/solidBlue', int(b * 255))
 
     def status_topic_callback(self, msg):
-        """
-        Callback method updating the status attribute every time a
-        crazyflie_interfaces/msg/Status message is published on the topic /cfXXX/status
+        """Callback for topic /cfXXX/status.
+
+        Update the status attribute every time a crazyflie_interfaces/msg/Status
+        message is published on the topic /cfXXX/status
 
         """
         self.status = {'id': msg.header.frame_id,
@@ -721,7 +722,9 @@ class Crazyflie:
                        'num_tx_unicast': msg.num_tx_unicast}
 
     def get_status(self):
-        """Returns the status dictionary containing info about:
+        """Return the status attribute.
+
+        Status is a dictionary containing:
         frame id, timestamp, supervisor info, battery voltage, pm state, rssi, nb of received or
         transmitted broadcast or unicast messages. see crazyflie_interfaces/msg/Status for details
         """
