@@ -15,7 +15,6 @@ def main():
     traj1 = Trajectory()
     traj1.loadcsv(Path(__file__).parent / 'data/figure8.csv')
 
-
     TIMESCALE = 1.0
     for cf in allcfs.crazyflies:
         cf.uploadTrajectory(0, 0, traj1)
@@ -45,18 +44,14 @@ def main():
             status = allcfs.crazyflies[0].get_status()
             print(f'pm state : {status["pm_state"]}, battery left : {status["battery"]}')
             timeHelper.sleep(1)
-        
-        
+
         # not sure if useful
-        # check if pm = 3 just to be sure, if not abort test 
+        # check if pm = 3 just to be sure, if not abort test
         if status['pm_state'] != 3:
             print(f'power state is not 3 (low) but {status["pm_state"]}. Landing and aborting')
             allcfs.land(targetHeight=0.06, duration=2.0)
             timeHelper.sleep(3)
-            return 1                    
-
-
-
+            return 1
 
         # now that battery is low, we try to land on the pad and see if it's charging
         allcfs.land(targetHeight=0.06, duration=2.0)
@@ -76,14 +71,13 @@ def main():
             timeHelper.sleep(5)
             status = allcfs.crazyflies[0].get_status()
 
-
         # now we wait until the crazyflie is charged
         # while status['battery'] < 4.1:
         while status['pm_state'] != 2:
             print(f'Charging in progress, battery at {status["battery"]}V')
             timeHelper.sleep(60)
             status = allcfs.crazyflies[0].get_status()
-            #check if it's still charging ###not sure if this check is useful
+            # check if it's still charging ###not sure if this check is useful
             if status['pm_state'] != 1:
                 print(f'charging interrupted, pm state : {status["pm_state"]}')
 
