@@ -703,7 +703,7 @@ class Crazyflie:
     #     self.setParam('ring/solidBlue', int(b * 255))
 
     def status_topic_callback(self, msg):
-        """Callback for topic /cfXXX/status.
+        """Call back for topic /cfXXX/status.
 
         Update the status attribute every time a crazyflie_interfaces/msg/Status
         message is published on the topic /cfXXX/status
