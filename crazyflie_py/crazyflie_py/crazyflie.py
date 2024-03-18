@@ -16,7 +16,7 @@ from collections import defaultdict
 
 from crazyflie_interfaces.msg import FullState, Position, Status, TrajectoryPolynomialPiece
 from crazyflie_interfaces.srv import GoTo, Land,\
-    NotifySetpointsStop, StartTrajectory, Takeoff, UploadTrajectory
+    NotifySetpointsStop, StartTrajectory, Takeoff, UploadTrajectory, DownloadUSD
 from geometry_msgs.msg import Point
 import numpy as np
 from rcl_interfaces.msg import Parameter, ParameterType, ParameterValue
@@ -139,6 +139,9 @@ class Crazyflie:
         self.statusSubscriber = node.create_subscription(
             Status, f'{self.prefix}/status', self.status_topic_callback, 10)
         self.status = {}
+        self.downloadUSDService = node.create_client(
+            DownloadUSD, prefix + '/downloadUSD')
+        self.downloadUSDService.wait_for_service()
 
         # Query some settings
         getParamsService = node.create_client(GetParameters, '/crazyflie_server/get_parameters')
@@ -731,6 +734,20 @@ class Crazyflie:
         """
         # self.node.get_logger().info(f'Crazyflie.get_status() was called {self.status}')
         return self.status
+    
+    def downloadUSD(self, outputfile, uri="radio://0/80/2M/E7E7E7E7E7", verbose=False):
+
+        req = DownloadUSD.Request()
+        req.outputfile = outputfile
+        req.uri = uri
+        req.verbose = verbose
+        future = self.downloadUSDService.call_async(req)
+        self.node.get_logger().info(f'Crazyflie.downloadUSD was called with args {outputfile}, {uri}, {verbose}')
+        while rclpy.ok():
+            rclpy.spin_once(self.node)
+            if future.done():
+                break
+
 
 
 class CrazyflieServer(rclpy.node.Node):

@@ -1,0 +1,4 @@
+string outputfile
+string uri
+bool verbose
+---

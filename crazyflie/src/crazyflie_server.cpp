@@ -1,6 +1,8 @@
 #include <memory>
 #include <vector>
 #include <regex>
+#include <iostream>
+#include <fstream>
 
 #include <crazyflie_cpp/Crazyflie.h>
 
@@ -1428,13 +1430,9 @@ private:
     }
   }
 
-  /////////// put this somewhere else. Dependancy with crazyflie_cpp ok here ?
-  #include <iostream>
-  #include <fstream>
-
-  #include <crazyflie_cpp/Crazyflie.h>
-  bool download_USD(std::string outputfile, std::string uri = "radio://0/80/2M/E7E7E7E7E7", bool verbose = False) 
+  bool download_USD(std::string outputfile, std::string uri = "radio://0/80/2M/E7E7E7E7E7", bool verbose = false) 
   {
+    RCLCPP_INFO(logger_, "download_USD cpp was called");
     try
     {
       Crazyflie cf(uri);
