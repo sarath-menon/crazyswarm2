@@ -1430,7 +1430,7 @@ private:
     }
   }
 
-  void update_name_to_id_map(const std::string& name, uint8_t id)
+   void update_name_to_id_map(const std::string& name, uint8_t id)
   {
     const auto iter = name_to_id_.find(name);
     if (iter != name_to_id_.end()) {
