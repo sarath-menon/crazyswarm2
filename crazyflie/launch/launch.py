@@ -30,6 +30,15 @@ def generate_launch_description():
 
     server_params = [crazyflies] + [server_yaml_contents["/crazyflie_server"]["ros__parameters"]]
 
+    # robot description
+    urdf = os.path.join(
+        get_package_share_directory('crazyflie'),
+        'urdf',
+        'crazyflie_description.urdf')
+    with open(urdf, 'r') as f:
+        robot_desc = f.read()
+    server_params[1]["robot_description"] = robot_desc
+
     # construct motion_capture_configuration
     motion_capture_yaml = os.path.join(
         get_package_share_directory('crazyflie'),
@@ -62,6 +71,8 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('backend', default_value='cpp'),
         DeclareLaunchArgument('debug', default_value='False'),
+        DeclareLaunchArgument('rviz', default_value='False'),
+        DeclareLaunchArgument('gui', default_value='True'),
         Node(
             package='motion_capture_tracking',
             executable='motion_capture_tracking_node',
@@ -76,11 +87,12 @@ def generate_launch_description():
             name='teleop',
             remappings=[
                 ('emergency', 'all/emergency'),
-                ('takeoff', 'cf6/takeoff'),
-                ('land', 'cf6/land'),
-                ('cmd_vel_legacy', 'cf6/cmd_vel_legacy'),
-                ('cmd_full_state', 'cf6/cmd_full_state'),
-                ('notify_setpoints_stop', 'cf6/notify_setpoints_stop'),
+                ('takeoff', 'all/takeoff'),
+                ('land', 'all/land'),
+                # uncomment to manually control (and update teleop.yaml)
+                # ('cmd_vel_legacy', 'cf6/cmd_vel_legacy'),
+                # ('cmd_full_state', 'cf6/cmd_full_state'),
+                # ('notify_setpoints_stop', 'cf6/notify_setpoints_stop'),
             ],
             parameters=[teleop_params]
         ),
@@ -116,13 +128,24 @@ def generate_launch_description():
             parameters=server_params
         ),
         Node(
+            condition=LaunchConfigurationEquals('rviz', 'True'),
             package='rviz2',
             namespace='',
             executable='rviz2',
             name='rviz2',
             arguments=['-d' + os.path.join(get_package_share_directory('crazyflie'), 'config', 'config.rviz')],
             parameters=[{
-                "use_sim_time": True,
+                "use_sim_time": PythonExpression(["'", LaunchConfiguration('backend'), "' == 'sim'"]),
+            }]
+        ),
+        Node(
+            condition=LaunchConfigurationEquals('gui', 'True'),
+            package='crazyflie',
+            namespace='',
+            executable='gui.py',
+            name='gui',
+            parameters=[{
+                "use_sim_time": PythonExpression(["'", LaunchConfiguration('backend'), "' == 'sim'"]),
             }]
         ),
     ])
