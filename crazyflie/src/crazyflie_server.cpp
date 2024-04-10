@@ -717,8 +717,8 @@ private:
 
   //for first try I made it a void function and commented all the returncodes
   // bool download_USD(std::string outputfile, std::string uri = "radio://0/80/2M/E7E7E7E7E7", bool verbose = false) 
-  void download_USD(const std::shared_ptr<NotifySetpointsStop::Request> request,
-                         std::shared_ptr<NotifySetpointsStop::Response> response)
+  void download_USD(const std::shared_ptr<DownloadUSD::Request> request,
+                         std::shared_ptr<DownloadUSD::Response> response)
   {
     RCLCPP_INFO(logger_, "download_USD cpp was called");
     bool verbose (false); //(request->verbose);
