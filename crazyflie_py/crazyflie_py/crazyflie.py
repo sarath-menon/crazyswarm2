@@ -138,6 +138,9 @@ class Crazyflie:
         self.setParamsService.wait_for_service()
         self.statusSubscriber = node.create_subscription(
             Status, f'{self.prefix}/status', self.status_topic_callback, 10)
+        self.downloadUSDService = node.create_client(
+            DownloadUSD, prefix + '/downloadUSD')
+        self.downloadUSDService.wait_for_service()
         self.status = {}
         
 
@@ -734,6 +737,10 @@ class Crazyflie:
         return self.status
     
     def downloadUSD(self, outputfile, uri="radio://0/80/2M/E7E7E7E7E7", verbose=False):
+        
+        ### verbose feature not yet functional on C++ side of things
+        ### returncodes not yet implemented
+        ### maybe this shouldn't be async ?
 
         req = DownloadUSD.Request()
         req.outputfile = outputfile
