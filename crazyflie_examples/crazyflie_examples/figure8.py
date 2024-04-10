@@ -35,6 +35,11 @@ def main():
 
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
+        
+        start = timeHelper.time()
+        allcfs.crazyflies[0].downloadUSD(outputfile="/home/jthevenoz/testingSDdownload")
+        timeHelper.sleep(1)
+        print("download lasted ", timeHelper.time() - start)
 
 
 if __name__ == '__main__':
