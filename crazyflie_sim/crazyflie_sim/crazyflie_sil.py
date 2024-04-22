@@ -236,9 +236,10 @@ class CrazyflieSIL:
 
         # sepoint values
         self.setpoint.thrust = thrust
-        self.setpoint.attitude.yaw = np.degrees(yaw)
+        
         self.setpoint.attitude.roll = np.degrees(roll)
         self.setpoint.attitude.pitch = np.degrees(pitch)
+        self.setpoint.attitude.yaw = np.degrees(yaw)
 
         # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
 

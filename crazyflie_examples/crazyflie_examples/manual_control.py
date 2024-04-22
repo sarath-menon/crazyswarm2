@@ -26,10 +26,9 @@ class MinimalPublisher(Node):
     def timer_callback(self):
         msg = Twist()
 
-        msg.linear.x = 0.3
-        msg.linear.y = 0.0
+
         msg.linear.z = 45000.0
-        msg.angular.x = 0.0
+        msg.angular.x = 0.3 #roll angle
         msg.angular.y = 0.0
         msg.angular.z = 0.0
 
