@@ -217,6 +217,31 @@ class CrazyflieSIL:
     #     self.setState.omega = firm.mkvec(0.0, 0.0, yawRate)
     #     # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
 
+    def cmdVel(self,  roll, pitch, yaw, thrust):
+        self.mode = CrazyflieSIL.MODE_LOW_VELOCITY
+
+        # to bypass position controller
+        self.setpoint.mode.x = firm.modeDisable
+        self.setpoint.mode.y = firm.modeDisable
+        
+        # to set thrust directly
+        self.setpoint.mode.z = firm.modeDisable
+
+        # # to set roll and pitch angles directly
+        # self.setpoint.mode.roll = firm.modeVelocity
+        # self.setpoint.mode.pitch = firm.modeVelocity
+
+        self.setpoint.mode.yaw = firm.modeAbs
+        self.setpoint.mode.quat = firm.modeDisable
+
+        # sepoint values
+        self.setpoint.thrust = thrust
+        self.setpoint.attitude.yaw = np.degrees(yaw)
+        self.setpoint.attitude.roll = np.degrees(roll)
+        self.setpoint.attitude.pitch = np.degrees(pitch)
+
+        # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
+
     # def cmdStop(self):
     #     # TODO: set mode to MODE_IDLE?
     #     pass

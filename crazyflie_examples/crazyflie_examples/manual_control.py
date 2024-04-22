@@ -10,12 +10,11 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
 
-
 class MinimalPublisher(Node):
 
     def __init__(self, swarm, allcfs, timeHelper):
         super().__init__('minimal_publisher')
-        self.publisher_ = self.create_publisher(Twist, '/cmd_vel_legacy', 10)
+        self.publisher_ = self.create_publisher(Twist, '/cf231/cmd_vel_legacy', 10)
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
@@ -27,23 +26,16 @@ class MinimalPublisher(Node):
     def timer_callback(self):
         msg = Twist()
 
-        msg.linear.x = 0.0
+        msg.linear.x = 0.3
         msg.linear.y = 0.0
-        msg.linear.z = 40000.0
+        msg.linear.z = 45000.0
         msg.angular.x = 0.0
         msg.angular.y = 0.0
         msg.angular.z = 0.0
 
-        # cf = self.allcfs.crazyflies[0]
-        # vel = np.ones(3)
-        # cf.cmdVelocityWorld(vel, yawRate=0)
-
-
         self.publisher_.publish(msg)
         self.get_logger().info('Publishing: "%s"' % self.i)
         self.i += 1
-
-        # self.swarm._cfs["all"].cf.commander.send_setpoint(0,0,0,40000)
 
         if self.i==50:
             self.get_logger().info('Landing')

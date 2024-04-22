@@ -332,7 +332,8 @@ class CrazyflieServer(Node):
 
         Controls the attitude and thrust of the crazyflie with teleop.
         """
-        self.get_logger().info('cmd_vel_legacy not yet implemented')
+
+        self.cfs[name].cmdVel(msg.angular.x, msg.angular.y, msg.angular.z, msg.linear.z)
 
     def _cmd_hover_changed(self, msg, name=''):
         """
