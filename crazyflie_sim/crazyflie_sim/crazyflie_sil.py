@@ -227,19 +227,21 @@ class CrazyflieSIL:
         # to set thrust directly
         self.setpoint.mode.z = firm.modeDisable
 
-        # # to set roll and pitch angles directly
-        # self.setpoint.mode.roll = firm.modeVelocity
-        # self.setpoint.mode.pitch = firm.modeVelocity
+        # to set roll, pitch, yaw rates directly
+        self.setpoint.mode.roll = firm.modeVelocity
+        self.setpoint.mode.pitch = firm.modeVelocity
+        self.setpoint.mode.yaw = firm.modeVelocity
 
-        self.setpoint.mode.yaw = firm.modeAbs
         self.setpoint.mode.quat = firm.modeDisable
 
+        # self.setpoint.mode.yaw = firm.modeAbs
+        
         # sepoint values
         self.setpoint.thrust = thrust
         
-        self.setpoint.attitude.roll = np.degrees(roll)
-        self.setpoint.attitude.pitch = np.degrees(pitch)
-        self.setpoint.attitude.yaw = np.degrees(yaw)
+        self.setpoint.attitudeRate.roll = np.degrees(roll)
+        self.setpoint.attitudeRate.pitch = np.degrees(pitch)
+        self.setpoint.attitudeRate.yaw = np.degrees(yaw)
 
         # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
 
