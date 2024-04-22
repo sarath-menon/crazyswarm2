@@ -16,37 +16,32 @@ class IfaSim(Node):
         super().__init__('minimal_publisher')
 
         # publishers and subscribers   
-        # self.setpoint_sub = self.node.create_subscription(CommandOuter, "controllerCommand", self.callback_command, 10)
-        self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)
+        self.setpoint_sub = self.create_subscription(CommandOuter, "controllerCommand", self.callback_command, 10)
+        # self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)
 
         # callback functions
-        timer_period = 0.01  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        # timer_period = 0.01  # seconds
+        # s   # self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)elf.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
 
         self.swarm = swarm
 
-    def timer_callback(self):
-        msg = Twist()
-
-
-        msg.linear.z = 45000.0 # thrust (0-60000)
-        msg.angular.x = 0.0 #roll angle (rad)
-        msg.angular.y = 0.0 #pitch angle (rad)
-        msg.angular.z = 0.0 #yaw angle (rad)
-
+    def callback_command(self, msg):
+ 
         if self.i<50:
-            self.publisher_.publish(msg)
-            self.get_logger().info('Publishing: "%s"' % self.i)
+            # self.publisher_.publish(msg)
+            # self.get_logger().info('Publishing: "%s"' % self.i)
             self.i += 1
 
         else:
             self.get_logger().info('Landing')
             self.allcfs.land(targetHeight=0.02, duration=1.0)
             self.timeHelper.sleep(1.0)
+
+        print("Thrust:", msg.thrust)
             
 
-
+   # self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)
 def main(args=None):
     swarm = Crazyswarm()
     timeHelper = swarm.timeHelper
