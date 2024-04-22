@@ -25,7 +25,7 @@ from std_srvs.srv import Empty
 # from .backend.none import BackendNone
 from .crazyflie_sil import CrazyflieSIL, TrajectoryPolynomialPiece
 from .sim_data_types import State
-
+from crazyflie_online_tracker_interfaces.msg import CommandOuter, ControllerState, CrazyflieState
 
 class CrazyflieServer(Node):
 
@@ -165,6 +165,9 @@ class CrazyflieServer(Node):
                             'all/start_trajectory',
                             self._start_trajectory_callback)
 
+        # publisher for the state of the drone
+        self.drone_state_pub = self.create_publisher(CrazyflieState, 'crazyflieState', 10)
+
         # This is the last service to announce.
         # Can be used to check if the server is fully available.
         self.create_service(Empty, 'all/emergency', self._emergency_callback)
@@ -174,6 +177,28 @@ class CrazyflieServer(Node):
             else self._ros_parameters['sim']['max_dt']
         self.timer = self.create_timer(max_dt, self._timer_callback)
         self.is_shutdown = False
+
+    def state_vec_to_msg(self, state_vector):
+        state = CrazyflieState()
+
+        state.pose.position.x = state_vector.pos[0]
+        state.pose.position.y = state_vector.pos[1]
+        state.pose.position.z = state_vector.pos[2]
+        
+        state.pose.orientation.w = state_vector.quat[0]
+        state.pose.orientation.x = state_vector.quat[1]
+        state.pose.orientation.y = state_vector.quat[2]
+        state.pose.orientation.z = state_vector.quat[3]
+        
+        
+        state.velocity.linear.x = state_vector.vel[0]
+        state.velocity.linear.y = state_vector.vel[1]
+        state.velocity.linear.z = state_vector.vel[2]
+
+        state.velocity.angular.x = state_vector.omega[0]
+        state.velocity.angular.y = state_vector.omega[1]
+        state.velocity.angular.z = state_vector.omega[2]
+        return state
 
     def on_shutdown_callback(self):
         if not self.is_shutdown:
@@ -196,6 +221,10 @@ class CrazyflieServer(Node):
         # update the resulting state
         for state, (_, cf) in zip(states_next, self.cfs.items()):
             cf.setState(state)
+
+        # publish state
+        next_state_msg = self.state_vec_to_msg(states_next[0])
+        self.drone_state_pub.publish(next_state_msg)
 
         for vis in self.visualizations:
             vis.step(self.backend.time(), states_next, states_desired, actions)
