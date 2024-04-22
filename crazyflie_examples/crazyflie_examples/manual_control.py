@@ -27,10 +27,10 @@ class MinimalPublisher(Node):
         msg = Twist()
 
 
-        msg.linear.z = 45000.0
-        msg.angular.x = 0.0 #roll angle
-        msg.angular.y = 0.0
-        msg.angular.z = 0.0
+        msg.linear.z = 45000.0 # thrust (0-60000)
+        msg.angular.x = 0.0 #roll angle (rad)
+        msg.angular.y = 0.0 #pitch angle (rad)
+        msg.angular.z = 0.0 #yaw angle (rad)
 
         if self.i<50:
             self.publisher_.publish(msg)
