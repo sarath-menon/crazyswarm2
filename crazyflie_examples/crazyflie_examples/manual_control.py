@@ -28,15 +28,16 @@ class MinimalPublisher(Node):
 
 
         msg.linear.z = 45000.0
-        msg.angular.x = 0.3 #roll angle
+        msg.angular.x = 0.0 #roll angle
         msg.angular.y = 0.0
         msg.angular.z = 0.0
 
-        self.publisher_.publish(msg)
-        self.get_logger().info('Publishing: "%s"' % self.i)
-        self.i += 1
+        if self.i<50:
+            self.publisher_.publish(msg)
+            self.get_logger().info('Publishing: "%s"' % self.i)
+            self.i += 1
 
-        if self.i==50:
+        else:
             self.get_logger().info('Landing')
             self.allcfs.land(targetHeight=0.02, duration=1.0)
             self.timeHelper.sleep(1.0)
