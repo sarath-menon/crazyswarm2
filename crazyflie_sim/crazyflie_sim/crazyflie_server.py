@@ -369,8 +369,8 @@ class CrazyflieServer(Node):
         Controls the attitude and thrust of the crazyflie with teleop.
         """
 
-        roll = msg.linear.y
-        pitch = -msg.linear.x
+        roll = msg.angular.y
+        pitch = -msg.angular.x
         yawrate = msg.angular.z
 
         thrust = int(min(max(msg.linear.z, 0, 0), 65000))
