@@ -28,8 +28,8 @@ class IfaSim(Node):
         # if self.i<50:
         msg_out = Twist()
         msg_out.linear.z = msg.thrust # thrust (0-60000)
-        msg_out.angular.x = np.deg2rad(msg.omega.x) #roll 
-        msg_out.angular.y = np.deg2rad(msg.omega.y) #pitch 
+        msg_out.angular.x = msg.omega.x #roll 
+        msg_out.angular.y = msg.omega.y #pitch 
         # msg_out.angular.z = msg.omega.z #yaw 
 
         self.publisher_.publish(msg_out)
