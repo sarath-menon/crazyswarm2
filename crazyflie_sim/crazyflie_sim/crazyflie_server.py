@@ -178,6 +178,8 @@ class CrazyflieServer(Node):
         self.timer = self.create_timer(max_dt, self._timer_callback)
         self.is_shutdown = False
 
+        self.i = 0
+
     def state_vec_to_msg(self, state_vector):
         state = CrazyflieState()
 
@@ -222,9 +224,16 @@ class CrazyflieServer(Node):
         for state, (_, cf) in zip(states_next, self.cfs.items()):
             cf.setState(state)
 
-        # publish state
-        next_state_msg = self.state_vec_to_msg(states_next[0])
-        self.drone_state_pub.publish(next_state_msg)
+        
+        self.i += 1
+
+        # to publish at 200Hz
+        if self.i%10==0:
+            # publish state
+            next_state_msg = self.state_vec_to_msg(states_next[0])
+            self.drone_state_pub.publish(next_state_msg)
+
+            print(self.backend.time())
 
         for vis in self.visualizations:
             vis.step(self.backend.time(), states_next, states_desired, actions)
