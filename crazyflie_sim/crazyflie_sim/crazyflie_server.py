@@ -233,8 +233,6 @@ class CrazyflieServer(Node):
             next_state_msg = self.state_vec_to_msg(states_next[0])
             self.drone_state_pub.publish(next_state_msg)
 
-            print(self.backend.time())
-
         for vis in self.visualizations:
             vis.step(self.backend.time(), states_next, states_desired, actions)
 
@@ -371,7 +369,13 @@ class CrazyflieServer(Node):
         Controls the attitude and thrust of the crazyflie with teleop.
         """
 
-        self.cfs[name].cmdVel(msg.angular.x, msg.angular.y, msg.angular.z, msg.linear.z)
+        roll = msg.linear.y
+        pitch = -msg.linear.x
+        yawrate = msg.angular.z
+
+        thrust = int(min(max(msg.linear.z, 0, 0), 65000))
+
+        self.cfs[name].cmdVel(roll,pitch,yawrate, thrust)
 
     def _cmd_hover_changed(self, msg, name=''):
         """
