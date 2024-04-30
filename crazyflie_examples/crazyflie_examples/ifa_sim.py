@@ -30,7 +30,7 @@ class IfaSim(Node):
         msg_out.linear.z = msg.thrust # thrust (0-60000)
         msg_out.angular.x = msg.omega.x #roll 
         msg_out.angular.y = msg.omega.y #pitch 
-        # msg_out.angular.z = msg.omega.z #yaw 
+        msg_out.angular.z = msg.omega.z #yaw 
 
         self.publisher_.publish(msg_out)
         self.get_logger().info('Publishing: "%s"' % self.i)
