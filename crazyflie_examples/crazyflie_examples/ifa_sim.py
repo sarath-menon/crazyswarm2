@@ -37,34 +37,30 @@ class IfaSim(Node):
         self.swarm.timeHelper.sleep(TAKEOFF_DURATION)
     
     def exit_handler(self, signum, frame):
-        msg = "Ctrl-c was pressed. Do you really want to exit? y/n "
-        print(msg, end="", flush=True)
+        print("Landing crazyflie and exiting program")
         self.allcfs.land(targetHeight=0.00, duration=1.0)
         self.swarm.timeHelper.sleep(1.0)
         exit(1)
 
     def callback_command(self, msg):
- 
-        # if self.i<50:
-        msg_out = Twist()
-        msg_out.linear.z = msg.thrust # thrust (0-60000)
-        msg_out.angular.x = msg.omega.x #roll 
-        msg_out.angular.y = msg.omega.y #pitch 
-        msg_out.angular.z = msg.omega.z #yaw 
 
-        self.publisher_.publish(msg_out)
-        self.get_logger().info('Publishing: "%s"' % self.i)
-        self.i += 1
+        if msg.is_last_command:
+            print("Received land command")
 
-        # else:
-        #     self.get_logger().info('Landing')
-        #     self.allcfs.land(targetHeight=0.02, duration=1.0)
-        #     self.timeHelper.sleep(1.0)
+            self.allcfs.land(targetHeight=0.00, duration=4.0)
+            self.swarm.timeHelper.sleep(4.0)
 
-        print("Thrust:", msg.thrust)
-            
+        else:
+            msg_out = Twist()
+            msg_out.linear.z = msg.thrust # thrust (0-60000)
+            msg_out.angular.x = msg.omega.x #roll 
+            msg_out.angular.y = msg.omega.y #pitch 
+            msg_out.angular.z = msg.omega.z #yaw 
 
-   # self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)
+            self.publisher_.publish(msg_out)
+            self.get_logger().info('Publishing: "%s"' % self.i)
+            self.i += 1
+
 def main(args=None):
     swarm = Crazyswarm()
 
