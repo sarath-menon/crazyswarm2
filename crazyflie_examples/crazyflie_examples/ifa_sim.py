@@ -9,6 +9,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from crazyflie_online_tracker_interfaces.msg import CommandOuter, ControllerState, CrazyflieState
+import signal
 
 class IfaSim(Node):
 
@@ -22,6 +23,25 @@ class IfaSim(Node):
         self.i = 0
 
         self.swarm = swarm
+        self.allcfs = swarm.allcfs
+
+        signal.signal(signal.SIGINT, self.exit_handler)
+
+        TAKEOFF_HEIGHT = 0.4
+        TAKEOFF_DURATION = 2.0
+
+        # takeoff
+        self.allcfs.takeoff(targetHeight=TAKEOFF_HEIGHT , duration=TAKEOFF_DURATION)
+
+        timeHelper = swarm.timeHelper
+        self.swarm.timeHelper.sleep(TAKEOFF_DURATION)
+    
+    def exit_handler(self, signum, frame):
+        msg = "Ctrl-c was pressed. Do you really want to exit? y/n "
+        print(msg, end="", flush=True)
+        self.allcfs.land(targetHeight=0.00, duration=1.0)
+        self.swarm.timeHelper.sleep(1.0)
+        exit(1)
 
     def callback_command(self, msg):
  
@@ -47,14 +67,6 @@ class IfaSim(Node):
    # self.drone_state_pub = self.node.create_publisher(CrazyflieState, 'crazyflieState', 10)
 def main(args=None):
     swarm = Crazyswarm()
-    timeHelper = swarm.timeHelper
-    allcfs = swarm.allcfs
-
-    TAKEOFF_HEIGHT = 0.4
-    TAKEOFF_DURATION = 2.0
-
-    allcfs.takeoff(targetHeight=TAKEOFF_HEIGHT , duration=TAKEOFF_DURATION)
-    timeHelper.sleep(TAKEOFF_DURATION)
 
     minimal_publisher = IfaSim(swarm)
 
