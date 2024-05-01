@@ -30,8 +30,8 @@ class IfaSim(Node):
         TAKEOFF_HEIGHT = 0.4
         TAKEOFF_DURATION = 2.0
 
-        # takeoff
-        self.allcfs.takeoff(targetHeight=TAKEOFF_HEIGHT , duration=TAKEOFF_DURATION)
+        # # takeoff
+        # self.allcfs.takeoff(targetHeight=TAKEOFF_HEIGHT , duration=TAKEOFF_DURATION)
 
         timeHelper = swarm.timeHelper
         self.swarm.timeHelper.sleep(TAKEOFF_DURATION)
@@ -47,8 +47,14 @@ class IfaSim(Node):
         if msg.is_last_command:
             print("Received land command")
 
-            self.allcfs.land(targetHeight=0.00, duration=4.0)
-            self.swarm.timeHelper.sleep(4.0)
+            self.allcfs.land(targetHeight=0.00, duration=10.0)
+            self.swarm.timeHelper.sleep(10.0)
+            
+
+        elif msg.is_takeoff:
+            print("Received takeoff command")
+            self.allcfs.takeoff(targetHeight=0.4, duration=2.0)
+            self.swarm.timeHelper.sleep(2.0)
 
         else:
             msg_out = Twist()
@@ -58,7 +64,6 @@ class IfaSim(Node):
             msg_out.angular.z = msg.omega.z #yaw 
 
             self.publisher_.publish(msg_out)
-            self.get_logger().info('Publishing: "%s"' % self.i)
             self.i += 1
 
 def main(args=None):
