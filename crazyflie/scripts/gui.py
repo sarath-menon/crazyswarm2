@@ -62,7 +62,7 @@ class NiceGuiNode(Node):
             with ui.row().classes('items-stretch'):
                 with ui.card().classes('w-full h-full'):
                     ui.label('Visualization').classes('text-2xl')
-                    with ui.scene(1600, 800, on_click=self.on_vis_click) as scene:
+                    with ui.scene(1200, 600, on_click=self.on_vis_click) as scene:
                         for name in self.cfnames:
                             robot = scene.stl('/urdf/cf2_assembly.stl').scale(1.0).material('#ff0000').with_name(name)
                             self.robotmodels[name] = robot
@@ -80,18 +80,18 @@ class NiceGuiNode(Node):
                     scene.camera.look_at_y = 0
                     scene.camera.look_at_z = 0
 
-            # with ui.row().classes('w-full h-lvh'):
-            #     with ui.tabs().classes('w-full') as tabs:
-            #         self.tabs = []
-            #         for name in ["all"] + self.cfnames:
-            #             self.tabs.append(ui.tab(name))
-            #     with ui.tab_panels(tabs, value=self.tabs[0], on_change=self.on_tab_change).classes('w-full') as self.tabpanels:
-            #         for name, tab in zip(["all"] + self.cfnames, self.tabs):
-            #             with ui.tab_panel(tab):
-            #                 self.logs[name] = ui.log().classes('w-full h-96 no-wrap')
-            #                 self.supervisor_labels[name] = ui.label("")
-            #                 self.battery_labels[name] = ui.label("")
-            #                 self.radio_labels[name] = ui.label("")
+            with ui.row().classes('w-full h-lvh'):
+                with ui.tabs().classes('w-full') as tabs:
+                    self.tabs = []
+                    for name in ["all"] + self.cfnames:
+                        self.tabs.append(ui.tab(name))
+                with ui.tab_panels(tabs, value=self.tabs[1], on_change=self.on_tab_change).classes('w-full') as self.tabpanels:
+                    for name, tab in zip(["all"] + self.cfnames, self.tabs):
+                        with ui.tab_panel(tab):
+                            self.logs[name] = ui.log().classes('w-full h-96 no-wrap')
+                            self.supervisor_labels[name] = ui.label("")
+                            self.battery_labels[name] = ui.label("")
+                            self.radio_labels[name] = ui.label("")
 
             for name in self.cfnames:
                 self.create_subscription(Status, name + '/status', partial(self.on_status, name=name), 1)
@@ -178,7 +178,7 @@ class NiceGuiNode(Node):
         name = hit.object_name or hit.object_id
         ui.notify(f'You clicked on the {name}')
         if name == 'ground':
-            self.tabpanels.value = 'all'
+            self.tabpanels.value = 'name'
         else:
             self.tabpanels.value = name
 
