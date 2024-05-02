@@ -174,13 +174,14 @@ class NiceGuiNode(Node):
                 self.red_style.apply(self.battery_labels[name])
 
     def on_vis_click(self, e: events.SceneClickEventArguments):
-        hit = e.hits[0]
-        name = hit.object_name or hit.object_id
-        ui.notify(f'You clicked on the {name}')
-        if name == 'ground':
-            self.tabpanels.value = 'name'
-        else:
-            self.tabpanels.value = name
+        pass
+        # hit = e.hits[0]
+        # name = hit.object_name or hit.object_id
+        # ui.notify(f'You clicked on the {name}')
+        # if name == 'ground':
+        #     self.tabpanels.value = 'name'
+        # else:
+        #     self.tabpanels.value = name
 
     def on_status(self, msg, name) -> None:
         status_ok = True

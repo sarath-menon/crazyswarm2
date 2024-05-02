@@ -228,10 +228,10 @@ class CrazyflieServer(Node):
         self.i += 1
 
         # to publish at 200Hz
-        if self.i%10==0:
-            # publish state
-            next_state_msg = self.state_vec_to_msg(states_next[0])
-            self.drone_state_pub.publish(next_state_msg)
+        # publish state
+        next_state_msg = self.state_vec_to_msg(states_next[0])
+        self.drone_state_pub.publish(next_state_msg)
+        # self.get_logger().info(f'{self.i} drone state published')
 
         for vis in self.visualizations:
             vis.step(self.backend.time(), states_next, states_desired, actions)

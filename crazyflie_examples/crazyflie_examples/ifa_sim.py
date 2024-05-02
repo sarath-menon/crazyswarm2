@@ -32,33 +32,34 @@ class IfaSim(Node):
 
         # # takeoff
         # self.allcfs.takeoff(targetHeight=TAKEOFF_HEIGHT , duration=TAKEOFF_DURATION)
+        # self.swarm.timeHelper.sleep(2.0)
 
         timeHelper = swarm.timeHelper
         self.swarm.timeHelper.sleep(TAKEOFF_DURATION)
     
     def exit_handler(self, signum, frame):
         print("Landing crazyflie and exiting program")
-        self.allcfs.land(targetHeight=0.00, duration=1.0)
-        self.swarm.timeHelper.sleep(1.0)
-        exit(1)
+        self.allcfs.land(targetHeight=0.00, duration=2.0)
+        self.swarm.timeHelper.sleep(2.0)
+        exit()
 
-    def callback_command(self, msg):
+    def callback_command(self, msg: CommandOuter):
 
-        if msg.is_last_command:
+        if msg.is_last_command == True:
             print("Received land command")
 
-            self.allcfs.land(targetHeight=0.00, duration=10.0)
-            self.swarm.timeHelper.sleep(10.0)
+            self.allcfs.land(targetHeight=0.00, duration=2.0)
+            self.swarm.timeHelper.sleep(2.0)
             
 
-        elif msg.is_takeoff:
-            print("Received takeoff command")
+        elif msg.is_takeoff == True:
+            print("Received takeoff commands")
             self.allcfs.takeoff(targetHeight=0.4, duration=2.0)
             self.swarm.timeHelper.sleep(2.0)
 
         else:
             msg_out = Twist()
-            msg_out.linear.z = msg.thrust # thrust (0-60000)
+            msg_out.linear.z = msg.thrust # thrust (0-65000)
             msg_out.angular.x = msg.omega.x #roll 
             msg_out.angular.y = msg.omega.y #pitch 
             msg_out.angular.z = msg.omega.z #yaw 
