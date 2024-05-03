@@ -138,8 +138,14 @@ class CrazyflieServer(Node):
                 name + '/notify_setpoints_stop',
                 partial(self._notify_setpoints_stop_callback, name=name)
             )
+            # self.create_subscription(
+            #     Twist,
+            #     name + '/cmd_vel_legacy',
+            #     partial(self._cmd_vel_legacy_changed, name=name),
+            #     10
+            # )
             self.create_subscription(
-                Twist,
+                FullState,
                 name + '/cmd_vel_legacy',
                 partial(self._cmd_vel_legacy_changed, name=name),
                 10
@@ -362,20 +368,35 @@ class CrazyflieServer(Node):
 
         return response
 
-    def _cmd_vel_legacy_changed(self, msg, name=''):
+    def _cmd_vel_legacy_changed(self, msg: FullState, name=''):
         """
-        Topic update callback.
+        Topic update callback
 
         Controls the attitude and thrust of the crazyflie with teleop.
         """
 
-        roll = msg.angular.y
-        pitch = -msg.angular.x
-        yawrate = msg.angular.z
+        pos = [msg.pose.position.x, msg.pose.position.y, msg.pose.position.z]
+        vel = [msg.twist.linear.x, msg.twist.linear.y, msg.twist.linear.z]
+        attitude_rates = [msg.twist.angular.y, -msg.twist.angular.x, msg.twist.angular.z]
 
-        thrust = int(min(max(msg.linear.z, 0, 0), 65000))
+        thrust = int(min(max(msg.acc.z, 10000), 65000))
 
-        self.cfs[name].cmdVel(roll,pitch,yawrate, thrust)
+        self.cfs[name].cmdVel(pos, vel, attitude_rates, thrust)
+
+    # def _cmd_vel_legacy_changed(self, msg, name=''):
+    #     """
+    #     Topic update callback.
+
+    #     Controls the attitude and thrust of the crazyflie with teleop.
+    #     """
+
+    #     roll = msg.angular.y
+    #     pitch = -msg.angular.x
+    #     yawrate = msg.angular.z
+
+    #     thrust = int(min(max(msg.linear.z, 0, 0), 65000))
+
+    #     self.cfs[name].cmdVel(roll,pitch,yawrate, thrust)
 
     def _cmd_hover_changed(self, msg, name=''):
         """

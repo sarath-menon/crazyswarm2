@@ -217,8 +217,43 @@ class CrazyflieSIL:
     #     self.setState.omega = firm.mkvec(0.0, 0.0, yawRate)
     #     # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
 
-    def cmdVel(self,  roll, pitch, yaw, thrust):
+    # def cmdVel(self,  roll, pitch, yaw, thrust):
+    #     self.mode = CrazyflieSIL.MODE_LOW_VELOCITY
+
+    #     # to bypass position controller
+    #     self.setpoint.mode.x = firm.modeDisable
+    #     self.setpoint.mode.y = firm.modeDisable
+        
+    #     # to set thrust directly
+    #     self.setpoint.mode.z = firm.modeDisable
+
+    #     # to set roll, pitch, yaw rates directly
+    #     self.setpoint.mode.roll = firm.modeVelocity
+    #     self.setpoint.mode.pitch = firm.modeVelocity
+    #     self.setpoint.mode.yaw = firm.modeVelocity
+
+    #     self.setpoint.mode.quat = firm.modeDisable
+
+    #     # self.setpoint.mode.yaw = firm.modeAbs
+        
+    #     # sepoint values
+    #     self.setpoint.thrust = thrust
+        
+    #     self.setpoint.attitudeRate.roll = np.degrees(roll)
+    #     self.setpoint.attitudeRate.pitch = np.degrees(pitch)
+    #     self.setpoint.attitudeRate.yaw = np.degrees(yaw)
+
+    # inputs: roll_rate, pitch_rate, yaw_rate, thrust
+    # pos, vel: only for logging
+    def cmdVel(self, pos, vel, attitude_rates, thrust):
         self.mode = CrazyflieSIL.MODE_LOW_VELOCITY
+
+        self.setpoint.position.x = pos[0]
+        self.setpoint.position.y = pos[1]
+        self.setpoint.position.z = pos[2]
+        self.setpoint.velocity.x = vel[0]
+        self.setpoint.velocity.y = vel[1]
+        self.setpoint.velocity.z = vel[2]
 
         # to bypass position controller
         self.setpoint.mode.x = firm.modeDisable
@@ -239,11 +274,11 @@ class CrazyflieSIL:
         # sepoint values
         self.setpoint.thrust = thrust
         
-        self.setpoint.attitudeRate.roll = np.degrees(roll)
-        self.setpoint.attitudeRate.pitch = np.degrees(pitch)
-        self.setpoint.attitudeRate.yaw = np.degrees(yaw)
+        self.setpoint.attitudeRate.roll = np.degrees(attitude_rates[0])
+        self.setpoint.attitudeRate.pitch = np.degrees(attitude_rates[1])
+        self.setpoint.attitudeRate.yaw = np.degrees(attitude_rates[2])
 
-        # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
+
 
     # def cmdStop(self):
     #     # TODO: set mode to MODE_IDLE?
