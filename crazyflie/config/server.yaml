@@ -18,7 +18,7 @@
       backend: np                 # see backend folder for a list 
       visualizations:             # see visualization folder for a list
         rviz:
-          enabled: false
+          enabled: true
         pdf:
           enabled: true
           output_file: "sim_results/result.pdf"
