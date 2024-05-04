@@ -10,6 +10,7 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from crazyflie_online_tracker_interfaces.msg import CommandOuter, ControllerState, CrazyflieState
 from crazyflie_interfaces.msg import FullState
+
 import signal
 
 class IfaSim(Node):
@@ -21,6 +22,7 @@ class IfaSim(Node):
         self.setpoint_sub = self.create_subscription(FullState, "controllerCommand", self.callback_command, 10)
         self.cmd_vel_publisher_ = self.create_publisher(FullState, '/cf231/cmd_vel', 10)
 
+        
         self.i = 0
 
         self.swarm = swarm
