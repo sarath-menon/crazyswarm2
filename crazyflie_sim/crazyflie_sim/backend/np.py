@@ -46,7 +46,7 @@ class Backend:
         #self.clock_publisher.publish(clock_message)
         
 
-        if self.i % 10 == 0: # 200Hz
+        if self.i % 2 == 0: # 1000Hz
             self.clock_publisher.publish(clock_message)
             time_s = clock_message.clock.sec  + clock_message.clock.nanosec / 1e9
             # print("Clock message published",  time_s)
