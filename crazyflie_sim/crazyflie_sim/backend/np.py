@@ -17,7 +17,8 @@ class Backend:
         self.names = names
         self.clock_publisher = node.create_publisher(Clock, 'clock', 10)
         self.t = 0
-        self.dt = 0.0005
+        self.dt = 0.0005 # 2000Hz
+        self.i = 0
 
         self.uavs = []
         for state in states:
@@ -30,6 +31,7 @@ class Backend:
     def step(self, states_desired: list[State], actions: list[Action]) -> list[State]:
         # advance the time
         self.t += self.dt
+        self.i += 1
 
         next_states = []
 
@@ -41,9 +43,15 @@ class Backend:
         # publish the current clock
         clock_message = Clock()
         clock_message.clock = Time(seconds=self.time()).to_msg()
-        self.clock_publisher.publish(clock_message)
+        #self.clock_publisher.publish(clock_message)
+        
 
-        return next_states
+        if self.i % 20 == 0: # 100Hz
+            self.clock_publisher.publish(clock_message)
+            time_s = clock_message.clock.sec  + clock_message.clock.nanosec / 1e9
+            # print("Clock message published",  time_s)
+
+        return next_states, clock_message
 
     def shutdown(self):
         pass
