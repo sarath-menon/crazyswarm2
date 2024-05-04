@@ -224,7 +224,7 @@ class CrazyflieServer(Node):
         actions = [cf.executeController() for _, cf in self.cfs.items()]
 
         # execute the physics simulator
-        states_next = self.backend.step(states_desired, actions)
+        states_next, clock_message = self.backend.step(states_desired, actions)
 
         # update the resulting state
         for state, (_, cf) in zip(states_next, self.cfs.items()):
@@ -235,8 +235,10 @@ class CrazyflieServer(Node):
 
         # to publish at 200Hz
         # publish state
-        next_state_msg = self.state_vec_to_msg(states_next[0])
-        self.drone_state_pub.publish(next_state_msg)
+        if self.i % 10 == 0:
+            next_state_msg = self.state_vec_to_msg(states_next[0])
+            next_state_msg.header.stamp = clock_message.clock
+            self.drone_state_pub.publish(next_state_msg)
         # self.get_logger().info(f'{self.i} drone state published')
 
         for vis in self.visualizations:
