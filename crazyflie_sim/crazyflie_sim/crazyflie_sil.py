@@ -217,31 +217,31 @@ class CrazyflieSIL:
     #     self.setState.omega = firm.mkvec(0.0, 0.0, yawRate)
     #     # TODO: should we set pos, acc, yaw to zero, or rely on modes to not read them?
 
-    # def cmdVel(self,  roll, pitch, yaw, thrust):
-    #     self.mode = CrazyflieSIL.MODE_LOW_VELOCITY
+    def cmdVelLegacy(self,  roll, pitch, yaw, thrust):
+        self.mode = CrazyflieSIL.MODE_LOW_VELOCITY
 
-    #     # to bypass position controller
-    #     self.setpoint.mode.x = firm.modeDisable
-    #     self.setpoint.mode.y = firm.modeDisable
+        # to bypass position controller
+        self.setpoint.mode.x = firm.modeDisable
+        self.setpoint.mode.y = firm.modeDisable
         
-    #     # to set thrust directly
-    #     self.setpoint.mode.z = firm.modeDisable
+        # to set thrust directly
+        self.setpoint.mode.z = firm.modeDisable
 
-    #     # to set roll, pitch, yaw rates directly
-    #     self.setpoint.mode.roll = firm.modeVelocity
-    #     self.setpoint.mode.pitch = firm.modeVelocity
-    #     self.setpoint.mode.yaw = firm.modeVelocity
+        # to set roll, pitch, yaw rates directly
+        self.setpoint.mode.roll = firm.modeVelocity
+        self.setpoint.mode.pitch = firm.modeVelocity
+        self.setpoint.mode.yaw = firm.modeVelocity
 
-    #     self.setpoint.mode.quat = firm.modeDisable
+        self.setpoint.mode.quat = firm.modeDisable
 
-    #     # self.setpoint.mode.yaw = firm.modeAbs
+        # self.setpoint.mode.yaw = firm.modeAbs
         
-    #     # sepoint values
-    #     self.setpoint.thrust = thrust
+        # sepoint values
+        self.setpoint.thrust = thrust
         
-    #     self.setpoint.attitudeRate.roll = np.degrees(roll)
-    #     self.setpoint.attitudeRate.pitch = np.degrees(pitch)
-    #     self.setpoint.attitudeRate.yaw = np.degrees(yaw)
+        self.setpoint.attitudeRate.roll = np.degrees(roll)
+        self.setpoint.attitudeRate.pitch = np.degrees(pitch)
+        self.setpoint.attitudeRate.yaw = np.degrees(yaw)
 
     # inputs: roll_rate, pitch_rate, yaw_rate, thrust
     # pos, vel: only for logging

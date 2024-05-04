@@ -19,7 +19,7 @@ class IfaSim(Node):
 
         # publishers and subscribers   
         self.setpoint_sub = self.create_subscription(FullState, "controllerCommand", self.callback_command, 10)
-        self.cmd_vel_publisher_ = self.create_publisher(FullState, '/cf231/cmd_vel_legacy', 10)
+        self.cmd_vel_publisher_ = self.create_publisher(FullState, '/cf231/cmd_vel', 10)
 
         self.i = 0
 
