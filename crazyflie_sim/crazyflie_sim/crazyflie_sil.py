@@ -92,6 +92,10 @@ class CrazyflieSIL:
             self.mellinger_control = firm.controllerMellinger_t()
             firm.controllerMellingerInit(self.mellinger_control)
             self.controller = firm.controllerMellinger
+        elif controller_name == 'rls':
+            self.rls_control = firm.controllerRls_t()
+            firm.controllerRlsInit(self.rls_control)
+            self.controller = firm.controllerRls
         elif controller_name == 'brescianini':
             firm.controllerBrescianiniInit()
             self.controller = firm.controllerBrescianini
@@ -365,9 +369,16 @@ class CrazyflieSIL:
         time_in_seconds = self.time_func()
         # ticks is essentially the time in milliseconds as an integer
         tick = int(time_in_seconds * 1000)
-        if self.controller_name != 'mellinger':
-            self.controller(self.control, self.setpoint, self.sensors, self.state, tick)
-        else:
+        if self.controller_name == 'rls':
+            self.controller(
+                self.rls_control,
+                    self.control,
+                    self.setpoint,
+                    self.sensors,
+                    self.state,
+                    tick)
+                
+        elif self.controller_name == 'mellinger':
             self.controller(
                 self.mellinger_control,
                 self.control,
@@ -375,6 +386,8 @@ class CrazyflieSIL:
                 self.sensors,
                 self.state,
                 tick)
+        else:
+            self.controller(self.control, self.setpoint, self.sensors, self.state, tick)
         return self._fwcontrol_to_sim_data_types_action()
 
     # 'private' methods
